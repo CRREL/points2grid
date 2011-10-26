@@ -1,2 +1,3 @@
 *.o
+config.h
 points2grid
