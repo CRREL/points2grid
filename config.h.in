@@ -1,0 +1,2 @@
+// let the compiler know if we have cURL available
+#cmakedefine CURL_FOUND

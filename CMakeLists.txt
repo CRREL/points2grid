@@ -11,6 +11,7 @@ set(POINTS2GRID_CPP
 )
 
 set(POINTS2GRID_HPP
+  config.h
   CoreInterp.h
   Global.h
   GridFile.h
@@ -28,8 +29,11 @@ source_group("Source Files" FILES ${POINTS2GRID_CPP})
 set_source_files_properties(${POINTS2GRID_HPP} PROPERTIES LANGUAGE CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-find_package(curl REQUIRED)
+find_package(curl)
 include_directories(${CURL_INCLUDE_DIRS})
+
+configure_file(${PROJECT_SOURCE_DIR}/config.h.in
+  ${PROJECT_SOURCE_DIR}/config.h)
 
 find_package(LibLAS REQUIRED)
 include_directories(${LIBLAS_INCLUDE_DIR})

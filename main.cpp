@@ -55,6 +55,7 @@ POSSIBILITY OF SUCH DAMAGE.
  * Description: this program starts from this file
  *
  */
+#include "config.h"
 #include "Interpolation.h"
 #include "Global.h"
 #include <math.h>
@@ -63,8 +64,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #include <getopt.h>
 #include <sys/times.h>
-#include <curl/curl.h>
 #include <string.h>
+
+#ifdef CURL_FOUND
+#include <curl/curl.h>
+#endif
 
 void printUsage();
 
@@ -288,6 +292,7 @@ int main(int argc, char **argv)
 
   // download file from URL, and set input name
   if (!((inputURL == NULL || !strcmp(inputURL, "")))) {
+#ifdef CURL_FOUND
       CURL *curl;
       CURLcode res;
 
@@ -324,7 +329,10 @@ int main(int argc, char **argv)
 	  cout << "Error while downloading input from: " << inputURL << endl;
 	  exit(1);
       }
-
+#else
+	  cout << "Error: points2grid not built with cURL, can only open local files"<< endl;
+	  exit(1);
+#endif
   }
 
   cout << "Parameters ************************" << endl;
