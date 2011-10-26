@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+project(points2grid CXX)
 
 set(POINTS2GRID_CPP
   GridFile.cpp
@@ -24,6 +25,7 @@ source_group("CMake Files" FILES CMakeLists.txt)
 source_group("Header Files" FILES ${POINTS2GRID_HPP})
 source_group("Source Files" FILES ${POINTS2GRID_CPP})
 
+set_source_files_properties(${POINTS2GRID_HPP} PROPERTIES LANGUAGE CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 find_package(curl REQUIRED)
