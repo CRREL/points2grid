@@ -7,10 +7,10 @@ CC=g++
 # CFLAGS=-O3 -Wall -g -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_USE_LARGEFILE64 -Dfopen64=fopen
 
 # on everything else
-CFLAGS=-O3 -m64 -Wall -g -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_USE_LARGEFILE64
+CFLAGS=-O3 -m64 -Wall -g -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_USE_LARGEFILE64 -I/tmp/lasjunk/include
 
 # ensure that your LIBRARY_PATH is set up to pick up these libraries
-LIB=-llas -lm -lcurl
+LIB= -L/tmp/lasjunk/lib -llas -lm -lcurl
 
 OBJS=main.o Interpolation.o InCoreInterp.o OutCoreInterp.o GridMap.o GridFile.o
 

@@ -54,8 +54,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <time.h>
 #include <sys/times.h>
 #include <stdio.h>
-#include <liblas/laspoint.hpp>
-#include <liblas/lasreader.hpp>
+#include <liblas/point.hpp>
+#include <liblas/reader.hpp>
 #include <fstream>  // std::ifstream
 #include <iostream> // std::cout
 #include <string.h>
@@ -115,7 +115,11 @@ int Interpolation::init(char *inputName, int inputFormat)
 	double data_x, data_y;
 	//double data_z;
 
+#ifdef fopen64
 	if((fp = fopen64(inputName, "r")) == NULL)
+#else
+	if((fp = fopen(inputName, "r")) == NULL)
+#endif
 	    {
 		cout << "file open error" << endl;
 		return -1;
@@ -181,10 +185,10 @@ int Interpolation::init(char *inputName, int inputFormat)
 	    ifs.open(inputName, std::ios::in | std::ios::binary);
 	    
 	    // create a las file reader
-	    liblas::LASReader reader(ifs);
+	    liblas::Reader reader(ifs);
 	    
 	    /// get header information
-	    liblas::LASHeader const& header = reader.GetHeader();
+	    liblas::Header const& header = reader.GetHeader();
 	    
 	    min_x = header.GetMinX();
 	    min_y = header.GetMinY();
@@ -300,8 +304,11 @@ int Interpolation::interpolation(char *inputName,
     if (inputFormat == INPUT_ASCII) {
 	FILE *fp;
 	char line[1024];
-
+#ifdef fopen64
 	if((fp = fopen64(inputName, "r")) == NULL)
+#else
+	if((fp = fopen(inputName, "r")) == NULL)
+#endif
 	    {
 		printf("file open error\n");
 		return -1;
@@ -335,11 +342,11 @@ int Interpolation::interpolation(char *inputName,
 	std::ifstream ifs;
 	ifs.open(inputName, std::ios::in | std::ios::binary);
 
-	liblas::LASReader reader(ifs);
+	liblas::Reader reader(ifs);
 
 	// process every point in the LAS file, and generate DEM
 	while (reader.ReadNextPoint()) {
-	    liblas::LASPoint const& p = reader.GetPoint();
+	    liblas::Point const& p = reader.GetPoint();
 
 	    data_x = p.GetX(); 
 	    data_y = p.GetY();

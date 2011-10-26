@@ -726,8 +726,12 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
                             strncat(arcFileName, ext[i], strlen(ext[i]));
                             strncat(arcFileName, ".asc", strlen(".asc"));
 
+#ifdef fopen64
                             if((arcFiles[i] = fopen64(arcFileName, "w+")) == NULL)
-                                {
+#else
+                            if((arcFiles[i] = fopen(arcFileName, "w+")) == NULL)
+#endif                                
+{
                                     cout << "File open error: " << arcFileName << endl;
                                     return -1;
                                 }
@@ -756,7 +760,11 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
                             strncat(gridFileName, ext[i], strlen(ext[i]));
                             strncat(gridFileName, ".grid", strlen(".grid"));
 
+#ifdef fopen64
                             if((gridFiles[i] = fopen64(gridFileName, "w+")) == NULL)
+#else
+                            if((gridFiles[i] = fopen(gridFileName, "w+")) == NULL)
+#endif
                                 {
                                     cout << "File open error: " << gridFileName << endl;
                                     return -1;

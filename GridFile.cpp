@@ -68,7 +68,13 @@ GridFile::GridFile(int id, char *_fname, int _size_x, int _size_y)
 
     // for each file, you have to initialize every points
     // then map.initialized = true;
+
+#ifdef fopen64
     if((fp = fopen64(fname, "w+")) == NULL)
+#else
+    if((fp = fopen(fname, "w+")) == NULL)
+#endif
+
     {
 	fprintf(stderr, "%s fopen error %d(%s) \n", fname, errno, strerror(errno));
     }
