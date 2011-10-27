@@ -61,21 +61,20 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <time.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <getopt.h>
-#include <sys/times.h>
 #include <string.h>
+#include <stdexcept>
+#include <boost/program_options.hpp>
 
 #ifdef CURL_FOUND
 #include <curl/curl.h>
 #endif
 
-void printUsage();
+namespace po = boost::program_options;
 
+const std::string appName("points2grid");
 
 int main(int argc, char **argv)
 {
-  //struct tms tbuf;
   clock_t t0, t1;
 
   // parameters
@@ -90,265 +89,255 @@ int main(int argc, char **argv)
   double searchRadius = (double) sqrt(2.0) * GRID_DIST_X;
   int window_size = 0;
 
-  if(argc < 5)
-    {
-      printUsage();
-      exit(0);
-    }
-
   // argument processing..
-  while(1)
-    {
-      static struct option long_options[] = 
-	{
-	  {"output_format", 1, 0, 0},
-	  {"resolution", 1, 0, 0},
-	  {"resolution-x", 1, 0, 0},
-	  {"resolution-y", 1, 0, 0},
-	  {"min", 0, 0, 0},
-	  {"max", 0, 0, 0},
-	  {"mean", 0, 0, 0},
-	  {"idw", 0, 0, 0},
-	  {"den", 0, 0, 0},
-	  {"all", 0, 0, 0},
-	  {"fill", 0, 0, 0},
-	  {"fill_window_size", 1, 0, 0},
-	  {"input_format", 1, 0, 0},
-	  {0, 0, 0, 0}
-	};
+  po::options_description general("General options"), 
+    df("Data file"),
+    ot("Output Type"),
+    res("Resolution"),
+    nf("Null Filling"),
+    desc("Allowed options");
 
-      int option_index = 0;
+  general.add_options()
+    ("help", "produce a help message")
+    ("output_file_name,o", po::value<std::string>()->required(), "without extension, i.e. if you want the output file to be test.asc, this parameter shoud be \"test\"")
+    ("search_radius,r", po::value<float>(), "specifies the search radius. The default value is square root 2 of horizontal distance in a grid cell")
+    ("output_format", po::value<std::string>(), "'all' generates every possible format,\n"
+      "'arc' for ArcGIS format,\n"
+      "'grid' for Ascii GRID format,\n"
+      "the default value is --all")
+    ("input_format", po::value<std::string>(), "'ascii' expects input point cloud in ASCII format (default)"
+      "'las' expects input point cloud in LAS format");
 
-      int c = getopt_long(argc, argv, "i:o:r:l:", long_options, &option_index);
+  df.add_options()
+#ifdef CURL_FOUND
+    ("data_file_name,i", po::value<std::string>(), "path to unzipped plain text data file");
+    ("data_file_url,l", po::value<std::string>(), "URL of unzipped plain text data file"
+      "You must specify either a data_file_name or data_file_url.")
+#else
+    ("data_file_name,i", po::value<std::string>()->required(), "path to unzipped plain text data file");
+#endif
+    
 
-      if(c == -1)
-	break;
+  ot.add_options()
+    ("min", "the Zmin values are stored")
+    ("max", "the Zmax values are stored")
+    ("mean", "the Zmean values are stored")
+    ("idw", "the Zidw values are stored")
+    ("den", "the density values are stored")
+    ("all", "all the values are stored (default)");
 
-      switch(c)
-	{
-	case 0:
+  res.add_options()
+    ("resolution", po::value<float>(), "The resolution is set to the specified value. Use square grids.\n"
+      "If no resolution options are specified, a 6ft square grid is used")
+    ("resolution-x", po::value<float>(), "The X side of grid cells is set to the specified value")
+    ("resolution-y", po::value<float>(), "The Y side of grid cells is set to the specified value");
 
-	  switch(option_index)
-	    {
-	    case 0:
-	      if(!strncmp(optarg, "all", strlen("all")))
-		output_format = OUTPUT_FORMAT_ALL;
-	      else if(!strncmp(optarg, "arc", strlen("arc")))
-		output_format = OUTPUT_FORMAT_ARC_ASCII;
-	      else if(!strncmp(optarg, "grid", strlen("grid")))
-		output_format = OUTPUT_FORMAT_GRID_ASCII;
-	      else{
-		printUsage();
-		exit(0);
-	      }
-	      break;
+  nf.add_options()
+    ("fill", "fills nulls in the DEM. Default window size is 3.")
+    ("fill_window_size", po::value<int>(), "The fill window is set to value. Permissible values are 3, 5 and 7.");
 
-	    case 1:
-	      if(optarg != NULL){
-		GRID_DIST_X = atof(optarg);
-		GRID_DIST_Y = atof(optarg);
-		if(searchRadius == sqrt(2.0) * 6.0)
-		  searchRadius = (double) sqrt(2.0) * GRID_DIST_X;
+  desc.add(general).add(df).add(ot).add(res).add(nf);
 
-		if(GRID_DIST_X == 0){
-		  printUsage();
-		  exit(0);
-		}
-	      }else{
-		printUsage();
-		exit(0);
-	      }
+  po::variables_map vm;
 
-	    case 2:
-	      if(optarg != NULL){
-		GRID_DIST_X = atof(optarg);
-		if(searchRadius == sqrt(2.0) * 6.0)
-		  searchRadius = (double) sqrt(2.0) * GRID_DIST_X;
+  try {
+    po::store(po::parse_command_line(argc, argv, desc), vm);
 
-		if(GRID_DIST_X == 0){
-		  printUsage();
-		  exit(0);
-		}
-	      }else{
-		printUsage();
-		exit(0);
-	      }
-	      break;
-
-	    case 3:
-	      if(optarg != NULL){
-		GRID_DIST_Y = atof(optarg);
-		if(GRID_DIST_Y == 0){
-		  printUsage();
-		  exit(0);
-		}
-	      }else{
-		printUsage();
-		exit(0);
-	      }
-	      break;
-
-	    case 4:
-	      type |= OUTPUT_TYPE_MIN;
-	      break;
-	    case 5:
-	      type |= OUTPUT_TYPE_MAX;
-	      break;
-	    case 6:
-	      type |= OUTPUT_TYPE_MEAN;
-	      break;
-	    case 7:
-	      type |= OUTPUT_TYPE_IDW;
-	      break;
-	    case 8:
-	      type |= OUTPUT_TYPE_DEN;
-	      break;
-	    case 9:
-	      type = OUTPUT_TYPE_ALL;
-	      break;
-
-	    case 10:
-	      window_size = 3;
-	      break;
-	    case 11:
-	      if(optarg != NULL){
-		window_size = atoi(optarg);
-		if(!((window_size == 3) || (window_size == 5) || (window_size == 7))) {
-		  printUsage();
-		  exit(0);
-		}
-	      }else{
-		printUsage();
-		exit(0);
-	      }
-	      break;
-	    case 12:
-	      if(!strncmp(optarg, "ascii", strlen("ascii")))
-		input_format = INPUT_ASCII;
-	      else if(!strncmp(optarg, "las", strlen("las")))
-		input_format = INPUT_LAS;
-	      else{
-		printUsage();
-		exit(0);
-	      }
-	      break;
-
-	    default:
-	      printUsage();
-	      exit(0);
-	    }
-
-	  break;
-	case 'i':
-
-	  if(optarg != NULL)
-	    strncpy(inputName, optarg, sizeof(inputName));
-	  else{
-	    printUsage();
-	    exit(0);
-	  }
-
-	  break;
-	case 'l':
-
-	  if(optarg != NULL)
-	    strncpy(inputURL, optarg, sizeof(inputURL));
-	  else{
-	    printUsage();
-	    exit(0);
-	  }
-
-	  break;
-	case 'o':
-	  if(optarg != NULL)
-	    strncpy(outputName, optarg, sizeof(inputName));
-	  else{
-	    printUsage();
-	    exit(0);
-	  }
-
-	  break;
-	case 'r':
-	  if(optarg != NULL)
-	    searchRadius = atof(optarg);
-
-	  break;
-	default:
-	  printUsage();
-	  exit(0);
-	}
-    }
-  if(type == 0)
-    type = OUTPUT_TYPE_ALL;
-
-  if(((inputName == NULL || !strcmp(inputName, "")) && 
-      (inputURL == NULL || !strcmp(inputURL, "")))
-     || 
-     (outputName == NULL || !strcmp(outputName, "")))
-    {
-      printUsage();
+    if (vm.count("help")) {
+      cout << "------------------------------------------------------------------------" << endl;
+      cout << "   " << appName << " (development version )" << endl;
+      cout << "------------------------------------------------------------------------" << endl;
+      cout << "Usage: " << appName << " [options]" << endl;
+      cout << desc << endl;
       exit(0);
     }
 
-  // download file from URL, and set input name
-  if (!((inputURL == NULL || !strcmp(inputURL, "")))) {
+    po::notify(vm);    
+
+    if (vm.count("output_format")) {
+      std::string of = vm["output_format"].as<std::string>();
+      if(of.compare("all") == 0) {
+		    output_format = OUTPUT_FORMAT_ALL;
+      }
+      else if(of.compare("arc") == 0)
+		    output_format = OUTPUT_FORMAT_ARC_ASCII;
+	    else if(of.compare("grid") == 0)
+		    output_format = OUTPUT_FORMAT_GRID_ASCII;
+	    else{
+        throw std::logic_error("'" + of + "' is not a recognized output_format");
+      }
+    }
+        // resolution
+    if(vm.count("resolution")){
+      float res = vm["resolution"].as<float>();
+      GRID_DIST_X = res;
+      GRID_DIST_Y = res;
+      if(searchRadius == sqrt(2.0) * 6.0)
+        searchRadius = (double) sqrt(2.0) * GRID_DIST_X;
+
+      if(GRID_DIST_X == 0){
+        throw std::logic_error("resolution must not be 0");
+      }
+    }
+
+    if(vm.count("resolution-x")) {
+      GRID_DIST_X = vm["resolution-x"].as<float>();
+      if(searchRadius == sqrt(2.0) * 6.0)
+        searchRadius = (double) sqrt(2.0) * GRID_DIST_X;
+
+      if(GRID_DIST_X == 0){
+        throw std::logic_error("resolution-x must not be 0");
+        exit(0);
+      }
+    }
+
+    if(vm.count("resolution-y")) {
+      GRID_DIST_Y = vm["resolution-y"].as<float>();
+      if(GRID_DIST_Y == 0){
+        throw std::logic_error("resolution-y must not be 0");
+        exit(0);
+      }
+    }
+
+    if(vm.count("min")) {
+      type |= OUTPUT_TYPE_MIN;
+    }
+
+    if(vm.count("max")) {
+      type |= OUTPUT_TYPE_MAX;
+    }
+
+    if(vm.count("mean")) {
+      type |= OUTPUT_TYPE_MEAN;
+    }
+
+    if(vm.count("idw")) {
+      type |= OUTPUT_TYPE_IDW;
+    }
+
+    if(vm.count("den")) {
+      type |= OUTPUT_TYPE_DEN;
+    }
+
+    if(vm.count("all")) {
+      type = OUTPUT_TYPE_ALL;
+    }
+
+    if(vm.count("fill")) {
+	    window_size = 3;
+    }
+
+    if(vm.count("fill_window_size")) {
+		  window_size = vm["fill_window_size"].as<int>();
+		  if(!((window_size == 3) || (window_size == 5) || (window_size == 7))) {
+		    throw std::logic_error("window-size must be either 3, 5, or 7");
+		  }
+    }
+
+    if(vm.count("input_format")) {
+      std::string inf = vm["input_format"].as<std::string>();
+
+      if(inf.compare("ascii") == 0)
+        input_format = INPUT_ASCII;
+      else if(inf.compare("las") == 0)
+        input_format = INPUT_LAS;
+      else{
+        throw std::logic_error("'" + inf + "' is not a recognized input_format");
+      }
+    }
+     
+
 #ifdef CURL_FOUND
-      CURL *curl;
-      CURLcode res;
+    if(vm.count("data_file_name")) {
+      strncpy(inputName, vm["data_file_name"].as<std::string>().c_str(), sizeof(inputName));
+    }
+    if(vm.count("data_file_url")) {
+      strncpy(inputURL, vm["data_file_url"].as<std::string>().c_str(), sizeof(inputURL));
+    }
 
-      /* get the file name from the URL */
-      int i = 0;
-      for(i = sizeof(inputURL); i>= 0; i--) { 
-	  if(inputURL[i] == '/')
-	      break;
-      }
-      strncpy(inputName, inputURL+i+1, sizeof(inputName));
- 
-      curl = curl_easy_init();
-      if (!curl) {
-	  cout << "Can't initialize curl object to download input from: " 
-	       << inputURL << endl;
-	  exit(1);
-      }
-
-      /* set URL */
-      curl_easy_setopt(curl, CURLOPT_URL, inputURL);
-      curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
-
-      /* and write to file */
-      FILE *fp;
-      fp = fopen(inputName, "w");
-      curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp); 
-
-      /* perform the curl request and clean up */
-      res = curl_easy_perform(curl);
-      curl_easy_cleanup(curl);
-      fclose(fp);
-
-      if (res != 0) {
-	  cout << "Error while downloading input from: " << inputURL << endl;
-	  exit(1);
+    if((inputName == NULL || !strcmp(inputName, "")) && 
+        (inputURL == NULL || !strcmp(inputURL, "")))
+      {
+        throw std::logic_error("you must specify a valid data file");
       }
 #else
-	  cout << "Error: points2grid not built with cURL, can only open local files"<< endl;
-	  exit(1);
+    strncpy(inputName, vm["data_file_name"].as<std::string>().c_str(), sizeof(inputName));
+    if (!strcmp(inputName, "")) {
+      throw std::logic_error("data_file_name must not be an empty string");
+    }
 #endif
+
+    // option required, so assumed to exist
+	  strncpy(outputName, vm["output_file_name"].as<std::string>().c_str(), sizeof(outputName));
+
+    if(vm.count("search_radius")) {
+	    searchRadius = vm["search_radius"].as<float>();
+    }
+
+    if(type == 0)
+      type = OUTPUT_TYPE_ALL;
+
+  #ifdef CURL_FOUND
+    // download file from URL, and set input name
+    if (!((inputURL == NULL || !strcmp(inputURL, "")))) {
+
+        CURL *curl;
+        CURLcode res;
+
+        /* get the file name from the URL */
+        int i = 0;
+        for(i = sizeof(inputURL); i>= 0; i--) { 
+	    if(inputURL[i] == '/')
+	        break;
+        }
+        strncpy(inputName, inputURL+i+1, sizeof(inputName));
+   
+        curl = curl_easy_init();
+        if (!curl) {
+	    cout << "Can't initialize curl object to download input from: " 
+	         << inputURL << endl;
+	    exit(1);
+        }
+
+        /* set URL */
+        curl_easy_setopt(curl, CURLOPT_URL, inputURL);
+        curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1);
+
+        /* and write to file */
+        FILE *fp;
+        fp = fopen(inputName, "w");
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp); 
+
+        /* perform the curl request and clean up */
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        fclose(fp);
+
+        if (res != 0) {
+	    cout << "Error while downloading input from: " << inputURL << endl;
+	    exit(1);
+        }
+    }
+  #endif
+
+    cout << "Parameters ************************" << endl;
+    cout << "inputName: '" << inputName << "'" << endl;
+    cout << "input_format: " << input_format << endl;
+    cout << "outputName: '" << outputName << "'" << endl;
+    cout << "GRID_DIST_X: " << GRID_DIST_X << endl;
+    cout << "GRID_DIST_Y: " << GRID_DIST_Y << endl;
+    cout << "searchRadius: " << searchRadius << endl;
+    cout << "output_format: " << output_format << endl;
+    cout << "type: " << type << endl;
+    cout << "fill window size: " << window_size << endl;
+    cout << "************************************" << endl;
+  }
+  catch (std::exception& e) {
+    cerr << "error: " << e.what() << endl;
+    cerr << "execute `" << appName << " --help` to see usage information" << endl;
   }
 
-  cout << "Parameters ************************" << endl;
-  cout << "inputName: '" << inputName << "'" << endl;
-  cout << "input_format: " << input_format << endl;
-  cout << "outputName: '" << outputName << "'" << endl;
-  cout << "GRID_DIST_X: " << GRID_DIST_X << endl;
-  cout << "GRID_DIST_Y: " << GRID_DIST_Y << endl;
-  cout << "searchRadius: " << searchRadius << endl;
-  cout << "output_format: " << output_format << endl;
-  cout << "type: " << type << endl;
-  cout << "fill window size: " << window_size << endl;
-  cout << "************************************" << endl;
-
   t0 = clock();
-  //t0 = times(&tbuf);
 
   Interpolation *ip = new Interpolation(GRID_DIST_X, GRID_DIST_Y, searchRadius, window_size);
 
@@ -359,12 +348,9 @@ int main(int argc, char **argv)
     }
 
   t1 = clock();
-  //t1 = times(&tbuf);
   printf("Init + Min/Max time: %10.2f\n", (double)(t1 - t0)/CLOCKS_PER_SEC);
 
   t0 = clock();
-  //t0 = times(&tbuf);
-
   if(ip->interpolation(inputName, outputName, input_format, output_format, type) < 0)
     {
       fprintf(stderr, "Interpolation::interpolation() error\n");
@@ -372,7 +358,6 @@ int main(int argc, char **argv)
     }
 
   t1 = clock();
-  //t1 = times(&tbuf);
   printf("DEM generation + Output time: %10.2f\n", (double)(t1 - t0)/CLOCKS_PER_SEC);
 
 
@@ -385,40 +370,3 @@ int main(int argc, char **argv)
 
   return 0;
 }
-
-void printUsage()
-{
-  cout << "*****************************************************" << endl;
-  cout << "Usage: \n" << endl;
-  cout << "% ./points2grid [-i <data_file_name> | -l <data_file_url>] -o <output_file_name> [--input_format=ascii|las] [--all] [--min] [--max] [--mean] [--idw] [--den] [--fill|--fill_window_size=<value>] [-r <search_radius>] [--output_format=all|arc|grid] [--resolution=<value>|--resolution-x=<value>|--resolution-y=<value>] "<< endl << endl;
-  cout << "1. -i <data_file_name> | -l <data_file_url>:"<< endl;
-  cout << "	- must be unzipped plain text file"<< endl << endl;
-  cout << "2. -o <output_file_name>: "<< endl;
-  cout << "	- without extension, i.e. if you want the output file to be test.asc, this parameter shoud be \"test\""<< endl << endl;
-  cout << "3. Output Type: " << endl;
-  cout << "	--min: the Zmin values are stored" << endl;
-  cout << "	--max: the Zmax values are stored" << endl;
-  cout << "	--mean: the Zmean values are stored" << endl;
-  cout << "	--idw: the Zidw values are stored" << endl;
-  cout << "	--den: the density values are stored" << endl;
-  cout << "	--all (default): all the values are stored" << endl << endl;
-  cout << "4. -r <search radius>"<< endl;
-  cout << "	- specifies the search radius. The default value is square root 2 of horizontal distance in a grid cell"<< endl << endl;
-  cout << "5. --input_format: "<< endl;
-  cout << "	- 'ascii' expects input point cloud in ASCII format (default)"<< endl;
-  cout << "	- 'las' expects input point cloud in LAS format"<< endl << endl;
-  cout << "6. --output_format: "<< endl;
-  cout << "	- 'all' generates every possible format, "<< endl;
-  cout << "	- 'arc' for ArcGIS format, "<< endl;
-  cout << "	- 'grid' for Ascii GRID format, "<< endl;
-  cout << "	- the default value is --all"<< endl << endl;
-  cout << "7. Resolution"<< endl;
-  cout << "	- --resolution=<value>: The resolution is set to the specified value. Use square grids."<< endl;
-  cout << "	- --resolution-x=<value> --resolution-y=<value>: Each parameter specifies each side of grid cells."<< endl;
-  cout << "	- If not specified, default values (6ft) are used."<< endl << endl;
-  cout << "8. Null Filling"<<endl;
-  cout << "	--fill: fills nulls in the DEM. Default window size is 3."<<endl;
-  cout << "	--fill_window_size=<value>: The fill window is set to value. Permissible values are 3, 5 and 7."<<endl;
-  cout << "*****************************************************" << endl;
-}
-
