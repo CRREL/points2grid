@@ -25,53 +25,7 @@ Please read the INSTALL file for details on the installation process.
 USE
 ---
 If your pre-requisites (curl and liblas) are installed on non-standard
-location, please set your LD_LIBRARY_PATH accordingly. To run complete
-usage information, please type "points2grid" from the command-line. The
-command-line options are as follows:
+location, please set your LD_LIBRARY_PATH accordingly. 
 
-% ./points2grid [-i <data_file_name> | -l <data_file_url>] -o
-  <output_file_name> [--input_format=ascii|las] [--all] [--min] [--max]
-  [--mean] [--idw] [--den] [--fill|--fill_window_size=<value>] [-r
-  <search_radius>] [--output_format=all|arc|grid]
-  [--resolution=<value>|--resolution-x=<value>|--resolution-y=<value>]
-
-1. -i <data_file_name> | -l <data_file_url>:
-	- must be unzipped plain text file
-
-2. -o <output_file_name>: 
-	- without extension, i.e. if you want the output file to be
-	test.asc, this parameter shoud be "test"
-
-3. Output Type: 
-	--min: the Zmin values are stored
-	--max: the Zmax values are stored
-	--mean: the Zmean values are stored
-	--idw: the Zidw values are stored
-	--den: the density values are stored
-	--all (default): all the values are stored
-
-4. -r <search radius>
-	- specifies the search radius. The default value is square root 2
-	of horizontal distance in a grid cell 
-
-5. --input_format: 
-        - 'ascii' expects input point cloud in ASCII format (default)
-        - 'las' expects input point cloud in LAS format
-
-6. --output_format: 
-	- 'all' generates every possible format, 
-	- 'arc' for ArcGIS format, 
-	- 'grid' for Ascii GRID format, 
-	- the default value is --all
-
-7. Resolution
-	- --resolution=<value>: The resolution is set to the specified
-	  value. Use square grids.
-	- --resolution-x=<value> --resolution-y=<value>: Each parameter
-	  specifies each side of grid cells. 
-	- If not specified, default values (6ft) are used.
-
-8. Null Filling
-        --fill: fills nulls in the DEM. Default window size is 3.
-        --fill_window_size=<value>: The fill window is set to value.
-	  Permissible values are 3, 5 and 7.
+To view complete usage information, please type "points2grid" from the
+command-line.
