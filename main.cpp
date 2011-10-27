@@ -360,10 +360,7 @@ int main(int argc, char **argv)
   t1 = clock();
   printf("DEM generation + Output time: %10.2f\n", (double)(t1 - t0)/CLOCKS_PER_SEC);
 
-
-  //printf("i: %d\n", i);
   printf("# of data: %d\n", ip->getDataCount());
-  //printf("Total Execution time: %10.2f\n", (t1 - t0)/(double) sysconf(_SC_CLK_TCK));
   printf("dimension: %d x %d\n", ip->getGridSizeX(), ip->getGridSizeY());
 
   delete ip;
