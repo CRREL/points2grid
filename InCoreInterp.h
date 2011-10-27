@@ -47,11 +47,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef _IN_CORE_INTERP_H_
 #define _IN_CORE_INTERP_H_
 
-using namespace std;
-
 #include <iostream>
 #include "GridPoint.h"
 #include "CoreInterp.h"
+
+using namespace std;
 
 class InCoreInterp : public CoreInterp
 {

@@ -47,11 +47,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef _GRID_FILE_H_
 #define _GRID_FILE_H_
 
-using namespace std;
-
 #include <iostream>
 #include <fstream>
 #include "GridPoint.h"
+
+using namespace std;
 
 class GridFile
 {

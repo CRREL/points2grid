@@ -47,13 +47,13 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef _GRID_MAP_H_
 #define _GRID_MAP_H_
 
-using namespace std;
-
 #include <iostream>
 #include <fstream>
 #include <stdlib.h>
 #include <string>
 #include "GridFile.h"
+
+using namespace std;
 
 class GridMap
 {

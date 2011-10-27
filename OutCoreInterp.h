@@ -47,8 +47,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef _OUT_CORE_INTERP_H_
 #define _OUT_CORE_INTERP_H_
 
-using namespace std;
-
 #include "CoreInterp.h"
 #include <string>
 #include <iostream>
@@ -56,6 +54,8 @@ using namespace std;
 #include <list>
 #include "GridPoint.h"
 #include "GridMap.h"
+
+using namespace std;
 
 class UpdateInfo;
 
