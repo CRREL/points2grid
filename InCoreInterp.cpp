@@ -219,7 +219,7 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
 					continue;
 		    
 				    if (interp[p][q].empty != 0) {
-					double distance = max(fabs(p-i), fabs(q-j));
+					double distance = max(abs(p-i), abs(q-j));
 					interp[i][j].Zmean += interp[p][q].Zmean/(pow(distance,Interpolation::WEIGHTER));
 					interp[i][j].Zidw += interp[p][q].Zidw/(pow(distance,Interpolation::WEIGHTER));
 					interp[i][j].Zmin += interp[p][q].Zmin/(pow(distance,Interpolation::WEIGHTER));
