@@ -49,12 +49,13 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <float.h>
 #include <math.h>
 #include <time.h>
-#include <sys/times.h>
-#include <sys/time.h>
 #include "Interpolation.h"
 #include "Global.h"
 #include <stdio.h>
 #include <string.h>
+
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
 
 OutCoreInterp::OutCoreInterp(double dist_x, double dist_y, 
                              int size_x, int size_y, 
@@ -130,11 +131,11 @@ OutCoreInterp::OutCoreInterp(double dist_x, double dist_y,
 
             char fname[1024];
 
-            struct timeval tp;
-            gettimeofday(&tp, NULL);
-
-            snprintf(fname, sizeof(fname), "data_%d_%ld", i, tp.tv_usec);
-
+#ifdef _WIN32
+            sprintf_s(fname, sizeof(fname), "data_%d_%ld", i, getRandomDigitsForFilename());
+#else
+            snprintf(fname, sizeof(fname), "data_%d_%ld", i, getRandomDigitsForFilename());
+#endif
             gridMap[i] = new GridMap(i,
                                      GRID_SIZE_X,
                                      lower_bound,
@@ -1094,6 +1095,13 @@ void OutCoreInterp::finalize()
 		}
             }
     }
+}
+
+long OutCoreInterp::getRandomDigitsForFilename() {
+  boost::random::uniform_int_distribution<long> dist(0, 999999L);
+  boost::random::mt19937 gen(time(NULL));
+  
+  return dist(gen);
 }
 
 /*
