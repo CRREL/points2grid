@@ -55,8 +55,6 @@ POSSIBILITY OF SUCH DAMAGE.
 GridFile::GridFile(int id, char *_fname, int _size_x, int _size_y)
 {
     boost::iostreams::mapped_file mf;
-    size_t n = 0;
-
     ID = id;
     strncpy(fname, _fname, sizeof(fname));
     size_x = _size_x;
