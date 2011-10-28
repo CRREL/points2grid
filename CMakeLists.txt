@@ -84,11 +84,21 @@ set(POINTS2GRID_HPP
   OutCoreInterp.h
 )
 
+# setup source groups
+# -------------------
+
 source_group("CMake Files" FILES CMakeLists.txt)
 source_group("Header Files" FILES ${POINTS2GRID_HPP})
 source_group("Source Files" FILES ${POINTS2GRID_CPP})
 
+
+# ensure the compiler knows we're using C++
+# -----------------------------------------
+
 set_source_files_properties(${POINTS2GRID_HPP} PROPERTIES LANGUAGE CXX)
+
+# build the actual executable
+# ---------------------------
 
 add_executable(points2grid ${POINTS2GRID_HPP} ${POINTS2GRID_CPP})
 target_link_libraries(points2grid ${CURL_LIBRARIES} ${LIBLAS_LIBRARY})
