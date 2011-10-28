@@ -110,14 +110,13 @@ int main(int argc, char **argv)
 
   df.add_options()
 #ifdef CURL_FOUND
-    ("data_file_name,i", po::value<std::string>(), "path to unzipped plain text data file");
+    ("data_file_name,i", po::value<std::string>(), "path to unzipped plain text data file")
     ("data_file_url,l", po::value<std::string>(), "URL of unzipped plain text data file"
-      "You must specify either a data_file_name or data_file_url.")
+      "You must specify either a data_file_name or data_file_url.");
 #else
     ("data_file_name,i", po::value<std::string>()->required(), "path to unzipped plain text data file");
 #endif
     
-
   ot.add_options()
     ("min", "the Zmin values are stored")
     ("max", "the Zmax values are stored")
