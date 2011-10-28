@@ -52,7 +52,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
-#include <sys/times.h>
 #include <stdio.h>
 #include <liblas/point.hpp>
 #include <liblas/reader.hpp>
@@ -204,8 +203,6 @@ int Interpolation::init(char *inputName, int inputFormat)
     }
 
     t1 = clock();
-    //t1 = times(&tbuf);
-    //printf("Min/Max searching time: %10.2f\n", (t1 - t0)/(double) sysconf(_SC_CLK_TCK));
     printf("Min/Max searching time: %10.2f\n", (double)(t1 - t0)/CLOCKS_PER_SEC);
 
 
@@ -266,9 +263,6 @@ int Interpolation::init(char *inputName, int inputFormat)
 	}
 	
     cout << "Interpolation::init() done successfully" << endl;
-
-    //t1 = times(&tbuf);
-    //printf("Initializing time: %10.2f\n", (t1 - t0)/(double) sysconf(_SC_CLK_TCK));
 
     return 0;
 }
@@ -373,9 +367,6 @@ int Interpolation::interpolation(char *inputName,
 	}
 
     cout << "Interpolation::interpolation() done successfully" << endl;
-
-    //t1 = times(&tbuf);
-    //printf("Interpolation + Output time: %10.2f\n", (t1 - t0)/(double) sysconf(_SC_CLK_TCK));
 
     return 0;
 }
