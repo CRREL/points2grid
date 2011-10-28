@@ -187,7 +187,6 @@ int main(int argc, char **argv)
 
       if(GRID_DIST_X == 0){
         throw std::logic_error("resolution-x must not be 0");
-        exit(0);
       }
     }
 
@@ -195,7 +194,6 @@ int main(int argc, char **argv)
       GRID_DIST_Y = vm["resolution-y"].as<float>();
       if(GRID_DIST_Y == 0){
         throw std::logic_error("resolution-y must not be 0");
-        exit(0);
       }
     }
 
@@ -335,6 +333,7 @@ int main(int argc, char **argv)
   catch (std::exception& e) {
     cerr << "error: " << e.what() << endl;
     cerr << "execute `" << appName << " --help` to see usage information" << endl;
+    exit(1);
   }
 
   t0 = clock();
