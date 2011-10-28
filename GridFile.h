@@ -49,6 +49,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <iostream>
 #include <fstream>
+#include <boost/iostreams/device/mapped_file.hpp>
 #include "GridPoint.h"
 
 using namespace std;
@@ -70,7 +71,7 @@ class GridFile
     private:
 	//ofstream fout;
 
-	int filedes;
+  boost::iostreams::mapped_file mf;
 	int ID;
 	int size_x;
 	int size_y;
