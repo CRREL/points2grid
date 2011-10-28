@@ -51,7 +51,6 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "Interpolation.h"
 #include "Global.h"
 #include <time.h>
-#include <sys/times.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -243,7 +242,6 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
     }
 
     t0 = clock();
-    //t0 = times(&tbuf);
 
     if((rc = outputFile(outputName, outputFormat, outputType)) < 0)
 	{
@@ -252,7 +250,6 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
 	}
 
     t1 = clock();
-    //t1 = times(&tbuf);
 
     printf("Output Execution time: %10.2f\n", (double)(t1 - t0)/ CLOCKS_PER_SEC);
 
@@ -515,12 +512,6 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
 	gridFiles = NULL;
     }
 
-
-    //struct tms tbuf;
-    //clock_t t0, t1;
-
-    //t0 = times(&tbuf);
-
     // print ArcGIS headers
     if(arcFiles != NULL)
 	{
@@ -698,9 +689,6 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
 			fclose(arcFiles[i]);
 		}
 	}
-
-    //t1 = times(&tbuf);
-    //printf("elapsed time: %10.10f\n", (t1 - t0)/(double) sysconf(_SC_CLK_TCK));
 
     return 0;
 }
