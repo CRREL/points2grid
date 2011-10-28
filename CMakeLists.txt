@@ -52,6 +52,14 @@ include_directories(${LIBLAS_INCLUDE_DIR})
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in
   ${PROJECT_SOURCE_DIR}/config.h)
 
+# set long file support on GCC
+# ============================
+
+if(${CMAKE_COMPILER_IS_GNUCC} OR ${CMAKE_COMPILER_IS_GNUCXX})
+  set_property(GLOBAL APPEND PROPERTY COMPILE_DEFINITIONS
+    _FILE_OFFSET_BITS 64)
+endif()
+
 # and now the actual project that we'll build
 # ===========================================
 

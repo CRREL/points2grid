@@ -114,11 +114,7 @@ int Interpolation::init(char *inputName, int inputFormat)
 	double data_x, data_y;
 	//double data_z;
 
-#ifdef fopen64
-	if((fp = fopen64(inputName, "r")) == NULL)
-#else
 	if((fp = fopen(inputName, "r")) == NULL)
-#endif
 	    {
 		cout << "file open error" << endl;
 		return -1;

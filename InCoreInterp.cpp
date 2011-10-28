@@ -461,11 +461,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
 			    strncat(arcFileName, ext[i], strlen(ext[i]));
 			    strncat(arcFileName, ".asc", strlen(".asc"));
 
-#ifdef fopen64
-			    if((arcFiles[i] = fopen64(arcFileName, "w+")) == NULL)
-#else
 			    if((arcFiles[i] = fopen(arcFileName, "w+")) == NULL)
-#endif
 				{
 				    cout << "File open error: " << arcFileName << endl;
 				    return -1;
