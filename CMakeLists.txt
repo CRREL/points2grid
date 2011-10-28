@@ -37,7 +37,7 @@ link_directories(${Boost_LIBRARY_DIRS})
 # cURL (optional)
 # ---------------
 
-find_package(curl)
+find_package(CURL)
 include_directories(${CURL_INCLUDE_DIRS})
 
 # libLAS
