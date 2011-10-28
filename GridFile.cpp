@@ -88,7 +88,7 @@ int GridFile::map()
     boost::iostreams::mapped_file_params params;
     params.path = fname;
     params.new_file_size = sizeof(GridPoint) * size_x * size_y;
-    params.mode = boost::iostreams::mapped_file::readwrite;
+    params.flags = boost::iostreams::mapped_file::readwrite;
 
     try {
         mf.open(params);
