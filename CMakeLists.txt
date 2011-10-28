@@ -55,7 +55,7 @@ configure_file(${PROJECT_SOURCE_DIR}/config.h.in
 # set flags for GCC (from original Makefile)
 # ==========================================
 
-if(${CMAKE_COMPILER_IS_GNUCC} OR ${CMAKE_COMPILER_IS_GNUCXX})
+if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   add_definitions(
     -O3 -Wall -g
     -D_GNU_SOURCE
