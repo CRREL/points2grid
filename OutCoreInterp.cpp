@@ -1075,7 +1075,7 @@ void OutCoreInterp::finalize()
                             if ((neighbor >= 0) && (neighbor <= overlapEnd))
                                 if (gf->interp[neighbor].empty != 0) {
 
-				    double distance = max(fabs(p-window_dist), fabs(q-window_dist));
+				    double distance = max(abs(p-window_dist), abs(q-window_dist));
 				    gf->interp[i].Zmean += gf->interp[neighbor].Zmean/(pow(distance,Interpolation::WEIGHTER));
 				    gf->interp[i].Zidw += gf->interp[neighbor].Zidw/(pow(distance,Interpolation::WEIGHTER));
 				    gf->interp[i].Zmin += gf->interp[neighbor].Zmin/(pow(distance,Interpolation::WEIGHTER));
