@@ -52,12 +52,20 @@ include_directories(${LIBLAS_INCLUDE_DIR})
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in
   ${PROJECT_SOURCE_DIR}/config.h)
 
-# set long file support on GCC
-# ============================
+# set flags for GCC (from original Makefile)
+# ==========================================
 
 if(${CMAKE_COMPILER_IS_GNUCC} OR ${CMAKE_COMPILER_IS_GNUCXX})
-  set_property(GLOBAL APPEND PROPERTY COMPILE_DEFINITIONS
-    _FILE_OFFSET_BITS 64)
+  add_definitions(
+    -O3 -Wall -g
+    -D_GNU_SOURCE
+    -D_FILE_OFFSET_BITS=64
+    -D_LARGEFILE_SOURCE
+    -D_USE_LARGEFILE64)
+
+  if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_definitions(-m64)
+  endif()
 endif()
 
 # and now the actual project that we'll build
