@@ -55,7 +55,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 
 #include <boost/random/mersenne_twister.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include <boost/random/uniform_int.hpp>
 
 OutCoreInterp::OutCoreInterp(double dist_x, double dist_y, 
                              int size_x, int size_y, 
@@ -1094,8 +1094,8 @@ void OutCoreInterp::finalize()
 }
 
 long OutCoreInterp::getRandomDigitsForFilename() {
-  boost::random::uniform_int_distribution<long> dist(0, 999999L);
-  boost::random::mt19937 gen(time(NULL));
+  boost::uniform_int<long> dist(0, 999999L);
+  boost::mt19937 gen(time(NULL));
   
   return dist(gen);
 }
