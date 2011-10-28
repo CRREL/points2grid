@@ -95,7 +95,7 @@ int main(int argc, char **argv)
     ot("Output Type"),
     res("Resolution"),
     nf("Null Filling"),
-    desc("Allowed options");
+    desc;
 
   general.add_options()
     ("help", "produce a help message")
