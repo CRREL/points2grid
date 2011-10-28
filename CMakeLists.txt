@@ -110,4 +110,5 @@ set_source_files_properties(${POINTS2GRID_HPP} PROPERTIES LANGUAGE CXX)
 # ---------------------------
 
 add_executable(points2grid ${POINTS2GRID_HPP} ${POINTS2GRID_CPP})
-target_link_libraries(points2grid ${CURL_LIBRARIES} ${LIBLAS_LIBRARY})
+target_link_libraries(points2grid ${Boost_LIBRARIES} ${CURL_LIBRARIES}
+  ${LIBLAS_LIBRARY})
