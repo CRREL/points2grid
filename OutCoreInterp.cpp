@@ -1107,7 +1107,7 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
                     break;
             }
 #else
-            *tname = tempnam(dir, pfx);
+            tname = tempnam(dir, pfx);
             if (tname == NULL) {
                 throw std::logic_error("Could not create temporary file.");
             }
