@@ -86,7 +86,6 @@ class OutCoreInterp : public CoreInterp
     int findFileNum(double data_y);
     void finalize();
     int outputFile(char *outputName, int outputFormat, unsigned int outputType);
-	  long getRandomDigitsForFilename();
 
  public:
     static const unsigned int QUEUE_LIMIT = 1000;

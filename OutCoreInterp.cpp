@@ -53,10 +53,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "Global.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdexcept>
 
-#include <boost/nondet_random.hpp>
-#include <boost/random/variate_generator.hpp>
-#include <boost/random/uniform_int.hpp>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 OutCoreInterp::OutCoreInterp(double dist_x, double dist_y, 
                              int size_x, int size_y, 
@@ -131,11 +132,58 @@ OutCoreInterp::OutCoreInterp(double dist_x, double dist_y,
                 overlap_upper_bound = GRID_SIZE_Y - 1;
 
             char fname[1024];
-
+            
 #ifdef _WIN32
-            sprintf_s(fname, sizeof(fname), "data_%d_%ld", i, getRandomDigitsForFilename());
+            LPCSTR lpPathName = ".";
+            LPCSTR lpPrefixString = "grd";
+            LPSTR lpTempFileName;
+
+            UINT j = GetTempFileNameA(
+                lpPathName,
+                lpPrefixString,
+                0,
+                lpTempFileName
+            );
+            
+            switch (j) {
+                case 0:
+                    throw std::logic_error("Could not create temporary file.");
+                    break;
+                case ERROR_BUFFER_OVERFLOW:
+                    throw std::logic_error("ERROR_BUFFER_OVERFLOW when creating temporary file.");
+                    break;
+                default:
+                    // temp file name retrieved successfully
+                    break;
+            }
+
+            size_t lpTempFileName_len = strlen(lpTempFileName);
+            if (lpTempFileName_len < sizeof(fname)) {
+                strncpy(fname, lpTempFileName, lpTempFileName_len);
+                fname[lpTempFileName_len] = '\0';
+            }
+            else {
+                throw std::logic_error("Temporary file name was too long for program buffer, aborting.");
+            }
+
+            free(lpTempFileName);
 #else
-            snprintf(fname, sizeof(fname), "data_%d_%ld", i, getRandomDigitsForFilename());
+            char *dir = ".", *pfx = "grd", *name;
+            *name = tempnam(dir, pfx);
+            if (name == NULL) {
+                throw std::logic_error("Could not create temporary file.");
+            }
+
+            size_t name_len = strlen(name);
+            if (name_len < sizeof(fname)) {
+                strncpy(fname, name, name_len);
+                fname[name_len] = '\0';
+            }
+            else {
+                throw std::logic_error("Temporary file name was too long for program buffer, aborting.");
+            }
+
+            free(name);
 #endif
             gridMap[i] = new GridMap(i,
                                      GRID_SIZE_X,
@@ -1092,13 +1140,6 @@ void OutCoreInterp::finalize()
 		}
             }
     }
-}
-
-long OutCoreInterp::getRandomDigitsForFilename() {
-  boost::uniform_int<long> dist(0, 999999L);
-  boost::random_device gen;
-  boost::variate_generator<boost::random_device&, boost::uniform_int<long> > randomDigits(gen, dist);
-  return randomDigits();
 }
 
 /*
