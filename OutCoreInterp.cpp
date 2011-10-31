@@ -1092,12 +1092,10 @@ void OutCoreInterp::finalize()
 }
 
 void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
-#ifdef _WIN32
-            LPCSTR dir = ".";
-            LPCSTR pfx = "grd";
-            LPSTR name;
+            char *dir = ".", *pfx = "grd", *tname;
 
-            switch (GetTempFileNameA(dir, pfx, 0, name)) {
+#ifdef _WIN32
+            switch (GetTempFileNameA(dir, pfx, 0, tname)) {
                 case 0:
                     throw std::logic_error("Could not create temporary file.");
                     break;
@@ -1105,27 +1103,26 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
                     throw std::logic_error("ERROR_BUFFER_OVERFLOW when creating temporary file.");
                     break;
                 default:
-                    // temp file name retrieved successfully
+                    // temp file tname retrieved successfully
                     break;
             }
 #else
-            char *dir = ".", *pfx = "grd", *name;
-            *name = tempnam(dir, pfx);
-            if (name == NULL) {
+            *tname = tempnam(dir, pfx);
+            if (tname == NULL) {
                 throw std::logic_error("Could not create temporary file.");
             }
 #endif
 
-            size_t name_len = strlen(name);
-            if (name_len < fname_len) {
-                strncpy(fname, name, name_len);
-                fname[name_len] = '\0';
+            size_t tname_len = strlen(tname);
+            if (tname_len < fname_len) {
+                strncpy(fname, tname, tname_len);
+                fname[tname_len] = '\0';
             }
             else {
-                throw std::logic_error("Temporary file name was too long for program buffer, aborting.");
+                throw std::logic_error("Temporary file tname was too long for program buffer, aborting.");
             }
 
-            free(name);
+            free(tname);
 }
 
 /*
