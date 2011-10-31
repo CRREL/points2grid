@@ -132,7 +132,7 @@ OutCoreInterp::OutCoreInterp(double dist_x, double dist_y,
                 overlap_upper_bound = GRID_SIZE_Y - 1;
 
             char fname[1024];
-            get_temp_file_name(&fname, sizeof(fname));
+            get_temp_file_name(fname, sizeof(fname));
 
             gridMap[i] = new GridMap(i,
                                      GRID_SIZE_X,
