@@ -48,6 +48,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #define _OUT_CORE_INTERP_H_
 
 #include "CoreInterp.h"
+#include <string.h>
 #include <string>
 #include <iostream>
 #include <queue>
@@ -86,6 +87,7 @@ class OutCoreInterp : public CoreInterp
     int findFileNum(double data_y);
     void finalize();
     int outputFile(char *outputName, int outputFormat, unsigned int outputType);
+    void get_temp_file_name(char *fname, size_t fname_len);
 
  public:
     static const unsigned int QUEUE_LIMIT = 1000;
