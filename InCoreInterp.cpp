@@ -81,10 +81,7 @@ InCoreInterp::InCoreInterp(double dist_x, double dist_y,
 
 InCoreInterp::~InCoreInterp()
 {
-    int i;
-    for(i = 0; i < GRID_SIZE_X; i++)
-	delete interp[i];
-    delete interp;
+    free(interp);
 }
 
 int InCoreInterp::init()
