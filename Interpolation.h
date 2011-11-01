@@ -57,18 +57,13 @@ using namespace std;
 #include "OutCoreInterp.h"
 #include "InCoreInterp.h"
 
-enum coreMode
-{
-    INCORE = 0,
-    OUTCORE
-};
-
 //class GridPoint;
 
 class Interpolation
 {
     public:
-    Interpolation(double x_dist, double y_dist, double radius, int _window_size);
+        Interpolation(double x_dist, double y_dist, double radius, 
+	    int _window_size, int _interpolation_mode);
 	~Interpolation();
 
 	int init(char *inputName, int inputFormat);
@@ -108,8 +103,7 @@ class Interpolation
 	unsigned int data_count;
 	double radius_sqr;
 	int window_size;
-
-	int core_mode;
+	int interpolation_mode;
 
 	CoreInterp *interp;
 };

@@ -63,11 +63,13 @@ POSSIBILITY OF SUCH DAMAGE.
 // Public Methods
 /////////////////////////////////////////////////////////////
 
-Interpolation::Interpolation(double x_dist, double y_dist, double radius, int _window_size) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist)
+Interpolation::Interpolation(double x_dist, double y_dist, double radius,
+    int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist)
 {
     data_count = 0;
     radius_sqr = radius * radius;
     window_size = _window_size;
+    interpolation_mode = _interpolation_mode;
 
     min_x = DBL_MAX;
     min_y = DBL_MAX;
@@ -224,27 +226,29 @@ int Interpolation::init(char *inputName, int inputFormat)
     cout << "GRID_SIZE_X " << GRID_SIZE_X << endl;
     cout << "GRID_SIZE_Y " << GRID_SIZE_Y << endl;
 
-    // if the size is too big to fit in memory,
-    // then 
-    //	construct out-of-core structure
-    if(GRID_SIZE_X * GRID_SIZE_Y > MEM_LIMIT)
-	{
-	    core_mode = OUTCORE;
-	    cout << "Using out of core interp code" << endl;;
-
-	    interp = new OutCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
-	    if(interp == NULL)
-		{
-		    cout << "OutCoreInterp construction error" << endl;
-		    return -1;
-		}
-
-	    cout << "Interpolation uses out-of-core algorithm" << endl;
-
-	    // else
-	    //	do normal
+    if (interpolation_mode == INTERP_AUTO) {
+	// if the size is too big to fit in memory,
+	// then construct out-of-core structure
+	if(GRID_SIZE_X * GRID_SIZE_Y > MEM_LIMIT) {
+	    interpolation_mode= INTERP_OUTCORE;
 	} else {
-	core_mode = INCORE;
+	    interpolation_mode = INTERP_INCORE;
+	}
+    }
+
+    if (interpolation_mode == INTERP_OUTCORE) {
+        cout << "Using out of core interp code" << endl;;
+
+	interp = new OutCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
+	if(interp == NULL)
+	    {
+		cout << "OutCoreInterp construction error" << endl;
+		return -1;
+	    }
+
+	cout << "Interpolation uses out-of-core algorithm" << endl;
+
+    } else {
 	cout << "Using incore interp code" << endl;
 
 	interp = new InCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);

@@ -61,4 +61,9 @@ enum INPUT_FORMAT {
     INPUT_LAS = 1,
 };
 
+enum INTERPOLATION_TYPE {
+    INTERP_AUTO = 0,
+    INTERP_INCORE = 1,
+    INTERP_OUTCORE = 2,
+};
 #endif

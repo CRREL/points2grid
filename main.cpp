@@ -81,7 +81,9 @@ int main(int argc, char **argv)
   char inputName[1024] = {0};
   char inputURL[2048] = {0};
   char outputName[1024] = {0};
+
   int input_format = INPUT_ASCII;
+  int interpolation_mode = INTERP_AUTO;
   int output_format = 0;
   unsigned int type = 0x00000000;
   double GRID_DIST_X = 6.0;
@@ -106,7 +108,11 @@ int main(int argc, char **argv)
       "'grid' for Ascii GRID format,\n"
       "the default value is --all")
     ("input_format", po::value<std::string>(), "'ascii' expects input point cloud in ASCII format (default)"
-      "'las' expects input point cloud in LAS format");
+      "'las' expects input point cloud in LAS format")
+    ("interpolation_mode", po::value<std::string>()->default_value("auto"), "'incore' stores working data in memory\n"
+      "'outcore' stores working data on the filesystem\n"
+      "'auto' (default) guesses based on the size of the data file");
+
 
   df.add_options()
 #ifdef CURL_FOUND
@@ -278,12 +284,29 @@ int main(int argc, char **argv)
     }
 
     if(vm.count("search_radius")) {
-	    searchRadius = vm["search_radius"].as<float>();
+      searchRadius = vm["search_radius"].as<float>();
+    }
+    
+    if(vm.count("interpolation_mode")) {
+      std::string im(vm["interpolation_mode"].as<std::string>());
+      if (im.compare("auto") == 0) {
+	interpolation_mode = INTERP_AUTO;
+      }
+      else if (im.compare("incore") == 0) {
+	interpolation_mode = INTERP_INCORE;
+      }
+      else if (im.compare("outcore") == 0) {
+	interpolation_mode = INTERP_OUTCORE;
+      }
+      else {
+	throw std::logic_error("'" + im + "' is not a recognized interpolation_mode");
+      }
     }
 
     if(type == 0)
       type = OUTPUT_TYPE_ALL;
 
+    
   #ifdef CURL_FOUND
     // download file from URL, and set input name
     if (!((inputURL == NULL || !strcmp(inputURL, "")))) {
@@ -347,7 +370,8 @@ int main(int argc, char **argv)
 
   t0 = clock();
 
-  Interpolation *ip = new Interpolation(GRID_DIST_X, GRID_DIST_Y, searchRadius, window_size);
+  Interpolation *ip = new Interpolation(GRID_DIST_X, GRID_DIST_Y, searchRadius,
+    window_size, interpolation_mode);
 
   if(ip->init(inputName, input_format) < 0)
     {
