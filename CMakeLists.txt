@@ -35,6 +35,10 @@ mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
 mark_as_advanced(CLEAR Boost_LIBRARY_DIRS) 
 link_directories(${Boost_LIBRARY_DIRS}) 
 
+if(Boost_VERSION VERSION_LESS 1.44.0)
+  set(OLD_BOOST_IOSTREAMS TRUE)
+endif()
+
 # cURL (optional)
 # ---------------
 

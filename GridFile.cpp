@@ -86,7 +86,12 @@ int GridFile::map()
     boost::iostreams::mapped_file_params params;
     params.path = fname;
     params.new_file_size = sizeof(GridPoint) * size_x * size_y;
+
+#ifndef OLD_BOOST_IOSTREAMS
     params.flags = boost::iostreams::mapped_file::readwrite;
+#else
+    params.mode = std::ios_base::in | std::ios_base::out;
+#endif
 
     try {
         mf.open(params);
