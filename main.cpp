@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 
   general.add_options()
     ("help", "produce a help message")
-    ("output_file_name,o", po::value<std::string>()->required(), "without extension, i.e. if you want the output file to be test.asc, this parameter shoud be \"test\"")
+    ("output_file_name,o", po::value<std::string>(), "required. name of output file without extension, i.e. if you want the output file to be test.asc, this parameter shoud be \"test\"")
     ("search_radius,r", po::value<float>(), "specifies the search radius. The default value is square root 2 of horizontal distance in a grid cell")
     ("output_format", po::value<std::string>(), "'all' generates every possible format,\n"
       "'arc' for ArcGIS format,\n"
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
     ("data_file_url,l", po::value<std::string>(), "URL of unzipped plain text data file"
       "You must specify either a data_file_name or data_file_url.");
 #else
-    ("data_file_name,i", po::value<std::string>()->required(), "path to unzipped plain text data file");
+    ("data_file_name,i", po::value<std::string>(), "required. path to unzipped plain text data file");
 #endif
     
   ot.add_options()
@@ -152,6 +152,10 @@ int main(int argc, char **argv)
     }
 
     po::notify(vm);    
+
+    if (!vm.count("output_file_name")) {
+      throw std::logic_error("output_file_name must be specified");
+    }
 
     if (vm.count("output_format")) {
       std::string of = vm["output_format"].as<std::string>();
@@ -258,9 +262,14 @@ int main(int argc, char **argv)
         throw std::logic_error("you must specify a valid data file");
       }
 #else
-    strncpy(inputName, vm["data_file_name"].as<std::string>().c_str(), sizeof(inputName));
-    if (!strcmp(inputName, "")) {
-      throw std::logic_error("data_file_name must not be an empty string");
+    if(!vm.count("data_file_name")) {
+      throw std::logic_error("data_file_name  must be specified");
+    }
+    else {
+      strncpy(inputName, vm["data_file_name"].as<std::string>().c_str(), sizeof(inputName));
+      if (!strcmp(inputName, "")) {
+	throw std::logic_error("data_file_name must not be an empty string");
+      }
     }
 #endif
 
