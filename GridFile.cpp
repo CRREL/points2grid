@@ -44,7 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-
+#include "config.h"
 #include "GridFile.h"
 #include <float.h>
 #include <fcntl.h>
