@@ -153,9 +153,6 @@ int main(int argc, char **argv)
 
     po::notify(vm);    
 
-    if (!vm.count("output_file_name")) {
-      throw std::logic_error("output_file_name must be specified");
-    }
 
     if (vm.count("output_format")) {
       std::string of = vm["output_format"].as<std::string>();
@@ -273,8 +270,12 @@ int main(int argc, char **argv)
     }
 #endif
 
-    // option required, so assumed to exist
-	  strncpy(outputName, vm["output_file_name"].as<std::string>().c_str(), sizeof(outputName));
+    if (!vm.count("output_file_name")) {
+      throw std::logic_error("output_file_name must be specified");
+    }
+    else {
+      strncpy(outputName, vm["output_file_name"].as<std::string>().c_str(), sizeof(outputName));
+    }
 
     if(vm.count("search_radius")) {
 	    searchRadius = vm["search_radius"].as<float>();
