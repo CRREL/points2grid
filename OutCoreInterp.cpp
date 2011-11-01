@@ -183,9 +183,7 @@ int OutCoreInterp::init()
 {
     // open up a memory mapped file
     openFile = 0;
-    gridMap[openFile]->getGridFile()->map();
-
-    return 0;
+    return gridMap[openFile]->getGridFile()->map();
 }
 
 int OutCoreInterp::update(double data_x, double data_y, double data_z)
