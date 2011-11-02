@@ -176,7 +176,7 @@ OutCoreInterp::~OutCoreInterp()
                 delete gridMap[i];
         }
     if(gridMap != NULL)
-	delete gridMap;
+	delete [] gridMap;
 }
 
 int OutCoreInterp::init()
