@@ -98,7 +98,7 @@ int GridFile::map()
         interp = (GridPoint *) mf.data();
     }
     catch(std::exception& e) {
-        fprintf(stderr, "mmap error %d(%s) \n", errno, strerror(errno));
+        cerr << "exception while mapping file: " << e.what() << endl;
         return -1;
     }
     inMemory = true;
