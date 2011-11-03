@@ -106,7 +106,7 @@ int GridFile::map()
     // initialize every point in the file
     GridPoint init_value = {DBL_MAX, -DBL_MAX, 0, 0, 0, 0, 0, 0};
     for(int i = 0; i < size_x * size_y; i++)
-        memcpy(interp + sizeof(GridPoint)*i, &init_value, sizeof(GridPoint));
+        memcpy(interp + i, &init_value, sizeof(GridPoint));
     cout << ID << ". file size: " << params.new_file_size << endl;
 
     return 0;
