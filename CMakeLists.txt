@@ -2,8 +2,8 @@
 # =================
 
 cmake_minimum_required(VERSION 2.6)
-project(points2grid CXX)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
+project(points2grid)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH} )
 
 # set build type
 # ==============
