@@ -23,7 +23,7 @@ message(STATUS "Setting ${CMAKE_PROJECT_NAME} build type - ${CMAKE_BUILD_TYPE}")
 set(Boost_USE_STATIC_LIBS        ON)
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-find_package( Boost 1.40 COMPONENTS program_options system REQUIRED )
+find_package( Boost 1.40 COMPONENTS program_options REQUIRED )
 
 if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
    include_directories(${Boost_INCLUDE_DIRS})
