@@ -74,11 +74,16 @@ configure_file(${PROJECT_SOURCE_DIR}/config.h.in
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   add_definitions(
-    -O3 -Wall -g
+    -Wall -g
     -D_GNU_SOURCE
     -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
     -D_USE_LARGEFILE64)
+
+  if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
+    message("Compiling with optimizations.")
+    add_definitions(-O3)
+  endif()
 
   if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-m64)
