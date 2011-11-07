@@ -1108,9 +1108,6 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
                 case ERROR_BUFFER_OVERFLOW:
                     throw std::logic_error("ERROR_BUFFER_OVERFLOW when creating temporary file.");
                     break;
-                default:
-                    // temp file tname retrieved successfully
-                    break;
             }
 #else
             tname = tempnam(NULL, pfx);
