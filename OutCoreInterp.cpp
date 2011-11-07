@@ -1090,9 +1090,17 @@ void OutCoreInterp::finalize()
 }
 
 void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
-            char *dir = ".", *pfx = "grd", *tname;
+            char *pfx = "grd", *tname;
 
 #ifdef _WIN32
+            char dir[MAX_PATH];
+            DWORD gtpRetVal;
+            
+            gtpRetVal = GetTempPathA(MAX_PATH, dir);
+            if (gtpRetVal == 0 || gtpRetVal > MAX_PATH) {
+                throw std::logic_error("Could not retrieve path for temporary file.")
+            }
+            
             switch (GetTempFileNameA(dir, pfx, 0, tname)) {
                 case 0:
                     throw std::logic_error("Could not create temporary file.");
@@ -1105,7 +1113,7 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
                     break;
             }
 #else
-            tname = tempnam(dir, pfx);
+            tname = tempnam(NULL, pfx);
             if (tname == NULL) {
                 throw std::logic_error("Could not create temporary file.");
             }
