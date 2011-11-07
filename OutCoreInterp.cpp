@@ -1098,7 +1098,7 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
             
             gtpRetVal = GetTempPathA(MAX_PATH, dir);
             if (gtpRetVal == 0 || gtpRetVal > MAX_PATH) {
-                throw std::logic_error("Could not retrieve path for temporary file.")
+                throw std::logic_error("Could not retrieve path for temporary file.");
             }
             
             switch (GetTempFileNameA(dir, pfx, 0, tname)) {
