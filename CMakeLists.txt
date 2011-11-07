@@ -78,11 +78,6 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     -D_LARGEFILE_SOURCE
     -D_USE_LARGEFILE64)
 
-  if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
-    message("Compiling with optimizations.")
-    add_definitions(-O3)
-  endif()
-
   if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-m64)
   endif()
