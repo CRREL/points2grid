@@ -23,10 +23,12 @@ message(STATUS "Setting ${CMAKE_PROJECT_NAME} build type - ${CMAKE_BUILD_TYPE}")
 set(Boost_USE_STATIC_LIBS        ON)
 set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
-find_package( Boost 1.40 COMPONENTS program_options system REQUIRED )
+find_package( Boost 1.40 COMPONENTS iostreams program_options REQUIRED )
 
-if(Boost_FOUND AND Boost_PROGRAM_OPTIONS_FOUND)
-   include_directories(${Boost_INCLUDE_DIRS})
+if(Boost_FOUND
+  AND Boost_IOSTREAMS_FOUND
+  AND Boost_PROGRAM_OPTIONS_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
 # make these available for the user to set.
@@ -35,21 +37,17 @@ mark_as_advanced(CLEAR Boost_LIBRARY_DIRS)
 link_directories(${Boost_LIBRARY_DIRS}) 
 
 set(Boost_SEMVER
-  ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION})
+  ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}
+  CACHE STRING "The Boost version you are linking against.")
+
+#provide a fallback in case version detection fails
+mark_as_advanced(Boost_SEMVER)
+
 message("Boost semantic version:" ${Boost_SEMVER})
 if(Boost_SEMVER VERSION_LESS 1.44.0)
   message("Using old Boost.Iostreams")
   set(OLD_BOOST_IOSTREAMS TRUE)
-  if(Boost_SEMVER VERSION_EQUAL 1.40.0)
-    set(Boost_IOSTREAMS_SOURCE_DIR ${PROJECT_SOURCE_DIR}/boost/1_40_0/iostreams)
-  else()
-    set(Boost_IOSTREAMS_SOURCE_DIR ${PROJECT_SOURCE_DIR}/boost/1_41_0/iostreams)
-  endif()
-else()
-  set(Boost_IOSTREAMS_SOURCE_DIR ${PROJECT_SOURCE_DIR}/boost/1_44_0/iostreams)
 endif()
-
-add_definitions(-DBOOST_IOSTREAMS_NO_LIB)
 
 # cURL (optional)
 # ---------------
@@ -100,7 +98,6 @@ set(POINTS2GRID_CPP
   Interpolation.cpp
   main.cpp
   OutCoreInterp.cpp
-  ${Boost_IOSTREAMS_SOURCE_DIR}/mapped_file.cpp
 )
 
 set(POINTS2GRID_HPP
