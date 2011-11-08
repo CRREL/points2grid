@@ -1090,12 +1090,17 @@ void OutCoreInterp::finalize()
 }
 
 void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
-            char *pfx = "grd", *tname;
+            char *pfx = "grd", *tname = NULL;
 
 #ifdef _WIN32
             char dir[MAX_PATH];
             DWORD gtpRetVal;
             
+            tname = (char*) calloc(MAX_PATH, sizeof(char*));
+            if (tname == NULL) {
+                throw std::logic_error("Could not allocate buffer for path to temporary file.");
+            }
+
             gtpRetVal = GetTempPathA(MAX_PATH, dir);
             if (gtpRetVal == 0 || gtpRetVal > MAX_PATH) {
                 throw std::logic_error("Could not retrieve path for temporary file.");
