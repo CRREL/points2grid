@@ -77,6 +77,11 @@ int GridFile::getId()
 // memory map
 int GridFile::map()
 {
+    // mapping is a no-op if the file is already mapped.
+    if (inMemory) {
+        return 0;
+    }
+    
     boost::iostreams::mapped_file_params params;
     params.path = fname;
     
