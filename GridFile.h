@@ -76,6 +76,7 @@ private:
     int size_x;
     int size_y;
     bool inMemory;
+    bool firstMap;
     char fname[1024];
 };
 

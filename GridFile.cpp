@@ -60,6 +60,7 @@ GridFile::GridFile(int id, char *_fname, int _size_x, int _size_y)
     size_x = _size_x;
     size_y = _size_y;
     inMemory = false;
+    firstMap = true;
 }
 
 GridFile::~GridFile()
@@ -78,8 +79,11 @@ int GridFile::map()
 {
     boost::iostreams::mapped_file_params params;
     params.path = fname;
-    params.new_file_size = sizeof(GridPoint) * size_x * size_y;
-
+    
+    if (firstMap) {
+        params.new_file_size = sizeof(GridPoint) * size_x * size_y;
+    }
+    
 #ifndef OLD_BOOST_IOSTREAMS
     params.flags = boost::iostreams::mapped_file::readwrite;
 #else
@@ -94,14 +98,17 @@ int GridFile::map()
         cerr << e.what() << endl;
         return -1;
     }
+
+    if (firstMap) {
+        // initialize every point in the file
+        GridPoint init_value = {DBL_MAX, -DBL_MAX, 0, 0, 0, 0, 0, 0};
+        for(int i = 0; i < size_x * size_y; i++)
+            memcpy(interp + i, &init_value, sizeof(GridPoint));
+        cout << ID << ". file size: " << params.new_file_size << endl;
+        firstMap = false;
+    }
+    
     inMemory = true;
-
-    // initialize every point in the file
-    GridPoint init_value = {DBL_MAX, -DBL_MAX, 0, 0, 0, 0, 0, 0};
-    for(int i = 0; i < size_x * size_y; i++)
-        memcpy(interp + i, &init_value, sizeof(GridPoint));
-    cout << ID << ". file size: " << params.new_file_size << endl;
-
     return 0;
 }
 
