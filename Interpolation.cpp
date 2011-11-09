@@ -298,11 +298,8 @@ int Interpolation::interpolation(char *inputName,
     if (inputFormat == INPUT_ASCII) {
         FILE *fp;
         char line[1024];
-#ifdef fopen64
-        if((fp = fopen64(inputName, "r")) == NULL)
-#else
+
         if((fp = fopen(inputName, "r")) == NULL)
-#endif
         {
             printf("file open error\n");
             return -1;

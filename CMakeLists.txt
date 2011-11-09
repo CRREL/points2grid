@@ -71,12 +71,17 @@ configure_file(${PROJECT_SOURCE_DIR}/config.h.in
 # ==========================================
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+  # implicit large file support
+  execute_process(COMMAND getconf LFS_CFLAGS
+    OUTPUT_VARIABLE LFS_CFLAGS
+    ERROR_QUIET)
+
   add_definitions(
-    -Wall -g
+    -Wall
+    -g
     -D_GNU_SOURCE
-    -D_FILE_OFFSET_BITS=64
     -D_LARGEFILE_SOURCE
-    -D_USE_LARGEFILE64)
+    ${LFS_CFLAGS})
 
   if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-m64)
