@@ -57,44 +57,44 @@ using namespace std;
 
 class GridMap
 {
-    public:
-	GridMap(int _id, 
-		int _size_x, 
-		int _lower_bound, 
-		int _upper_bound, 
-		int _overlap_lower_bound, 
-		int _overlap_uuper_bound, 
-		bool _initialized, 
-		char * fname);
-	~GridMap();
+public:
+    GridMap(int _id,
+            int _size_x,
+            int _lower_bound,
+            int _upper_bound,
+            int _overlap_lower_bound,
+            int _overlap_uuper_bound,
+            bool _initialized,
+            char * fname);
+    ~GridMap();
 
-    public:
-	int getId();
-	int getLowerBound();
-	int getUpperBound();
-	int getOverlapLowerBound();
-	int getOverlapUpperBound();
-	GridFile *getGridFile();
+public:
+    int getId();
+    int getLowerBound();
+    int getUpperBound();
+    int getOverlapLowerBound();
+    int getOverlapUpperBound();
+    GridFile *getGridFile();
 
-	bool isInitialized();
+    bool isInitialized();
 
-	void setId(int _id);
-	void setLowerBound(int _lower_bound);
-	void setUpperBound(int _upper_bound);
-	void setOverlapLowerBound(int _overlap_lower_bound);
-	void setOverlapUpperBound(int _overlap_upper_bound);
-	void setInitialized(bool _initialized);
-	//void setGridFile(string fname);
+    void setId(int _id);
+    void setLowerBound(int _lower_bound);
+    void setUpperBound(int _upper_bound);
+    void setOverlapLowerBound(int _overlap_lower_bound);
+    void setOverlapUpperBound(int _overlap_upper_bound);
+    void setInitialized(bool _initialized);
+    //void setGridFile(string fname);
 
-    private:
-	int lowerBound;
-	int upperBound;
-	int overlapLowerBound;
-	int overlapUpperBound;
+private:
+    int lowerBound;
+    int upperBound;
+    int overlapLowerBound;
+    int overlapUpperBound;
 
-	bool initialized;
-	int id;
-	GridFile * gridFile;
+    bool initialized;
+    int id;
+    GridFile * gridFile;
 };
 
 #endif

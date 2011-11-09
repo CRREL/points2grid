@@ -61,51 +61,51 @@ using namespace std;
 
 class Interpolation
 {
-    public:
-        Interpolation(double x_dist, double y_dist, double radius, 
-	    int _window_size, int _interpolation_mode);
-	~Interpolation();
+public:
+    Interpolation(double x_dist, double y_dist, double radius,
+                  int _window_size, int _interpolation_mode);
+    ~Interpolation();
 
-	int init(char *inputName, int inputFormat);
-	int interpolation(char *inputName, char *outputName, int inputFormat, 
-			  int outputFormat, unsigned int type);
-	unsigned int getDataCount();
-	
-	unsigned int getGridSizeX();
-	unsigned int getGridSizeY();
+    int init(char *inputName, int inputFormat);
+    int interpolation(char *inputName, char *outputName, int inputFormat,
+                      int outputFormat, unsigned int type);
+    unsigned int getDataCount();
 
-	// for debug
-	void printArray();
-	
-	// depricated
-	void setRadius(double r);
+    unsigned int getGridSizeX();
+    unsigned int getGridSizeY();
 
-    public:
-	double GRID_DIST_X;
-	double GRID_DIST_Y;
+    // for debug
+    void printArray();
 
-	static const int MAX_POINT_SIZE = 16000000;
-	static const int WEIGHTER = 2;
+    // depricated
+    void setRadius(double r);
 
-	// update this to the maximum grid that will fit in memory
-	// as a rule of thumb, memory requirement = MEM_LIMIT*55 bytes
-	static const unsigned int MEM_LIMIT = 200000000;
+public:
+    double GRID_DIST_X;
+    double GRID_DIST_Y;
 
-    private:
-	double min_x;
-	double min_y;
-	double max_x;
-	double max_y;
+    static const int MAX_POINT_SIZE = 16000000;
+    static const int WEIGHTER = 2;
 
-	unsigned int GRID_SIZE_X;
-	unsigned int GRID_SIZE_Y;
+    // update this to the maximum grid that will fit in memory
+    // as a rule of thumb, memory requirement = MEM_LIMIT*55 bytes
+    static const unsigned int MEM_LIMIT = 200000000;
 
-	unsigned int data_count;
-	double radius_sqr;
-	int window_size;
-	int interpolation_mode;
+private:
+    double min_x;
+    double min_y;
+    double max_x;
+    double max_y;
 
-	CoreInterp *interp;
+    unsigned int GRID_SIZE_X;
+    unsigned int GRID_SIZE_Y;
+
+    unsigned int data_count;
+    double radius_sqr;
+    int window_size;
+    int interpolation_mode;
+
+    CoreInterp *interp;
 };
 
 #endif

@@ -55,25 +55,25 @@ using namespace std;
 
 class InCoreInterp : public CoreInterp
 {
- public:
+public:
     InCoreInterp() {};
-    InCoreInterp(double dist_x, double dist_y, 
-		 int size_x, int size_y, 
-		 double r_sqr,
-		 double _min_x, double _max_x,
-		 double _min_y, double _max_y,
-		 int _window_size);
+    InCoreInterp(double dist_x, double dist_y,
+                 int size_x, int size_y,
+                 double r_sqr,
+                 double _min_x, double _max_x,
+                 double _min_y, double _max_y,
+                 int _window_size);
     ~InCoreInterp();
 
     virtual int init();
     virtual int update(double data_x, double data_y, double data_z);
     virtual int finish(char *outputName, int outputFormat, unsigned int outputType);
 
- private:
+private:
     GridPoint **interp;
     double radius_sqr;
 
- private:
+private:
     void update_first_quadrant(double data_z, int base_x, int base_y, double x, double y);
     void update_second_quadrant(double data_z, int base_x, int base_y, double x, double y);
     void update_third_quadrant(double data_z, int base_x, int base_y, double x, double y);

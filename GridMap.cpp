@@ -47,7 +47,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include "GridMap.h"
 
-	
+
 GridMap::GridMap(int _id, int _size_x, int _lower_bound, int _upper_bound, int _overlap_lower_bound, int _overlap_upper_bound, bool _initialized, char *fname)
 {
     id = _id;
@@ -62,7 +62,7 @@ GridMap::GridMap(int _id, int _size_x, int _lower_bound, int _upper_bound, int _
 GridMap::~GridMap()
 {
     if(gridFile != NULL)
-	delete gridFile;
+        delete gridFile;
 }
 
 int GridMap::getLowerBound()

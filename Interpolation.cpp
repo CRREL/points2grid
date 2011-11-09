@@ -64,7 +64,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////
 
 Interpolation::Interpolation(double x_dist, double y_dist, double radius,
-    int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist)
+                             int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist)
 {
     data_count = 0;
     radius_sqr = radius * radius;
@@ -82,7 +82,7 @@ Interpolation::~Interpolation()
 {
     delete interp;
 }
-	
+
 int Interpolation::init(char *inputName, int inputFormat)
 {
     //unsigned int i;
@@ -93,7 +93,7 @@ int Interpolation::init(char *inputName, int inputFormat)
 
     //////////////////////////////////////////////////////////////////////
     // MIN/MAX SEARCHING
-    // TODO: the size of data, min, max of each coordinate 
+    // TODO: the size of data, min, max of each coordinate
     //       are required to implement streaming processing....
     //
     // This code can be eliminated if database can provide these values
@@ -103,101 +103,101 @@ int Interpolation::init(char *inputName, int inputFormat)
     t0 = clock();
 
     if(inputName == NULL)
-	{
-	    cout << "Wrong Input File Name" << endl;
-	    return -1;
-	}
+    {
+        cout << "Wrong Input File Name" << endl;
+        return -1;
+    }
 
     printf("inputName: '%s'\n", inputName);
 
     if (inputFormat == INPUT_ASCII) {
-	FILE *fp;
-	char line[1024];
-	double data_x, data_y;
-	//double data_z;
+        FILE *fp;
+        char line[1024];
+        double data_x, data_y;
+        //double data_z;
 
-	if((fp = fopen(inputName, "r")) == NULL)
-	    {
-		cout << "file open error" << endl;
-		return -1;
-	    }
-      
-	// throw the first line away - it contains the header
-	fgets(line, sizeof(line), fp);
-      
-	// read the data points to find min and max values
-	while(fgets(line, sizeof(line), fp) != NULL)
-	    {
-		data_x = atof(strtok(line, ",\n"));
-		if(min_x > data_x) min_x = data_x;
-		if(max_x < data_x) max_x = data_x;
-	  
-		data_y = atof(strtok(NULL, ",\n"));
-		if(min_y > data_y) min_y = data_y;
-		if(max_y < data_y) max_y = data_y;
-	  
-		data_count++;
-	  
-	  
-		/*
-		// tokenizing
-		string strLine(line);
-	  
-		// first token
-		string::size_type pos = strLine.find_first_of(",",0);
-		string::size_type lastPos = strLine.find_first_not_of(",",0);
-	  
-		string strX = strLine.substr(lastPos, pos - lastPos);
-	  
-		// second token
-		lastPos = strLine.find_first_not_of(",", pos);
-		pos = strLine.find_first_of(",", lastPos);
-	  
-		string strY = strLine.substr(lastPos, pos - lastPos);
-	  
-		// third token
-		lastPos = strLine.find_first_not_of(",", pos);
-		pos = strLine.find_first_of("\n", lastPos);
-	  
-		string strZ = strLine.substr(lastPos, pos - lastPos);
-	  
-		// data conversion
-		arrX[data_count] = atof(strX.c_str());
-		if(min_x > arrX[data_count]) min_x = arrX[data_count];
-		if(max_x < arrX[data_count]) max_x = arrX[data_count];
-	  
-		arrY[data_count] = atof(strY.c_str());
-		if(min_y > arrY[data_count]) min_y = arrY[data_count];
-		if(max_y < arrY[data_count]) max_y = arrY[data_count];
-	  
-		arrZ[data_count++] = atof(strZ.c_str());
-		*/
-	    }
-      
-	fclose(fp);
+        if((fp = fopen(inputName, "r")) == NULL)
+        {
+            cout << "file open error" << endl;
+            return -1;
+        }
+
+        // throw the first line away - it contains the header
+        fgets(line, sizeof(line), fp);
+
+        // read the data points to find min and max values
+        while(fgets(line, sizeof(line), fp) != NULL)
+        {
+            data_x = atof(strtok(line, ",\n"));
+            if(min_x > data_x) min_x = data_x;
+            if(max_x < data_x) max_x = data_x;
+
+            data_y = atof(strtok(NULL, ",\n"));
+            if(min_y > data_y) min_y = data_y;
+            if(max_y < data_y) max_y = data_y;
+
+            data_count++;
+
+
+            /*
+            // tokenizing
+            string strLine(line);
+
+            // first token
+            string::size_type pos = strLine.find_first_of(",",0);
+            string::size_type lastPos = strLine.find_first_not_of(",",0);
+
+            string strX = strLine.substr(lastPos, pos - lastPos);
+
+            // second token
+            lastPos = strLine.find_first_not_of(",", pos);
+            pos = strLine.find_first_of(",", lastPos);
+
+            string strY = strLine.substr(lastPos, pos - lastPos);
+
+            // third token
+            lastPos = strLine.find_first_not_of(",", pos);
+            pos = strLine.find_first_of("\n", lastPos);
+
+            string strZ = strLine.substr(lastPos, pos - lastPos);
+
+            // data conversion
+            arrX[data_count] = atof(strX.c_str());
+            if(min_x > arrX[data_count]) min_x = arrX[data_count];
+            if(max_x < arrX[data_count]) max_x = arrX[data_count];
+
+            arrY[data_count] = atof(strY.c_str());
+            if(min_y > arrY[data_count]) min_y = arrY[data_count];
+            if(max_y < arrY[data_count]) max_y = arrY[data_count];
+
+            arrZ[data_count++] = atof(strZ.c_str());
+            */
+        }
+
+        fclose(fp);
     } else { // las input
 
-	try {
-	    std::ifstream ifs;
-	    ifs.open(inputName, std::ios::in | std::ios::binary);
-	    
-	    // create a las file reader
-	    liblas::Reader reader(ifs);
-	    
-	    /// get header information
-	    liblas::Header const& header = reader.GetHeader();
-	    
-	    min_x = header.GetMinX();
-	    min_y = header.GetMinY();
-	    max_x = header.GetMaxX();
-	    max_y = header.GetMaxY();
-	    data_count = header.GetPointRecordsCount();
-	    
-	    ifs.close();
-	} catch (std::runtime_error &e) {
-	    cout << "error while reading LAS file: verify that the input is valid LAS file" << endl;
-	    return -1;
-	}
+        try {
+            std::ifstream ifs;
+            ifs.open(inputName, std::ios::in | std::ios::binary);
+
+            // create a las file reader
+            liblas::Reader reader(ifs);
+
+            /// get header information
+            liblas::Header const& header = reader.GetHeader();
+
+            min_x = header.GetMinX();
+            min_y = header.GetMinY();
+            max_x = header.GetMaxX();
+            max_y = header.GetMaxY();
+            data_count = header.GetPointRecordsCount();
+
+            ifs.close();
+        } catch (std::runtime_error &e) {
+            cout << "error while reading LAS file: verify that the input is valid LAS file" << endl;
+            return -1;
+        }
     }
 
     t1 = clock();
@@ -227,51 +227,51 @@ int Interpolation::init(char *inputName, int inputFormat)
     cout << "GRID_SIZE_Y " << GRID_SIZE_Y << endl;
 
     if (interpolation_mode == INTERP_AUTO) {
-	// if the size is too big to fit in memory,
-	// then construct out-of-core structure
-	if(GRID_SIZE_X * GRID_SIZE_Y > MEM_LIMIT) {
-	    interpolation_mode= INTERP_OUTCORE;
-	} else {
-	    interpolation_mode = INTERP_INCORE;
-	}
+        // if the size is too big to fit in memory,
+        // then construct out-of-core structure
+        if(GRID_SIZE_X * GRID_SIZE_Y > MEM_LIMIT) {
+            interpolation_mode= INTERP_OUTCORE;
+        } else {
+            interpolation_mode = INTERP_INCORE;
+        }
     }
 
     if (interpolation_mode == INTERP_OUTCORE) {
         cout << "Using out of core interp code" << endl;;
 
-	interp = new OutCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
-	if(interp == NULL)
-	    {
-		cout << "OutCoreInterp construction error" << endl;
-		return -1;
-	    }
+        interp = new OutCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
+        if(interp == NULL)
+        {
+            cout << "OutCoreInterp construction error" << endl;
+            return -1;
+        }
 
-	cout << "Interpolation uses out-of-core algorithm" << endl;
+        cout << "Interpolation uses out-of-core algorithm" << endl;
 
     } else {
-	cout << "Using incore interp code" << endl;
+        cout << "Using incore interp code" << endl;
 
-	interp = new InCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
+        interp = new InCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
 
-	cout << "Interpolation uses in-core algorithm" << endl;
+        cout << "Interpolation uses in-core algorithm" << endl;
     }
 
     if(interp->init() < 0)
-	{
-	    cout << "inter->init() error" << endl;
-	    return -1;
-	}
-	
+    {
+        cout << "inter->init() error" << endl;
+        return -1;
+    }
+
     cout << "Interpolation::init() done successfully" << endl;
 
     return 0;
 }
 
-int Interpolation::interpolation(char *inputName, 
-				 char *outputName, 
-				 int inputFormat, 
-				 int outputFormat, 
-				 unsigned int outputType)
+int Interpolation::interpolation(char *inputName,
+                                 char *outputName,
+                                 int inputFormat,
+                                 int outputFormat,
+                                 unsigned int outputType)
 {
     int rc;
     //unsigned int i;
@@ -296,75 +296,75 @@ int Interpolation::interpolation(char *inputName,
     */
 
     if (inputFormat == INPUT_ASCII) {
-	FILE *fp;
-	char line[1024];
+        FILE *fp;
+        char line[1024];
 #ifdef fopen64
-	if((fp = fopen64(inputName, "r")) == NULL)
+        if((fp = fopen64(inputName, "r")) == NULL)
 #else
-	if((fp = fopen(inputName, "r")) == NULL)
+        if((fp = fopen(inputName, "r")) == NULL)
 #endif
-	    {
-		printf("file open error\n");
-		return -1;
-	    }
-      
-	// throw the first line away - it contains the header
-	fgets(line, sizeof(line), fp);
-      
-	// read every point and generate DEM
-	while(fgets(line, sizeof(line), fp) != NULL)
-	    {
-		data_x = atof(strtok(line, ",\n"));
-		data_y = atof(strtok(NULL, ",\n"));
-		data_z = atof(strtok(NULL, ",\n"));
-	  
-		data_x -= min_x;
-		data_y -= min_y;
-	  
-		//if((rc = interp->update(arrX[i], arrY[i], arrZ[i])) < 0)
-		if((rc = interp->update(data_x, data_y, data_z)) < 0)
-		    {
-			cout << "interp->update() error while processing " << endl;
-			return -1;
-		    }
-	    }
-      
-	fclose(fp);
+        {
+            printf("file open error\n");
+            return -1;
+        }
+
+        // throw the first line away - it contains the header
+        fgets(line, sizeof(line), fp);
+
+        // read every point and generate DEM
+        while(fgets(line, sizeof(line), fp) != NULL)
+        {
+            data_x = atof(strtok(line, ",\n"));
+            data_y = atof(strtok(NULL, ",\n"));
+            data_z = atof(strtok(NULL, ",\n"));
+
+            data_x -= min_x;
+            data_y -= min_y;
+
+            //if((rc = interp->update(arrX[i], arrY[i], arrZ[i])) < 0)
+            if((rc = interp->update(data_x, data_y, data_z)) < 0)
+            {
+                cout << "interp->update() error while processing " << endl;
+                return -1;
+            }
+        }
+
+        fclose(fp);
     } else { // input format is LAS
 
-	// instantiate a reader for the LAS file
-	std::ifstream ifs;
-	ifs.open(inputName, std::ios::in | std::ios::binary);
+        // instantiate a reader for the LAS file
+        std::ifstream ifs;
+        ifs.open(inputName, std::ios::in | std::ios::binary);
 
-	liblas::Reader reader(ifs);
+        liblas::Reader reader(ifs);
 
-	// process every point in the LAS file, and generate DEM
-	while (reader.ReadNextPoint()) {
-	    liblas::Point const& p = reader.GetPoint();
+        // process every point in the LAS file, and generate DEM
+        while (reader.ReadNextPoint()) {
+            liblas::Point const& p = reader.GetPoint();
 
-	    data_x = p.GetX(); 
-	    data_y = p.GetY();
-	    data_z = p.GetZ();
+            data_x = p.GetX();
+            data_y = p.GetY();
+            data_z = p.GetZ();
 
-	    data_x -= min_x;
-	    data_y -= min_y;
+            data_x -= min_x;
+            data_y -= min_y;
 
-	    //if((rc = interp->update(arrX[i], arrY[i], arrZ[i])) < 0)                                               
-	    if((rc = interp->update(data_x, data_y, data_z)) < 0)
-		{
-		    cout << "interp->update() error while processing " << endl;
-		    return -1;
-		}
-	}
-      
-	ifs.close();
+            //if((rc = interp->update(arrX[i], arrY[i], arrZ[i])) < 0)
+            if((rc = interp->update(data_x, data_y, data_z)) < 0)
+            {
+                cout << "interp->update() error while processing " << endl;
+                return -1;
+            }
+        }
+
+        ifs.close();
     }
 
     if((rc = interp->finish(outputName, outputFormat, outputType)) < 0)
-	{
-	    cout << "interp->finish() error" << endl;
-	    return -1;
-	}
+    {
+        cout << "interp->finish() error" << endl;
+        return -1;
+    }
 
     cout << "Interpolation::interpolation() done successfully" << endl;
 

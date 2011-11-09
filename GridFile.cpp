@@ -60,11 +60,11 @@ GridFile::GridFile(int id, char *_fname, int _size_x, int _size_y)
     size_x = _size_x;
     size_y = _size_y;
     inMemory = false;
- }
+}
 
 GridFile::~GridFile()
 {
-    if(inMemory == true){
+    if(inMemory == true) {
         mf.close();
         inMemory = false;
         interp = NULL;
@@ -118,13 +118,13 @@ int GridFile::unmap()
     // have to overwrite
 
     // we can track the changes but that scheme requires memory usage.
-    // But our main goal is to fully utilize memory. 
-    
+    // But our main goal is to fully utilize memory.
+
     if(interp != NULL)
     {
         mf.close();
-	    inMemory = false;
-	    interp = NULL;
+        inMemory = false;
+        interp = NULL;
     }
 
     return 0;

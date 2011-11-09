@@ -56,27 +56,27 @@ using namespace std;
 
 class GridFile
 {
-    public:
-	GridFile(int id, char *_fname, int _size_x, int _size_y);
-	~GridFile();
+public:
+    GridFile(int id, char *_fname, int _size_x, int _size_y);
+    ~GridFile();
 
-	int getId();
-	int map();
-	int unmap();
-	bool isInMemory();
-	unsigned int getMemSize();
+    int getId();
+    int map();
+    int unmap();
+    bool isInMemory();
+    unsigned int getMemSize();
 
-	GridPoint *interp;
+    GridPoint *interp;
 
-    private:
-	//ofstream fout;
+private:
+    //ofstream fout;
 
-  boost::iostreams::mapped_file mf;
-	int ID;
-	int size_x;
-	int size_y;
-	bool inMemory;
-	char fname[1024];
+    boost::iostreams::mapped_file mf;
+    int ID;
+    int size_x;
+    int size_y;
+    bool inMemory;
+    char fname[1024];
 };
 
 #endif
