@@ -47,7 +47,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <points2grid/Interpolation.hpp>
 #include <points2grid/Global.hpp>
-#include <points2grid/InCoreInterp.h>
+#include <points2grid/InCoreInterp.hpp>
 
 #include <time.h>
 #include <stdio.h>

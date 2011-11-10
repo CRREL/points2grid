@@ -83,7 +83,7 @@ int main(int argc, char **argv)
     char inputURL[2048] = {0};
     char outputName[1024] = {0};
 
-    int input_format = INPUT_ASCII;
+    int input_format = INPUT_LAS;
     int interpolation_mode = INTERP_AUTO;
     int output_format = 0;
     unsigned int type = 0x00000000;

@@ -55,11 +55,8 @@ endif()
 find_package(CURL)
 include_directories(${CURL_INCLUDE_DIRS})
 
-# libLAS
+# PDAL
 # ------
-
-find_package(LibLAS REQUIRED)
-include_directories(${LIBLAS_INCLUDE_DIR})
 
 find_package(PDAL 0.1.0 REQUIRED )
 include_directories(${PDAL_INCLUDE_DIR})
@@ -149,7 +146,7 @@ source_group("Source Files" FILES ${POINTS2GRID_CPP})
 set(P2G_LIB_NAME pts2grd)
 add_library(${P2G_LIB_NAME} SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
 target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} 
-  ${CURL_LIBRARIES} ${LIBLAS_LIBRARY} ${PDAL_LIBRARY})
+  ${CURL_LIBRARIES} ${PDAL_LIBRARY})
 
 if (APPLE)
   set_target_properties(

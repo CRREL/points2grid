@@ -53,8 +53,16 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#include <liblas/point.hpp>
-#include <liblas/reader.hpp>
+
+#include <pdal/pdal.hpp>
+#include <pdal/StageFactory.hpp>
+#include <pdal/PointBuffer.hpp>
+#include <pdal/StageIterator.hpp>
+#include <pdal/Dimension.hpp>
+
+#include <pdal/Schema.hpp>
+#include <boost/scoped_ptr.hpp>
+
 #include <fstream>  // std::ifstream
 #include <iostream> // std::cout
 #include <string.h>
@@ -178,24 +186,26 @@ int Interpolation::init(char *inputName, int inputFormat)
     } else { // las input
 
         try {
-            std::ifstream ifs;
-            ifs.open(inputName, std::ios::in | std::ios::binary);
+            
+            pdal::Options options;
+            options.add("filename", inputName);
+            
+            pdal::StageFactory factory;
+            pdal::Stage* reader = factory.createReader("drivers.pipeline.reader", options);
 
-            // create a las file reader
-            liblas::Reader reader(ifs);
-
-            /// get header information
-            liblas::Header const& header = reader.GetHeader();
-
-            min_x = header.GetMinX();
-            min_y = header.GetMinY();
-            max_x = header.GetMaxX();
-            max_y = header.GetMaxY();
-            data_count = header.GetPointRecordsCount();
-
-            ifs.close();
+            reader->initialize();
+ 
+            pdal::Bounds<double> bounds = reader->getBounds();
+            
+            min_x = bounds.getMinimum(0);
+            min_y = bounds.getMinimum(1);
+            max_x = bounds.getMaximum(0);
+            max_y = bounds.getMaximum(1);
+            
+            // boost::scoped_ptr<boost::StageSequentialIterator> iter(reader.createSequentialIterator());
+            // iter->skip(m_pointNumber);
         } catch (std::runtime_error &e) {
-            cout << "error while reading LAS file: verify that the input is valid LAS file" << endl;
+            cout << "error while reading LAS file: verify that the input is valid LAS file" << e.what() << endl;
             return -1;
         }
     }
@@ -329,32 +339,55 @@ int Interpolation::interpolation(char *inputName,
         fclose(fp);
     } else { // input format is LAS
 
-        // instantiate a reader for the LAS file
-        std::ifstream ifs;
-        ifs.open(inputName, std::ios::in | std::ios::binary);
 
-        liblas::Reader reader(ifs);
+        pdal::Options options;
+        options.add("filename", inputName);
+        
+        pdal::StageFactory factory;
+        pdal::Stage* reader = factory.createReader("drivers.pipeline.reader", options);
 
-        // process every point in the LAS file, and generate DEM
-        while (reader.ReadNextPoint()) {
-            liblas::Point const& p = reader.GetPoint();
+        reader->initialize();
+        const pdal::Schema& schema = reader->getSchema();
 
-            data_x = p.GetX();
-            data_y = p.GetY();
-            data_z = p.GetZ();
+        pdal::PointBuffer data(schema, 32768);
 
-            data_x -= min_x;
-            data_y -= min_y;
+        boost::scoped_ptr<pdal::StageSequentialIterator> iter(reader->createSequentialIterator());
 
-            //if((rc = interp->update(arrX[i], arrY[i], arrZ[i])) < 0)
-            if((rc = interp->update(data_x, data_y, data_z)) < 0)
+        int xPos = schema.getDimensionIndex(pdal::DimensionId::X_i32);
+        pdal::Dimension const& xDim = schema.getDimension(xPos);
+
+        int yPos = schema.getDimensionIndex(pdal::DimensionId::Y_i32);
+        pdal::Dimension const& yDim = schema.getDimension(yPos);
+        
+        int zPos = schema.getDimensionIndex(pdal::DimensionId::Z_i32);
+        pdal::Dimension const& zDim = schema.getDimension(zPos);
+    
+        iter->read(data);
+        
+        while (true) {
+            if (iter->atEnd()) break;
+            for (boost::uint32_t pointIndex=0; pointIndex < data.getNumPoints(); pointIndex++)
             {
-                cout << "interp->update() error while processing " << endl;
-                return -1;
+                boost::int32_t x = data.getField<boost::int32_t>(pointIndex, xPos);
+                boost::int32_t y = data.getField<boost::int32_t>(pointIndex, yPos);
+                boost::int32_t z = data.getField<boost::int32_t>(pointIndex, zPos);
+                
+                data_x = xDim.applyScaling<boost::int32_t>(x);
+                data_y = yDim.applyScaling<boost::int32_t>(y);
+                data_z = zDim.applyScaling<boost::int32_t>(z);
+                data_x -= min_x;
+                data_y -= min_y;
+        
+                //if((rc = interp->update(arrX[i], arrY[i], arrZ[i])) < 0)
+                if((rc = interp->update(data_x, data_y, data_z)) < 0)
+                {
+                    cout << "interp->update() error while processing " << endl;
+                    return -1;
+                }
             }
+            iter->read(data);
         }
 
-        ifs.close();
     }
 
     if((rc = interp->finish(outputName, outputFormat, outputType)) < 0)

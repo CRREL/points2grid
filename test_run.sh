@@ -1,0 +1,1 @@
+./points2grid -i pipeline_read.xml -o example
