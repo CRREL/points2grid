@@ -43,7 +43,7 @@ set(Boost_SEMVER
 #provide a fallback in case version detection fails
 mark_as_advanced(Boost_SEMVER)
 
-message("Boost semantic version:" ${Boost_SEMVER})
+# message("Boost semantic version:" ${Boost_SEMVER})
 if(Boost_SEMVER VERSION_LESS 1.44.0)
   message("Using old Boost.Iostreams")
   set(OLD_BOOST_IOSTREAMS TRUE)
@@ -106,6 +106,11 @@ include_directories(
     .
     ${INCLUDE_DIR})
 
+set(DEFAULT_INCLUDE_SUBDIR include)
+
+set(DEFAULT_BIN_SUBDIR bin)
+set(DEFAULT_LIB_SUBDIR lib)
+  
 set(LIBRARY_CPP
   ${SRC_DIR}/GridFile.cpp
   ${SRC_DIR}/GridMap.cpp
@@ -143,11 +148,21 @@ set_source_files_properties(${POINTS2GRID_HPP} PROPERTIES LANGUAGE CXX)
 # build the actual executable
 # ---------------------------
 
-add_library(libpoints2grid SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
-target_link_libraries(libpoints2grid ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} 
+set(P2G_LIB_NAME pts2grd)
+add_library(${P2G_LIB_NAME} SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
+target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} 
   ${CURL_LIBRARIES} ${LIBLAS_LIBRARY})
+
+if (APPLE)
+  set_target_properties(
+    ${P2G_LIB_NAME}
+    PROPERTIES
+    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
+
 add_executable(points2grid ${APPS_DIR}/points2grid.cpp)
-target_link_libraries(points2grid libpoints2grid)
+target_link_libraries(points2grid ${P2G_LIB_NAME})
 
   
 # install the executable
@@ -158,3 +173,12 @@ install(TARGETS points2grid
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
 )
+
+install(TARGETS ${P2G_LIB_NAME} 
+  RUNTIME DESTINATION ${DEFAULT_BIN_SUBDIR}
+  LIBRARY DESTINATION ${DEFAULT_LIB_SUBDIR}
+  ARCHIVE DESTINATION ${DEFAULT_LIB_SUBDIR})
+
+install(DIRECTORY ${INCLUDE_DIR}
+  DESTINATION ${DEFAULT_INCLUDE_SUBDIR}
+  FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
