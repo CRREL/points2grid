@@ -61,6 +61,12 @@ include_directories(${CURL_INCLUDE_DIRS})
 find_package(LibLAS REQUIRED)
 include_directories(${LIBLAS_INCLUDE_DIR})
 
+# bzip2
+# -----
+
+find_package(BZip2 REQUIRED)
+include_directories(${BZIP_INCLUDE_DIRS})
+
 # generate our configuration header
 # =================================
 
@@ -129,8 +135,8 @@ set_source_files_properties(${POINTS2GRID_HPP} PROPERTIES LANGUAGE CXX)
 # ---------------------------
 
 add_executable(points2grid ${POINTS2GRID_HPP} ${POINTS2GRID_CPP})
-target_link_libraries(points2grid ${Boost_LIBRARIES} ${CURL_LIBRARIES}
-  ${LIBLAS_LIBRARY})
+target_link_libraries(points2grid ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} 
+  ${CURL_LIBRARIES} ${LIBLAS_LIBRARY})
   
 # install the executable
 # ----------------------
