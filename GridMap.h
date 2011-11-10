@@ -61,7 +61,7 @@ public:
             int lower_bound,
             int upper_bound,
             int overlap_lower_bound,
-            int overlap_uuper_bound,
+            int overlap_upper_bound,
             bool initialized,
             char * fname);
     ~GridMap();

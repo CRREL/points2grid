@@ -57,7 +57,7 @@ using namespace std;
 class GridFile
 {
 public:
-    GridFile(int id, char *_fname, int _size_x, int _size_y);
+    GridFile(int id, char *fname, int size_x, int size_y);
     ~GridFile();
 
     int getId();
@@ -71,13 +71,13 @@ public:
 private:
     //ofstream fout;
 
-    boost::iostreams::mapped_file mf;
-    int ID;
-    int size_x;
-    int size_y;
-    bool inMemory;
-    bool firstMap;
-    char fname[1024];
+    boost::iostreams::mapped_file m_mf;
+    int m_id;
+    int m_size_x;
+    int m_size_y;
+    bool m_inMemory;
+    bool m_firstMap;
+    std::string m_filename;
 };
 
 #endif

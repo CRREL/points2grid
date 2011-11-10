@@ -47,7 +47,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #ifndef _GRID_POINT_H_
 #define _GRID_POINT_H_
 
-typedef struct _GridPoint
+typedef struct 
 {
     double Zmin;
     double Zmax;

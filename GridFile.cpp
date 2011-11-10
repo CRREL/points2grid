@@ -52,41 +52,41 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <stdio.h>
 
-GridFile::GridFile(int id, char *_fname, int _size_x, int _size_y)
+GridFile::GridFile(int id, char *fname, int size_x, int size_y)
+: m_id(id)
+, m_size_x(size_x)
+, m_size_y(size_y)
+, m_inMemory(false)
+, m_firstMap(true)
+, m_filename(fname)
 {
-    boost::iostreams::mapped_file mf;
-    ID = id;
-    strncpy(fname, _fname, sizeof(fname));
-    size_x = _size_x;
-    size_y = _size_y;
-    inMemory = false;
-    firstMap = true;
+
 }
 
 GridFile::~GridFile()
 {
     unmap();
-    unlink(fname);
+    unlink(m_filename.c_str());
 }
 
 int GridFile::getId()
 {
-    return ID;
+    return m_id;
 }
 
 // memory map
 int GridFile::map()
 {
     // mapping is a no-op if the file is already mapped.
-    if (inMemory) {
+    if (m_inMemory) {
         return 0;
     }
     
     boost::iostreams::mapped_file_params params;
-    params.path = fname;
+    params.path = m_filename;
     
-    if (firstMap) {
-        params.new_file_size = sizeof(GridPoint) * size_x * size_y;
+    if (m_firstMap) {
+        params.new_file_size = sizeof(GridPoint) * m_size_x * m_size_y;
     }
     
 #ifndef OLD_BOOST_IOSTREAMS
@@ -96,33 +96,33 @@ int GridFile::map()
 #endif
 
     try {
-        mf.open(params);
-        interp = (GridPoint *) mf.data();
+        m_mf.open(params);
+        interp = (GridPoint *) m_mf.data();
     }
     catch(std::exception& e) {
         cerr << e.what() << endl;
         return -1;
     }
 
-    if (firstMap) {
+    if (m_firstMap) {
         // initialize every point in the file
         GridPoint init_value = {DBL_MAX, -DBL_MAX, 0, 0, 0, 0, 0, 0};
-        for(int i = 0; i < size_x * size_y; i++)
+        for(int i = 0; i < m_size_x * m_size_y; i++)
             memcpy(interp + i, &init_value, sizeof(GridPoint));
-        cout << ID << ". file size: " << params.new_file_size << endl;
-        firstMap = false;
+        cout << m_id << ". file size: " << params.new_file_size << endl;
+        m_firstMap = false;
     }
     
-    inMemory = true;
+    m_inMemory = true;
     return 0;
 }
 
 int GridFile::unmap()
 {
-    if(inMemory)
+    if(m_inMemory)
     {
-        mf.close();
-        inMemory = false;
+        m_mf.close();
+        m_inMemory = false;
         interp = NULL;
     }
 
@@ -131,10 +131,10 @@ int GridFile::unmap()
 
 bool GridFile::isInMemory()
 {
-    return inMemory;
+    return m_inMemory;
 }
 
 unsigned int GridFile::getMemSize()
 {
-    return size_x * size_y * sizeof(GridPoint);
+    return m_size_x * m_size_y * sizeof(GridPoint);
 }
