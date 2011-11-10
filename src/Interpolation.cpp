@@ -53,8 +53,17 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
+
+#ifndef unix 
+#include <liblas/laspoint.hpp>
+#include <liblas/lasreader.hpp>
+#endif
+#ifdef unix
 #include <liblas/point.hpp>
 #include <liblas/reader.hpp>
+#endif
+
+
 #include <fstream>  // std::ifstream
 #include <iostream> // std::cout
 #include <string.h>
