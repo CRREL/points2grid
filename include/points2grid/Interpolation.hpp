@@ -52,10 +52,10 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace std;
 
-#include "GridPoint.h"
-#include "CoreInterp.h"
-#include "OutCoreInterp.h"
-#include "InCoreInterp.h"
+#include <points2grid/GridPoint.hpp>
+#include <points2grid/CoreInterp.hpp>
+#include <points2grid/OutCoreInterp.hpp>
+#include <points2grid/InCoreInterp.hpp>
 
 //class GridPoint;
 

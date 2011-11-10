@@ -44,15 +44,16 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#include "InCoreInterp.h"
 
-#include <float.h>
-#include <math.h>
-#include "Interpolation.h"
-#include "Global.h"
+#include <points2grid/Interpolation.hpp>
+#include <points2grid/Global.hpp>
+#include <points2grid/InCoreInterp.h>
+
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
+#include <float.h>
+#include <math.h>
 
 InCoreInterp::InCoreInterp(double dist_x, double dist_y,
                            int size_x, int size_y,

@@ -44,8 +44,8 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#include "config.h"
-#include "GridFile.h"
+#include <points2grid/config.h>
+#include <points2grid/GridFile.hpp>
 #include <float.h>
 #include <fcntl.h>
 #include <errno.h>

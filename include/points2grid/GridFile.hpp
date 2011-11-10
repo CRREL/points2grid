@@ -44,55 +44,40 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _GRID_MAP_H_
-#define _GRID_MAP_H_
+#ifndef _GRID_FILE_H_
+#define _GRID_FILE_H_
 
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
-#include <string>
-#include "GridFile.h"
+#include <boost/iostreams/device/mapped_file.hpp>
+#include <points2grid/GridPoint.hpp>
 
-class GridMap
+using namespace std;
+
+class GridFile
 {
 public:
-    GridMap(int id,
-            int size_x,
-            int lower_bound,
-            int upper_bound,
-            int overlap_lower_bound,
-            int overlap_upper_bound,
-            bool initialized,
-            char * fname);
-    ~GridMap();
+    GridFile(int id, char *fname, int size_x, int size_y);
+    ~GridFile();
 
-public:
     int getId();
-    int getLowerBound();
-    int getUpperBound();
-    int getOverlapLowerBound();
-    int getOverlapUpperBound();
-    GridFile *getGridFile();
+    int map();
+    int unmap();
+    bool isInMemory();
+    unsigned int getMemSize();
 
-    bool isInitialized();
-
-    void setId(int _id);
-    void setLowerBound(int _lower_bound);
-    void setUpperBound(int _upper_bound);
-    void setOverlapLowerBound(int _overlap_lower_bound);
-    void setOverlapUpperBound(int _overlap_upper_bound);
-    void setInitialized(bool _initialized);
-    //void setGridFile(string fname);
+    GridPoint *interp;
 
 private:
-    int m_lowerBound;
-    int m_upperBound;
-    int m_overlapLowerBound;
-    int m_overlapUpperBound;
+    //ofstream fout;
 
-    bool m_initialized;
+    boost::iostreams::mapped_file m_mf;
     int m_id;
-    GridFile * m_gridFile;
+    int m_size_x;
+    int m_size_y;
+    bool m_inMemory;
+    bool m_firstMap;
+    std::string m_filename;
 };
 
 #endif

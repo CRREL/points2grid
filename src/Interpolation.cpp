@@ -44,8 +44,8 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#include "Interpolation.h"
-#include "Global.h"
+#include <points2grid/Interpolation.hpp>
+#include <points2grid/Global.hpp>
 #include <string.h>
 #include <math.h>
 #include <float.h>

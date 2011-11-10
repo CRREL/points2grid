@@ -55,9 +55,10 @@ POSSIBILITY OF SUCH DAMAGE.
  * Description: this program starts from this file
  *
  */
-#include "config.h"
-#include "Interpolation.h"
-#include "Global.h"
+#include <points2grid/config.h>
+#include <points2grid/Interpolation.hpp>
+#include <points2grid/Global.hpp>
+
 #include <math.h>
 #include <time.h>
 #include <stdio.h>

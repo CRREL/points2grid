@@ -104,7 +104,7 @@ set (APPS_DIR apps)
 
 include_directories(
     .
-    ${INCLUDE_DIR})
+    include)
 
 set(DEFAULT_INCLUDE_SUBDIR include)
 
@@ -122,14 +122,14 @@ set(LIBRARY_CPP
 
 set(POINTS2GRID_HPP
   ${INCLUDE_DIR}/config.h
-  ${INCLUDE_DIR}/Interpolation.h
-  ${INCLUDE_DIR}/OutCoreInterp.h
-  ${INCLUDE_DIR}/CoreInterp.h
-  ${INCLUDE_DIR}/Global.h
-  ${INCLUDE_DIR}/GridFile.h
-  ${INCLUDE_DIR}/GridMap.h
-  ${INCLUDE_DIR}/GridPoint.h
-  ${INCLUDE_DIR}/InCoreInterp.h    
+  ${INCLUDE_DIR}/Interpolation.hpp
+  ${INCLUDE_DIR}/OutCoreInterp.hpp
+  ${INCLUDE_DIR}/CoreInterp.hpp
+  ${INCLUDE_DIR}/Global.hpp
+  ${INCLUDE_DIR}/GridFile.hpp
+  ${INCLUDE_DIR}/GridMap.hpp
+  ${INCLUDE_DIR}/GridPoint.hpp
+  ${INCLUDE_DIR}/InCoreInterp.hpp    
 )
 
 # setup source groups
@@ -139,11 +139,6 @@ source_group("CMake Files" FILES CMakeLists.txt)
 source_group("Header Files" FILES ${POINTS2GRID_HPP})
 source_group("Source Files" FILES ${POINTS2GRID_CPP})
 
-
-# ensure the compiler knows we're using C++
-# -----------------------------------------
-
-set_source_files_properties(${POINTS2GRID_HPP} PROPERTIES LANGUAGE CXX)
 
 # build the actual executable
 # ---------------------------

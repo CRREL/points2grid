@@ -44,16 +44,17 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#include "OutCoreInterp.h"
 
 #include <float.h>
 #include <math.h>
 #include <time.h>
-#include "Interpolation.h"
-#include "Global.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdexcept>
+
+#include <points2grid/OutCoreInterp.hpp>
+#include <points2grid/Interpolation.hpp>
+#include <points2grid/Global.hpp>
 
 #ifdef _WIN32
 #include <windows.h>

@@ -45,7 +45,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
-#include "GridMap.h"
+#include <points2grid/GridMap.hpp>
 
 
 GridMap::GridMap(int id, 
