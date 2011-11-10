@@ -67,11 +67,12 @@ include_directories(${LIBLAS_INCLUDE_DIR})
 find_package(BZip2 REQUIRED)
 include_directories(${BZIP_INCLUDE_DIRS})
 
+
 # generate our configuration header
 # =================================
 
-configure_file(${PROJECT_SOURCE_DIR}/config.h.in
-  ${PROJECT_SOURCE_DIR}/config.h)
+configure_file(${PROJECT_SOURCE_DIR}/include/config.h.in
+  ${PROJECT_SOURCE_DIR}/include/config.h)
 
 # set flags for GCC (from original Makefile)
 # ==========================================
@@ -97,25 +98,33 @@ endif()
 # and now the actual project that we'll build
 # ===========================================
 
-set(POINTS2GRID_CPP
-  GridFile.cpp
-  GridMap.cpp
-  InCoreInterp.cpp
-  Interpolation.cpp
-  main.cpp
-  OutCoreInterp.cpp
+set(SRC_DIR src)
+set (INCLUDE_DIR include)
+set (APPS_DIR apps)
+
+include_directories(
+    .
+    ${INCLUDE_DIR})
+
+set(LIBRARY_CPP
+  ${SRC_DIR}/GridFile.cpp
+  ${SRC_DIR}/GridMap.cpp
+  ${SRC_DIR}/InCoreInterp.cpp
+  ${SRC_DIR}/Interpolation.cpp
+  ${SRC_DIR}/OutCoreInterp.cpp
+
 )
 
 set(POINTS2GRID_HPP
-  config.h
-  CoreInterp.h
-  Global.h
-  GridFile.h
-  GridMap.h
-  GridPoint.h
-  InCoreInterp.h
-  Interpolation.h
-  OutCoreInterp.h
+  ${INCLUDE_DIR}/config.h
+  ${INCLUDE_DIR}/Interpolation.h
+  ${INCLUDE_DIR}/OutCoreInterp.h
+  ${INCLUDE_DIR}/CoreInterp.h
+  ${INCLUDE_DIR}/Global.h
+  ${INCLUDE_DIR}/GridFile.h
+  ${INCLUDE_DIR}/GridMap.h
+  ${INCLUDE_DIR}/GridPoint.h
+  ${INCLUDE_DIR}/InCoreInterp.h    
 )
 
 # setup source groups
@@ -134,9 +143,12 @@ set_source_files_properties(${POINTS2GRID_HPP} PROPERTIES LANGUAGE CXX)
 # build the actual executable
 # ---------------------------
 
-add_executable(points2grid ${POINTS2GRID_HPP} ${POINTS2GRID_CPP})
-target_link_libraries(points2grid ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} 
+add_library(libpoints2grid SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
+target_link_libraries(libpoints2grid ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} 
   ${CURL_LIBRARIES} ${LIBLAS_LIBRARY})
+add_executable(points2grid ${APPS_DIR}/points2grid.cpp)
+target_link_libraries(points2grid libpoints2grid)
+
   
 # install the executable
 # ----------------------

@@ -435,7 +435,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
     FILE **gridFiles;
     char gridFileName[1024];
 
-    char *ext[5] = {".min", ".max", ".mean", ".idw", ".den"};
+    const char *ext[5] = {".min", ".max", ".mean", ".idw", ".den"};
     unsigned int type[5] = {OUTPUT_TYPE_MIN, OUTPUT_TYPE_MAX, OUTPUT_TYPE_MEAN, OUTPUT_TYPE_IDW, OUTPUT_TYPE_DEN};
     int numTypes = 5;
 

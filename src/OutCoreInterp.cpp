@@ -701,7 +701,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
     FILE **gridFiles;
     char gridFileName[1024];
 
-    char *ext[5] = {".min", ".max", ".mean", ".idw", ".den"};
+    const char *ext[5] = {".min", ".max", ".mean", ".idw", ".den"};
     unsigned int type[5] = {OUTPUT_TYPE_MIN, OUTPUT_TYPE_MAX, OUTPUT_TYPE_MEAN, OUTPUT_TYPE_IDW, OUTPUT_TYPE_DEN};
     int numTypes = 5;
 
@@ -1086,7 +1086,8 @@ void OutCoreInterp::finalize()
 }
 
 void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
-    char *pfx = "grd", *tname = NULL;
+    const char *pfx = "grd";
+    char *tname = NULL;
 
 #ifdef _WIN32
     char dir[MAX_PATH];
