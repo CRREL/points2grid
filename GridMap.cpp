@@ -48,76 +48,86 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "GridMap.h"
 
 
-GridMap::GridMap(int _id, int _size_x, int _lower_bound, int _upper_bound, int _overlap_lower_bound, int _overlap_upper_bound, bool _initialized, char *fname)
+GridMap::GridMap(int id, 
+                 int size_x, 
+                 int lower_bound, 
+                 int upper_bound, 
+                 int overlap_lower_bound, 
+                 int overlap_upper_bound, 
+                 bool initialized, 
+                 char *fname)
 {
-    id = _id;
-    lowerBound = _lower_bound;
-    upperBound = _upper_bound;
-    overlapLowerBound = _overlap_lower_bound;
-    overlapUpperBound = _overlap_upper_bound;
-    initialized = _initialized;
+    m_id = id;
+    m_lowerBound = lower_bound;
+    m_upperBound = upper_bound;
+    m_overlapLowerBound = overlap_lower_bound;
+    m_overlapUpperBound = overlap_upper_bound;
 
-    gridFile = new GridFile(id, fname, _size_x, _overlap_upper_bound - _overlap_lower_bound + 1);
+    m_gridFile = new GridFile(m_id, fname, size_x, m_overlapUpperBound - m_overlapLowerBound + 1);
+    
+    if (m_gridFile != 0)
+        m_initialized = initialized;
+
 }
 GridMap::~GridMap()
 {
-    if(gridFile != NULL)
-        delete gridFile;
+    if(m_gridFile != 0)
+        delete m_gridFile;
 }
 
 int GridMap::getLowerBound()
 {
-    return lowerBound;
+    return m_lowerBound;
 }
 int GridMap::getUpperBound()
 {
-    return upperBound;
+    return m_upperBound;
 }
 int GridMap::getOverlapLowerBound()
 {
-    return overlapLowerBound;
+    return m_overlapLowerBound;
 }
 int GridMap::getOverlapUpperBound()
 {
-    return overlapUpperBound;
+    return m_overlapUpperBound;
 }
 
 bool GridMap::isInitialized()
 {
-    return initialized;
+    return m_initialized;
 }
 int GridMap::getId()
 {
-    return id;
+    return m_id;
 }
 GridFile *GridMap::getGridFile()
 {
-    return gridFile;
+    return m_gridFile;
 }
 
-void GridMap::setLowerBound(int _lower_bound)
+void GridMap::setLowerBound(int lower_bound)
 {
-    lowerBound = _lower_bound;
+    m_lowerBound = lower_bound;
 }
-void GridMap::setUpperBound(int _upper_bound)
+void GridMap::setUpperBound(int upper_bound)
 {
-    upperBound = _upper_bound;
+    m_upperBound = upper_bound;
 }
-void GridMap::setOverlapLowerBound(int _overlap_lower_bound)
+void GridMap::setOverlapLowerBound(int overlap_lower_bound)
 {
-    overlapLowerBound = _overlap_lower_bound;
+    m_overlapLowerBound = overlap_lower_bound;
 }
-void GridMap::setOverlapUpperBound(int _overlap_upper_bound)
+void GridMap::setOverlapUpperBound(int overlap_upper_bound)
 {
-    overlapUpperBound = _overlap_upper_bound;
+    m_overlapUpperBound = overlap_upper_bound;
 }
-void GridMap::setInitialized(bool _initialized)
+void GridMap::setInitialized(bool initialized)
 {
-    initialized = _initialized;
+    m_initialized = initialized;
 }
-void GridMap::setId(int _id)
+void GridMap::setId(int id)
 {
-    id = _id;
+    m_id = id;
 }
 /*
 void GridMap::setGridFile(string fname)

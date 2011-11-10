@@ -53,18 +53,16 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <string>
 #include "GridFile.h"
 
-using namespace std;
-
 class GridMap
 {
 public:
-    GridMap(int _id,
-            int _size_x,
-            int _lower_bound,
-            int _upper_bound,
-            int _overlap_lower_bound,
-            int _overlap_uuper_bound,
-            bool _initialized,
+    GridMap(int id,
+            int size_x,
+            int lower_bound,
+            int upper_bound,
+            int overlap_lower_bound,
+            int overlap_uuper_bound,
+            bool initialized,
             char * fname);
     ~GridMap();
 
@@ -87,14 +85,14 @@ public:
     //void setGridFile(string fname);
 
 private:
-    int lowerBound;
-    int upperBound;
-    int overlapLowerBound;
-    int overlapUpperBound;
+    int m_lowerBound;
+    int m_upperBound;
+    int m_overlapLowerBound;
+    int m_overlapUpperBound;
 
-    bool initialized;
-    int id;
-    GridFile * gridFile;
+    bool m_initialized;
+    int m_id;
+    GridFile * m_gridFile;
 };
 
 #endif
