@@ -24,11 +24,12 @@ your CPLUS_INCLUDE_PATH and LIBRARY_PATH to respectively point to the
 locations of the include files and libraries of the installed software
 pre-requisites.
 
-If you are on a Mac (OSX), edit the Makefile to uncomment the Mac-specific
-CFLAGS setting. If you are on Solaris or Linux, there is no need to update
-the Makefile.
+To compile points2grid, simply use the standard cmake procedures:
 
-To compile points2grid, simply use the Makefile by typing "make". The
-Makefile has been confirmed to work with gcc3 and gcc4 on Linux, Solaris
+mkdir build # make a build folder
+cd build
+cmake ..
+make
+
+The software has been confirmed to work with gcc3 and gcc4 on Linux, Solaris
 and OSX. 
-
