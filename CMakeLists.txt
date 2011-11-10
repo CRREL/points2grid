@@ -71,8 +71,8 @@ include_directories(${BZIP_INCLUDE_DIRS})
 # generate our configuration header
 # =================================
 
-configure_file(${PROJECT_SOURCE_DIR}/include/config.h.in
-  ${PROJECT_SOURCE_DIR}/include/config.h)
+configure_file(${PROJECT_SOURCE_DIR}/include/points2grid/config.h.in
+  ${PROJECT_SOURCE_DIR}/include/points2grid/config.h)
 
 # set flags for GCC (from original Makefile)
 # ==========================================
@@ -99,7 +99,7 @@ endif()
 # ===========================================
 
 set(SRC_DIR src)
-set (INCLUDE_DIR include)
+set (INCLUDE_DIR include/points2grid)
 set (APPS_DIR apps)
 
 include_directories(

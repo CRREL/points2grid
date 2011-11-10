@@ -6,3 +6,5 @@ CMakeCache.txt
 *.o
 config.h
 points2grid
+*.so
+*.dylib
