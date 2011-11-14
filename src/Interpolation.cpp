@@ -64,7 +64,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <pdal/Dimension.hpp>
 #include <pdal/Schema.hpp>
 #else /* LIBLAS_FOUND */
-#include <liblas/capi/liblas.h> // the C API is stable across liblas versions
+extern "C" {
+    #include <liblas/capi/liblas.h> // the C API is stable across liblas versions
+}
 #endif
 
 #include <boost/scoped_ptr.hpp>

@@ -157,7 +157,7 @@ target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${BZIP2_LIBRARIES}
 if (PDAL_FOUND)
   target_link_libraries(${P2G_LIB_NAME} ${PDAL_LIBRARY})
 else()
-  target_link_libraries(${P2G_LIB_NAME} ${LIBLAS_LIBRARY})
+  target_link_libraries(${P2G_LIB_NAME} ${LIBLAS_LIBRARIES})
 endif()
 
 
