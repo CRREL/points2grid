@@ -70,9 +70,12 @@ endif()
 # bzip2
 # -----
 
-find_package(BZip2 REQUIRED)
-include_directories(${BZIP_INCLUDE_DIRS})
-
+find_package(BZip2)
+if(BZIP_FOUND)
+  include_directories(${BZIP_INCLUDE_DIRS})
+else()
+  message(STATUS "BZip not found.  Builds using packaged Boost libraries may fail.")
+endif()
 
 # generate our configuration header
 # =================================
@@ -151,8 +154,7 @@ source_group("Source Files" FILES ${POINTS2GRID_CPP})
 
 set(P2G_LIB_NAME pts2grd)
 add_library(${P2G_LIB_NAME} SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
-target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${BZIP2_LIBRARIES} 
-  ${CURL_LIBRARIES})
+target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
 
 if (PDAL_FOUND)
   target_link_libraries(${P2G_LIB_NAME} ${PDAL_LIBRARY})
@@ -160,6 +162,9 @@ else()
   target_link_libraries(${P2G_LIB_NAME} ${LIBLAS_LIBRARIES})
 endif()
 
+if (BZIP_FOUND)
+  target_link_libraries(${P2G_LIB_NAME} ${BZIP2_LIBRARIES})
+endif()
 
 if (APPLE)
   set_target_properties(
