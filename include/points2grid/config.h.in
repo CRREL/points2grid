@@ -1,6 +1,9 @@
-// let the compiler know if we have cURL available
+// let the compiler know which libraries we have available
 #cmakedefine CURL_FOUND
+#cmakedefine LIBLAS_FOUND
+#cmakedefine PDAL_FOUND
 
 // Boost.Iostreams prior to 1.44.0 requires different parameters
 // This flag tells the parameter initializaiton code knows what to do.
 #cmakedefine OLD_BOOST_IOSTREAMS
+

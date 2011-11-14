@@ -1,12 +1,26 @@
 PREREQUISITES
 -------------
-Points2Grid requires two libraries to be installed -
+Points2Grid depends on some external libraries to get the job done -
 
-1) curl: Please install libcurl from http://curl.haxx.se/. Points2Grid has
+either 
+
+1) PDAL: Please install PDAL from https://github.com/PDAL/PDAL. Points2Grid has
+   been tested to work with version 0.1.0 of PDAL.
+   
+   PDAL is required for certain advanced features of points2grid to work.
+   
+or
+
+2) liblas: Please install liblas from http://liblas.org. Points2Grid has
+   been tested to work with version 1.2.1 of liblas, and possibly some later ones too.
+   
+   liblas is being superseded by PDAL.  later versions of points2grid will drop support
+   for liblas, and you will need to upgrade your system.
+
+If you'd like to be able to retrieve files from remote URLS, you'll also need: 
+
+3) curl: Please install libcurl from http://curl.haxx.se/. Points2Grid has
 been tested to work with version 7.20.0 of libcurl.
-
-2) PDAL: Please install liblas from https://github.com/PDAL/PDAL. Points2Grid has
-been tested to work with version 0.1.0 of PDAL.
 
 CONFIGURATION
 -------------

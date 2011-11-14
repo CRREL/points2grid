@@ -44,8 +44,10 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
+#include <points2grid/config.h>
 #include <points2grid/Interpolation.hpp>
 #include <points2grid/Global.hpp>
+
 #include <string.h>
 #include <math.h>
 #include <float.h>
@@ -54,14 +56,19 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <time.h>
 #include <stdio.h>
 
+#ifdef PDAL_FOUND
 #include <pdal/pdal.hpp>
 #include <pdal/StageFactory.hpp>
 #include <pdal/PointBuffer.hpp>
 #include <pdal/StageIterator.hpp>
 #include <pdal/Dimension.hpp>
-
 #include <pdal/Schema.hpp>
+#else /* LIBLAS_FOUND */
+#include <liblas/capi/liblas.h> // the C API is stable across liblas versions
+#endif
+
 #include <boost/scoped_ptr.hpp>
+
 
 #include <fstream>  // std::ifstream
 #include <iostream> // std::cout
@@ -184,7 +191,7 @@ int Interpolation::init(char *inputName, int inputFormat)
 
         fclose(fp);
     } else { // las input
-
+#ifdef PDAL_FOUND
         try {
             
             pdal::Options options;
@@ -208,6 +215,25 @@ int Interpolation::init(char *inputName, int inputFormat)
             cout << "error while reading LAS file: verify that the input is valid LAS file" << e.what() << endl;
             return -1;
         }
+#else /* LIBLAS_FOUND */
+        LASReaderH lr = LASReader_Create(inputName);
+        LASHeaderH lh = LASReader_GetHeader(lr);
+        
+        if (lh == NULL) {
+            LASError_Print("error while reading LAS file: verify that the input is valid LAS file.");
+            LASReader_Destroy(lr);
+            
+            return -1;            
+        }
+        
+        min_x = LASHeader_GetMinX(lh);
+        min_y = LASHeader_GetMinY(lh);
+        max_x = LASHeader_GetMaxX(lh);
+        max_y = LASHeader_GetMaxY(lh);
+        data_count = LASHeader_GetPointRecordsCount(lh);
+        
+        LASReader_Destroy(lr);
+#endif  
     }
 
     t1 = clock();
@@ -339,7 +365,7 @@ int Interpolation::interpolation(char *inputName,
         fclose(fp);
     } else { // input format is LAS
 
-
+#ifdef PDAL_FOUND
         pdal::Options options;
         options.add("filename", inputName);
         
@@ -387,6 +413,26 @@ int Interpolation::interpolation(char *inputName,
             }
             iter->read(data);
         }
+#else /* LIBLAS_FOUND */
+        LASReaderH lr = LASReader_Create(inputName);
+        LASPointH lp;
+        
+        while (lp = LASReader_GetNextPoint(lr)) {
+            data_x = LASPoint_GetX(lp);
+            data_y = LASPoint_GetY(lp);
+            data_z = LASPoint_GetZ(lp);
+            
+            data_x -= min_x;
+            data_y -= min_y;
+            
+            if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
+                cout << "interp->update() error while processing " << endl;
+                return -1;
+            }
+        }
+        
+        LASReader_Destroy(lr);
+#endif
 
     }
 
