@@ -71,10 +71,10 @@ endif()
 # -----
 
 find_package(BZip2)
-if(BZIP_FOUND)
-  include_directories(${BZIP_INCLUDE_DIRS})
+if(BZIP2_FOUND)
+  include_directories(${BZIP2_INCLUDE_DIRS})
 else()
-  message(STATUS "BZip not found.  Builds using packaged Boost libraries may fail.")
+  message(STATUS "BZip2 not found.  Builds using packaged Boost libraries may fail.")
 endif()
 
 # generate our configuration header
@@ -162,7 +162,7 @@ else()
   target_link_libraries(${P2G_LIB_NAME} ${LIBLAS_LIBRARIES})
 endif()
 
-if (BZIP_FOUND)
+if (BZIP2_FOUND)
   target_link_libraries(${P2G_LIB_NAME} ${BZIP2_LIBRARIES})
 endif()
 
