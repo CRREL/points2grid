@@ -52,6 +52,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 using namespace std;
 
+#include <points2grid/export.hpp>
 #include <points2grid/GridPoint.hpp>
 #include <points2grid/CoreInterp.hpp>
 #include <points2grid/OutCoreInterp.hpp>
@@ -59,7 +60,7 @@ using namespace std;
 
 //class GridPoint;
 
-class Interpolation
+class P2G_DLL Interpolation
 {
 public:
     Interpolation(double x_dist, double y_dist, double radius,
