@@ -108,8 +108,8 @@ int main(int argc, char **argv)
      "'arc' for ArcGIS format,\n"
      "'grid' for Ascii GRID format,\n"
      "the default value is --all")
-    ("input_format", po::value<std::string>(), "'ascii' expects input point cloud in ASCII format (default)\n"
-     "'las' expects input point cloud in LAS format")
+    ("input_format", po::value<std::string>(), "'ascii' expects input point cloud in ASCII format\n"
+     "'las' expects input point cloud in LAS format (default)")
     ("interpolation_mode", po::value<std::string>()->default_value("auto"), "'incore' stores working data in memory\n"
      "'outcore' stores working data on the filesystem\n"
      "'auto' (default) guesses based on the size of the data file");
