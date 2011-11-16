@@ -219,12 +219,15 @@ int Interpolation::init(char *inputName, int inputFormat)
         }
 #else /* LIBLAS_FOUND */
         LASReaderH lr = LASReader_Create(inputName);
-        LASHeaderH lh = LASReader_GetHeader(lr);
+        if (!lr) {
+            LASError_Print("Could not open file to read.");
+            return -1;
+        }
         
-        if (lh == NULL) {
+        LASHeaderH lh = LASReader_GetHeader(lr);        
+        if (!lh) {
             LASError_Print("error while reading LAS file: verify that the input is valid LAS file.");
-            LASReader_Destroy(lr);
-            
+            LASReader_Destroy(lr);    
             return -1;            
         }
         
@@ -417,9 +420,13 @@ int Interpolation::interpolation(char *inputName,
         }
 #else /* LIBLAS_FOUND */
         LASReaderH lr = LASReader_Create(inputName);
-        LASPointH lp;
+        if (!lr) {
+            LASError_Print("Could not open file to read.");
+            return -1;
+        }
         
-        while (lp = LASReader_GetNextPoint(lr)) {
+        LASPointH lp;
+        while ((lp = LASReader_GetNextPoint(lr))) {
             data_x = LASPoint_GetX(lp);
             data_y = LASPoint_GetY(lp);
             data_z = LASPoint_GetZ(lp);
