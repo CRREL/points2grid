@@ -7,3 +7,9 @@
 // This flag tells the parameter initializaiton code knows what to do.
 #cmakedefine OLD_BOOST_IOSTREAMS
 
+
+#define P2G_VERSION_MAJOR ${P2G_VERSION_MAJOR}
+#define P2G_VERSION_MINOR ${P2G_VERSION_MINOR} 
+#define P2G_VERSION_PATCH ${P2G_VERSION_PATCH} 
+
+#define P2G_VERSION_STRING ${P2G_VERSION_STRING}
