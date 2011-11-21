@@ -370,55 +370,6 @@ int Interpolation::interpolation(char *inputName,
         fclose(fp);
     } else { // input format is LAS
 
-#ifdef PDAL_FOUND
-        pdal::Options options;
-        options.add("filename", inputName);
-        
-        pdal::StageFactory factory;
-        pdal::Stage* reader = factory.createReader("drivers.pipeline.reader", options);
-
-        reader->initialize();
-        const pdal::Schema& schema = reader->getSchema();
-
-        pdal::PointBuffer data(schema, 32768);
-
-        boost::scoped_ptr<pdal::StageSequentialIterator> iter(reader->createSequentialIterator());
-
-        int xPos = schema.getDimensionIndex(pdal::DimensionId::X_i32);
-        pdal::Dimension const& xDim = schema.getDimension(xPos);
-
-        int yPos = schema.getDimensionIndex(pdal::DimensionId::Y_i32);
-        pdal::Dimension const& yDim = schema.getDimension(yPos);
-        
-        int zPos = schema.getDimensionIndex(pdal::DimensionId::Z_i32);
-        pdal::Dimension const& zDim = schema.getDimension(zPos);
-    
-        iter->read(data);
-        
-        while (true) {
-            if (iter->atEnd()) break;
-            for (boost::uint32_t pointIndex=0; pointIndex < data.getNumPoints(); pointIndex++)
-            {
-                boost::int32_t x = data.getField<boost::int32_t>(pointIndex, xPos);
-                boost::int32_t y = data.getField<boost::int32_t>(pointIndex, yPos);
-                boost::int32_t z = data.getField<boost::int32_t>(pointIndex, zPos);
-                
-                data_x = xDim.applyScaling<boost::int32_t>(x);
-                data_y = yDim.applyScaling<boost::int32_t>(y);
-                data_z = zDim.applyScaling<boost::int32_t>(z);
-                data_x -= min_x;
-                data_y -= min_y;
-        
-                //if((rc = interp->update(arrX[i], arrY[i], arrZ[i])) < 0)
-                if((rc = interp->update(data_x, data_y, data_z)) < 0)
-                {
-                    cout << "interp->update() error while processing " << endl;
-                    return -1;
-                }
-            }
-            iter->read(data);
-        }
-#else /* LIBLAS_FOUND */
         LASReaderH lr = LASReader_Create(inputName);
         if (!lr) {
             LASError_Print("Could not open file to read.");
@@ -441,7 +392,6 @@ int Interpolation::interpolation(char *inputName,
         }
         
         LASReader_Destroy(lr);
-#endif
 
     }
 
