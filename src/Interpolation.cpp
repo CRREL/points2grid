@@ -64,9 +64,12 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <pdal/Dimension.hpp>
 #include <pdal/Schema.hpp>
 #else /* LIBLAS_FOUND */
+
+#ifdef LIBLAS_FOUND
 extern "C" {
     #include <liblas/capi/liblas.h> // the C API is stable across liblas versions
 }
+#endif
 #endif
 
 #include <boost/scoped_ptr.hpp>
@@ -217,7 +220,8 @@ int Interpolation::init(char *inputName, int inputFormat)
             cout << "error while reading LAS file: verify that the input is valid LAS file" << e.what() << endl;
             return -1;
         }
-#else /* LIBLAS_FOUND */
+#endif /* LIBLAS_FOUND */
+#ifdef LIBLAS_FOUND
         LASReaderH lr = LASReader_Create(inputName);
         if (!lr) {
             LASError_Print("Could not open file to read.");
@@ -368,7 +372,10 @@ int Interpolation::interpolation(char *inputName,
         }
 
         fclose(fp);
-    } else { // input format is LAS
+    } 
+
+#ifdef LIBLAS_FOUND    
+    else { // input format is LAS
 
         LASReaderH lr = LASReader_Create(inputName);
         if (!lr) {
@@ -394,6 +401,7 @@ int Interpolation::interpolation(char *inputName,
         LASReader_Destroy(lr);
 
     }
+#endif
 
     if((rc = interp->finish(outputName, outputFormat, outputType)) < 0)
     {

@@ -64,8 +64,10 @@ include_directories(${CURL_INCLUDE_DIRS})
 # PDAL and libLAS
 # ---------------
 
-find_package(LibLAS REQUIRED)
-include_directories(${LIBLAS_INCLUDE_DIR})
+find_package(LibLAS)
+if (LIBLAS_FOUND)
+    include_directories(${LIBLAS_INCLUDE_DIR})
+endif()
 
 # bzip2
 # -----

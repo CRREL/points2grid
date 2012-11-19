@@ -8,3 +8,4 @@ config.h
 *.so
 *.dylib
 install_manifest.txt
+points2grid
