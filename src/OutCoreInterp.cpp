@@ -1062,7 +1062,7 @@ void OutCoreInterp::finalize()
                         if (neighbor == i)
                             continue;
 
-                        if ((neighbor >= 0) && (neighbor <= overlapEnd))
+                        if ((neighbor >= 0) && (neighbor < overlapEnd))
                             if (gf->interp[neighbor].empty != 0) {
 
                                 double distance = max(abs(p-window_dist), abs(q-window_dist));
