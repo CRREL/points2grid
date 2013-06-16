@@ -135,7 +135,7 @@ int main(int argc, char **argv)
 
     res.add_options()
     ("resolution", po::value<float>(), "The resolution is set to the specified value. Use square grids.\n"
-     "If no resolution options are specified, a 6ft square grid is used")
+     "If no resolution options are specified, a 6 unit square grid is used")
     ("resolution-x", po::value<float>(), "The X side of grid cells is set to the specified value")
     ("resolution-y", po::value<float>(), "The Y side of grid cells is set to the specified value");
 
