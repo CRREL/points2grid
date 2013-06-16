@@ -54,6 +54,7 @@ typedef struct
     double Zmean;
     unsigned int count;
     double Zidw;
+    double Zstd;
     double sum;
     int empty;
     int filled;

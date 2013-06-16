@@ -374,6 +374,8 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
                 gf->interp[j + offset].Zmean += p[j].Zmean;
                 gf->interp[j + offset].count += p[j].count;
 
+                gf->interp[j + offset].Zstd += p[j].Zstd;
+
                 if (p[j].sum != -1) {
                     gf->interp[j + offset].Zidw += p[j].Zidw;
                     gf->interp[j + offset].sum += p[j].sum;
@@ -456,6 +458,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
                 gf->interp[j + offset].count = p[j].count;
                 gf->interp[j + offset].Zidw = p[j].Zidw;
                 gf->interp[j + offset].sum = p[j].sum;
+		gf->interp[j + offset].Zstd = p[j].Zstd;
             }
 
             //if(i - 1 == 0)
@@ -675,7 +678,9 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
         gf->interp[coord].Zmean += data_z;
         gf->interp[coord].count++;
 
-        double dist = pow(distance, Interpolation::WEIGHTER);
+	gf->interp[coord].Zstd += data_z;
+
+	double dist = pow(distance, Interpolation::WEIGHTER);
         if (gf->interp[coord].sum != -1) {
             if (dist != 0) {
                 gf->interp[coord].Zidw += data_z/dist;
@@ -702,9 +707,9 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
     FILE **gridFiles;
     char gridFileName[1024];
 
-    const char *ext[5] = {".min", ".max", ".mean", ".idw", ".den"};
-    unsigned int type[5] = {OUTPUT_TYPE_MIN, OUTPUT_TYPE_MAX, OUTPUT_TYPE_MEAN, OUTPUT_TYPE_IDW, OUTPUT_TYPE_DEN};
-    int numTypes = 5;
+    const char *ext[6] = {".min", ".max", ".mean", ".idw", ".den", "std"};
+    unsigned int type[6] = {OUTPUT_TYPE_MIN, OUTPUT_TYPE_MAX, OUTPUT_TYPE_MEAN, OUTPUT_TYPE_IDW, OUTPUT_TYPE_DEN, OUTPUT_TYPE_STD};
+    int numTypes = 6;
 
 
     // open ArcGIS files
@@ -875,6 +880,16 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
                         else
                             fprintf(arcFiles[4], "%d ", gf->interp[index].count);
                     }
+
+                    // Zstd
+                    if(arcFiles[5] != NULL)
+                    {
+                        if(gf->interp[index].empty == 0 &&
+                                gf->interp[index].filled == 0)
+                            fprintf(arcFiles[5], "-9999 ");
+                        else
+                            fprintf(arcFiles[5], "%f ", gf->interp[index].Zstd);
+                    }
                 }
 
                 if(gridFiles != NULL)
@@ -928,7 +943,17 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
                         else
                             fprintf(gridFiles[4], "%d ", gf->interp[index].count);
                     }
-                }
+
+                    // Zstd
+                    if(gridFiles[5] != NULL)
+                    {
+                        if(gf->interp[index].empty == 0 &&
+                                gf->interp[index].filled == 0)
+                            fprintf(gridFiles[5], "-9999 ");
+                        else
+                            fprintf(gridFiles[5], "%f ", gf->interp[index].Zstd);
+                    }
+		}
             }
 
             if(arcFiles != NULL)
@@ -1034,7 +1059,23 @@ void OutCoreInterp::finalize()
         else
             gf->interp[i].Zmean = 0 ;
 
-        if(gf->interp[i].sum != 0 && gf->interp[i].sum != -1)
+	
+        if(gf->interp[i].count != 0) {
+            gf->interp[i].Zstd /= gf->interp[i].count ;
+            gf->interp[i].empty = 1;
+        }
+        else
+            gf->interp[i].Zstd = 0 ;
+
+	
+        if(gf->interp[i].count != 0) {
+            gf->interp[i].Zstd /= gf->interp[i].count ;
+            gf->interp[i].empty = 1;
+        }
+        else
+            gf->interp[i].Zstd = 0 ;
+
+	if(gf->interp[i].sum != 0 && gf->interp[i].sum != -1)
             gf->interp[i].Zidw /= gf->interp[i].sum;
         else if (gf->interp[i].sum == -1) {
             // do nothing
@@ -1070,6 +1111,7 @@ void OutCoreInterp::finalize()
                                 gf->interp[i].Zidw += gf->interp[neighbor].Zidw/(pow(distance,Interpolation::WEIGHTER));
                                 gf->interp[i].Zmin += gf->interp[neighbor].Zmin/(pow(distance,Interpolation::WEIGHTER));
                                 gf->interp[i].Zmax += gf->interp[neighbor].Zmax/(pow(distance,Interpolation::WEIGHTER));
+                                gf->interp[i].Zstd += gf->interp[neighbor].Zstd/(pow(distance,Interpolation::WEIGHTER));
                                 new_sum += 1/(pow(distance,Interpolation::WEIGHTER));
                             }
                     }
@@ -1080,7 +1122,8 @@ void OutCoreInterp::finalize()
                 gf->interp[i].Zidw /= new_sum;
                 gf->interp[i].Zmin /= new_sum;
                 gf->interp[i].Zmax /= new_sum;
-                gf->interp[i].filled = 1;
+		gf->interp[i].Zstd /= new_sum;
+		gf->interp[i].filled = 1;
             }
         }
     }
