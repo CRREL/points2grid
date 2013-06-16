@@ -118,6 +118,7 @@ int InCoreInterp::init()
             interp[i][j].Zidw = 0;
             interp[i][j].sum = 0;
             interp[i][j].Zstd = 0;
+            interp[i][j].Zstd_tmp = 0;
             interp[i][j].empty = 0;
             interp[i][j].filled = 0;
         }
@@ -193,11 +194,11 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
                 interp[i][j].Zmean = 0;
             }
 
-	    
+	    // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
             if(interp[i][j].count != 0) {
-                interp[i][j].Zstd /= interp[i][j].count;
-                interp[i][j].empty = 1;
-            } else {
+  	        interp[i][j].Zstd = interp[i][j].Zstd / (interp[i][j].count);
+		interp[i][j].Zstd = sqrt(interp[i][j].Zstd);
+	    } else {
                 interp[i][j].Zstd = 0;
             }
 
@@ -231,6 +232,7 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
                                     interp[i][j].Zmean += interp[p][q].Zmean/(pow(distance,Interpolation::WEIGHTER));
                                     interp[i][j].Zidw += interp[p][q].Zidw/(pow(distance,Interpolation::WEIGHTER));
 				    interp[i][j].Zstd += interp[p][q].Zstd/(pow(distance,Interpolation::WEIGHTER));
+				    interp[i][j].Zstd_tmp += interp[p][q].Zstd_tmp/(pow(distance,Interpolation::WEIGHTER));
                                     interp[i][j].Zmin += interp[p][q].Zmin/(pow(distance,Interpolation::WEIGHTER));
                                     interp[i][j].Zmax += interp[p][q].Zmax/(pow(distance,Interpolation::WEIGHTER));
 
@@ -243,6 +245,7 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
                         interp[i][j].Zmean /= new_sum;
                         interp[i][j].Zidw /= new_sum;
                         interp[i][j].Zstd /= new_sum;
+                        interp[i][j].Zstd_tmp /= new_sum;
                         interp[i][j].Zmin /= new_sum;
                         interp[i][j].Zmax /= new_sum;
                         interp[i][j].filled = 1;
@@ -406,7 +409,10 @@ void InCoreInterp::updateGridPoint(int x, int y, double data_z, double distance)
     interp[x][y].Zmean += data_z;
     interp[x][y].count++;
 
-    interp[x][y].Zstd += data_z;
+    // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+    double delta = data_z - interp[x][y].Zstd_tmp;
+    interp[x][y].Zstd_tmp += delta/interp[x][y].count;
+    interp[x][y].Zstd += delta * (data_z - interp[x][y].Zstd_tmp);
 
     double dist = pow(distance, Interpolation::WEIGHTER);
 
@@ -450,7 +456,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
     FILE **gridFiles;
     char gridFileName[1024];
 
-    const char *ext[6] = {".min", ".max", ".mean", ".idw", ".den", "std"};
+    const char *ext[6] = {".min", ".max", ".mean", ".idw", ".den", ".std"};
     unsigned int type[6] = {OUTPUT_TYPE_MIN, OUTPUT_TYPE_MAX, OUTPUT_TYPE_MEAN, OUTPUT_TYPE_IDW, OUTPUT_TYPE_DEN, OUTPUT_TYPE_STD};
     int numTypes = 6;
 
