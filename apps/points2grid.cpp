@@ -129,6 +129,7 @@ int main(int argc, char **argv)
     ("max", "the Zmax values are stored")
     ("mean", "the Zmean values are stored")
     ("idw", "the Zidw values are stored")
+    ("std", "the Zstd values are stored")
     ("den", "the density values are stored")
     ("all", "all the values are stored (default)");
 
@@ -218,6 +219,10 @@ int main(int argc, char **argv)
 
         if(vm.count("idw")) {
             type |= OUTPUT_TYPE_IDW;
+        }
+
+	if(vm.count("std")) {
+            type |= OUTPUT_TYPE_STD;
         }
 
         if(vm.count("den")) {

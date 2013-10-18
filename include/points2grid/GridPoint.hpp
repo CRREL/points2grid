@@ -54,6 +54,8 @@ typedef struct
     double Zmean;
     unsigned int count;
     double Zidw;
+    double Zstd;    // M2 from https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
+    double Zstd_tmp;  // mean from above.
     double sum;
     int empty;
     int filled;

@@ -48,7 +48,8 @@ static const unsigned int OUTPUT_TYPE_MAX = 0x00000010;
 static const unsigned int OUTPUT_TYPE_MEAN = 0x00000100;
 static const unsigned int OUTPUT_TYPE_IDW = 0x00001000;
 static const unsigned int OUTPUT_TYPE_DEN = 0x00010000;
-static const unsigned int OUTPUT_TYPE_ALL = 0x00011111;
+static const unsigned int OUTPUT_TYPE_STD = 0x00100000;
+static const unsigned int OUTPUT_TYPE_ALL = 0x00111111;
 
 enum OUTPUT_FORMAT {
     OUTPUT_FORMAT_ALL = 0,
