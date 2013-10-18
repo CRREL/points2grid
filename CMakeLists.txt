@@ -149,7 +149,7 @@ source_group("Source Files" FILES ${POINTS2GRID_CPP})
 # ---------------------------
 
 set(P2G_LIB_NAME pts2grd)
-add_library(${P2G_LIB_NAME} SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
+add_library(${P2G_LIB_NAME} STATIC ${LIBRARY_CPP} ${POINTS2GRID_HPP})
 target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
 
 if (BZIP2_FOUND)
