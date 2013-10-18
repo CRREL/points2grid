@@ -72,8 +72,13 @@ IF(LIBLAS_INCLUDE_DIR)
   SET(LIBLAS_VERSION 0)
 
   SET(LIBLAS_VERSION_H "${LIBLAS_INCLUDE_DIR}/liblas/version.hpp")
-  FILE(READ ${LIBLAS_VERSION_H} LIBLAS_VERSION_H_CONTENTS)
-
+  if (EXISTS ${LIBLAS_VERSION_H})
+      FILE(READ ${LIBLAS_VERSION_H} LIBLAS_VERSION_H_CONTENTS)
+  else()
+      SET(LIBLAS_VERSION_H "${LIBLAS_INCLUDE_DIR}/liblas/capi/las_version.h")
+      FILE(READ ${LIBLAS_VERSION_H} LIBLAS_VERSION_H_CONTENTS)
+  endif()
+      
   IF (DEFINED LIBLAS_VERSION_H_CONTENTS)
   
     # string will be something like "106000", which is xyyzzz (x=major, y=minor, z=patch)
