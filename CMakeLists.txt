@@ -61,13 +61,7 @@ endif()
 find_package(CURL)
 include_directories(${CURL_INCLUDE_DIRS})
 
-# PDAL and libLAS
-# ---------------
 
-find_package(LibLAS)
-if (LIBLAS_FOUND)
-    include_directories(${LIBLAS_INCLUDE_DIR})
-endif()
 
 # bzip2
 # -----
@@ -157,12 +151,6 @@ source_group("Source Files" FILES ${POINTS2GRID_CPP})
 set(P2G_LIB_NAME pts2grd)
 add_library(${P2G_LIB_NAME} SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
 target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
-
-if (PDAL_FOUND)
-  target_link_libraries(${P2G_LIB_NAME} ${PDAL_LIBRARY})
-else()
-  target_link_libraries(${P2G_LIB_NAME} ${LIBLAS_LIBRARIES})
-endif()
 
 if (BZIP2_FOUND)
   target_link_libraries(${P2G_LIB_NAME} ${BZIP2_LIBRARIES})
