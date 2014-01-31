@@ -1,25 +1,8 @@
 PREREQUISITES
 -------------
-Points2Grid depends on some external libraries to get the job done -
+Points2Grid depends on external libraries to get the job done -
 
-either 
-
-1) PDAL: Please install PDAL from https://github.com/PDAL/PDAL. Points2Grid has
-   been tested to work with version 0.1.0 of PDAL.
-   
-   PDAL is required for certain advanced features of points2grid to work.
-   
-or
-
-2) liblas: Please install liblas from http://liblas.org. Points2Grid has
-   been tested to work with version 1.2.1 of liblas, and possibly some later ones too.
-   
-   liblas is being superseded by PDAL.  later versions of points2grid will drop support
-   for liblas, and you will need to upgrade your system.
-
-If you'd like to be able to retrieve files from remote URLS, you'll also need: 
-
-3) curl: Please install libcurl from http://curl.haxx.se/. Points2Grid has
+1) curl: Please install libcurl from http://curl.haxx.se/. Points2Grid has
 been tested to work with version 7.20.0 of libcurl.
 
 CONFIGURATION
@@ -33,17 +16,26 @@ resulting in significantly worse performance.
 COMPILATION
 -----------
 
-If you have installed curl and liblas at non-standard locations, please set
-your CPLUS_INCLUDE_PATH and LIBRARY_PATH to respectively point to the
-locations of the include files and libraries of the installed software
-pre-requisites.
+If you have installed libraries at non-standard locations, please set
+your CMAKE_PREFIX_PATH environment variable to respectively point to the
+parent directory of the include files and libraries of the installed software
+pre-requisites. Multiple paths can be separated with the platform-specific path
+delimiter.
+
+Example (Unix, bash): export CMAKE_PREFIX_PATH=/opt/curl:/other/prefix
+
+If you define CMAKE_PREFIX_PATH as a command line option to `cmake`, you need to
+use the CMake list delimiter, i.e. a semicolon.
+
+Example: cmake .. -DCMAKE_PREFIX_PATH="/opt/curl;/other/prefix"
 
 To compile points2grid, simply use the standard cmake procedures:
 
 mkdir build # make a build folder
 cd build
-cmake ..
+cmake .. [-DCMAKE_INSTALL_PREFIX="/install/prefix"]
 make
+make install
 
 The software has been confirmed to work with gcc3 and gcc4 on Linux, Solaris
-and OSX. 
+and OSX, and with clang on OSX. 
