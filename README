@@ -24,7 +24,7 @@ Please read the INSTALL file for details on the installation process.
 
 USE
 ---
-If any of your pre-requisites (curl, liblas, or PDAL) are installed on non-standard
+If any of your pre-requisites (curl) are installed on non-standard
 location, please set your LD_LIBRARY_PATH accordingly. 
 
 To view complete usage information, please type "./points2grid" from the
