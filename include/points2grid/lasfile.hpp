@@ -15,8 +15,8 @@
 
 
 
-#ifndef INCLUDED_HEXER_LASFILE_HPP
-#define INCLUDED_HEXER_LASFILE_HPP
+#ifndef INCLUDED_P2G_LASFILE_HPP
+#define INCLUDED_P2G_LASFILE_HPP
 
 #include <boost/noncopyable.hpp>
 #include <boost/interprocess/file_mapping.hpp>
@@ -111,12 +111,16 @@ public:
 			return points_struct_size_;
 
 		switch(points_format_id_) {
-		case 2:
-			return 26;
-		case 3:
-			return 26+2;
-		default:
-			break;
+    		case 0:
+    			return 20;
+    		case 1:
+    			return 28;
+    		case 2:
+    			return 26;
+    		case 3:
+    			return 28+6;
+    		default:
+    			break;
 		}
 		throw std::runtime_error("Unknown point format");
 	}
