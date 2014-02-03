@@ -333,7 +333,7 @@ int Interpolation::interpolation(char *inputName,
         
         size_t count = las.points_count();
         size_t index(0);
-        while (count < index) {
+        while (index < count) {
             data_x = las.getX(index);
             data_y = las.getY(index);
             data_z = las.getZ(index);
@@ -345,6 +345,7 @@ int Interpolation::interpolation(char *inputName,
                 cout << "interp->update() error while processing " << endl;
                 return -1;
             }
+            index++;
         }
         
 
