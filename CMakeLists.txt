@@ -28,9 +28,6 @@ set (P2G_VERSION_STRING "${P2G_VERSION_MAJOR}.${P2G_VERSION_MINOR}.${P2G_VERSION
 # Boost (required) 
 # ----------------
 
-set(Boost_USE_STATIC_LIBS        OFF)
-set(Boost_USE_MULTITHREADED      ON)
-set(Boost_USE_STATIC_RUNTIME    OFF)
 find_package( Boost 1.40 COMPONENTS iostreams program_options system filesystem REQUIRED )
 
 if(Boost_FOUND
