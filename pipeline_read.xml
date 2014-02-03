@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<Pipeline version="1.0">
-    <Reader type="drivers.las.reader">
-        <Option name="filename">
-            example.las
-        </Option>
-    </Reader>
-</Pipeline>
