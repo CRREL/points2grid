@@ -1,1 +1,1 @@
-./points2grid -i pipeline_read.xml -o example
+./points2grid -i example.las -o output
