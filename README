@@ -18,6 +18,18 @@ cells in the DEM that have null values.
 More information about Points2Grid (SVN, downloads, mailing list) can be found
 at: http://www.opentopography.org/index.php/resources/otforge/points2grid.
 
+HISTORY
+-------
+
+The points2grid source tree at CRREL's github repository is a fork 
+of the work that was done at ASU and OpenTopography. It is probably the 
+most up-to-date version of the code at this time. Note that CRREL has 
+not functionally changed the algorithms, however, and most of the 
+tweaks have been in how points2grid gets its data. This CRREL edition 
+contains its own LAS-reading code to eliminate all significant 
+external dependencies. This points2grid tree can also be linked to PDAL 
+as a PDAL writer to output grids using PDAL data sources.
+
 INSTALLATION
 ------------
 Please read the INSTALL file for details on the installation process.
