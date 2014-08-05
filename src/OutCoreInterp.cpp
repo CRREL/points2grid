@@ -678,7 +678,7 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
         return;
     }
 
-    if(coord < gf->getMemSize() && coord >= 0)
+    if(coord < gf->getMemSize() && coord > 0)
     {
         if(gf->interp[coord].Zmin > data_z)
             gf->interp[coord].Zmin = data_z;
@@ -1141,7 +1141,7 @@ void OutCoreInterp::finalize()
 void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
     const char *pfx = "grd";
     char *tname = NULL;
-
+    char tname_template[] = "/tmp/p2gXXXXXX";
 #ifdef _WIN32
     char dir[MAX_PATH];
     DWORD gtpRetVal;
@@ -1165,7 +1165,9 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
         break;
     }
 #else
-    tname = tempnam(NULL, pfx);
+
+    tname = mktemp(tname_template);
+    // tname = tempnam(NULL, pfx);
     if (tname == NULL) {
         throw std::logic_error("Could not create temporary file.");
     }
