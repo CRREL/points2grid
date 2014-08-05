@@ -119,6 +119,9 @@ if(WIN32)
       add_definitions(-D_CRT_SECURE_NO_WARNINGS)
       add_definitions(-D_CRT_NONSTDC_NO_WARNING)
       add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+      add_definitions(-DBOOST_ALL_NO_LIB)
+	  add_definitions(-DBOOST_PROGRAM_OPTIONS_DYN_LINK)
+	  
   endif()
 endif()
 
@@ -170,9 +173,14 @@ source_group("Source Files" FILES ${POINTS2GRID_CPP})
 # build the actual executable
 # ---------------------------
 
+
 set(P2G_LIB_NAME pts2grd)
 add_library(${P2G_LIB_NAME} SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
 target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
+if (WIN32)
+set_target_properties(${P2G_LIB_NAME} PROPERTIES
+     COMPILE_DEFINITIONS P2G_DLL_EXPORT)
+endif()
 
 if (BZIP2_FOUND)
   target_link_libraries(${P2G_LIB_NAME} ${BZIP2_LIBRARIES})
@@ -187,7 +195,11 @@ endif()
 
 
 add_executable(points2grid ${APPS_DIR}/points2grid.cpp)
-target_link_libraries(points2grid ${P2G_LIB_NAME})
+target_link_libraries(points2grid ${P2G_LIB_NAME}  )
+if (WIN32)
+set_target_properties(points2grid PROPERTIES
+     COMPILE_DEFINITIONS P2G_DLL_IMPORT)
+endif()
 
   
 # install the executable

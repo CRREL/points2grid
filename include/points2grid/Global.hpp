@@ -42,7 +42,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 
-P2G_DLL static const unsigned int OUTPUT_TYPE_MIN = 0x00000001;
+static const unsigned int OUTPUT_TYPE_MIN = 0x00000001;
 static const unsigned int OUTPUT_TYPE_MAX = 0x00000010;
 static const unsigned int OUTPUT_TYPE_MEAN = 0x00000100;
 static const unsigned int OUTPUT_TYPE_IDW = 0x00001000;

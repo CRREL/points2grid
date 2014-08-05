@@ -66,7 +66,11 @@ GridFile::GridFile(int id, char *fname, int size_x, int size_y)
 GridFile::~GridFile()
 {
     unmap();
+#ifdef _WIN32
+    _unlink(m_filename.c_str());
+#else
     unlink(m_filename.c_str());
+#endif
 }
 
 int GridFile::getId()

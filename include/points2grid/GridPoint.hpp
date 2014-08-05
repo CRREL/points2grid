@@ -48,7 +48,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <points2grid/export.hpp>
 
-typedef struct 
+typedef P2G_DLL struct 
 {
     double Zmin;
     double Zmax;
