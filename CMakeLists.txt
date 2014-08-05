@@ -4,8 +4,14 @@
 cmake_minimum_required(VERSION 2.6)
 project(points2grid)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules" ${CMAKE_MODULE_PATH} )
-
 set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
+
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+set(CMAKE_SKIP_RPATH ON)
+endif()
+if (CMAKE_MAJOR_VERSION GREATER 2)
+    cmake_policy(SET CMP0042 OLD)
+endif()
 
 # set build type
 # ==============
@@ -34,6 +40,14 @@ if(Boost_FOUND
   AND Boost_IOSTREAMS_FOUND
   AND Boost_PROGRAM_OPTIONS_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
+
+  if(WIN32)
+    if (MSVC)
+      set(Boost_USE_STATIC_LIBS   ON)
+      set(Boost_USE_MULTITHREADED ON)
+    endif(MSVC)
+  endif(WIN32)
+  
 endif()
 
 # make these available for the user to set.
@@ -99,6 +113,15 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   endif()
 endif()
 
+if(WIN32)
+  if (MSVC)
+      add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+      add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+      add_definitions(-D_CRT_NONSTDC_NO_WARNING)
+      add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+  endif()
+endif()
+
 # and now the actual project that we'll build
 # ===========================================
 
@@ -159,7 +182,7 @@ if (APPLE)
   set_target_properties(
     ${P2G_LIB_NAME}
     PROPERTIES
-    INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+    INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_RPATH ON)
 endif()
 
 
