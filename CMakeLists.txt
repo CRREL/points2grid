@@ -34,20 +34,19 @@ set (P2G_VERSION_STRING "${P2G_VERSION_MAJOR}.${P2G_VERSION_MINOR}.${P2G_VERSION
 # Boost (required) 
 # ----------------
 
+  if(WIN32)
+    if (MSVC)
+      set(Boost_USE_STATIC_LIBS   ON)
+      set(Boost_USE_MULTITHREADED ON)
+      set(Boost_USE_STATIC_RUNTIME    OFF)
+    endif(MSVC)
+  endif(WIN32)
 find_package( Boost 1.40 COMPONENTS iostreams program_options system filesystem REQUIRED )
 
 if(Boost_FOUND
   AND Boost_IOSTREAMS_FOUND
   AND Boost_PROGRAM_OPTIONS_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
-
-  if(WIN32)
-    if (MSVC)
-      set(Boost_USE_STATIC_LIBS   ON)
-      set(Boost_USE_MULTITHREADED ON)
-    endif(MSVC)
-  endif(WIN32)
-  
 endif()
 
 # make these available for the user to set.
@@ -118,10 +117,7 @@ if(WIN32)
       add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
       add_definitions(-D_CRT_SECURE_NO_WARNINGS)
       add_definitions(-D_CRT_NONSTDC_NO_WARNING)
-      add_definitions(-D_SCL_SECURE_NO_WARNINGS)
-      add_definitions(-DBOOST_ALL_NO_LIB)
-	  add_definitions(-DBOOST_PROGRAM_OPTIONS_DYN_LINK)
-	  
+      add_definitions(-D_SCL_SECURE_NO_WARNINGS)	  
   endif()
 endif()
 
