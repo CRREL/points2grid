@@ -44,10 +44,11 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _CORE_INTERP_H_
-#define _CORE_INTERP_H_
+#pragma once
 
-class CoreInterp
+#include <points2grid/export.hpp>
+
+class P2G_DLL CoreInterp
 {
 public:
     CoreInterp() {};
@@ -74,4 +75,3 @@ protected:
     int window_size;
 };
 
-#endif

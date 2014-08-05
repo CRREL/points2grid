@@ -44,8 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _INTERP_H_
-#define _INTERP_H_
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -57,6 +56,7 @@ using namespace std;
 #include <points2grid/CoreInterp.hpp>
 #include <points2grid/OutCoreInterp.hpp>
 #include <points2grid/InCoreInterp.hpp>
+#include <points2grid/export.hpp>
 
 //class GridPoint;
 
@@ -109,4 +109,3 @@ private:
     CoreInterp *interp;
 };
 
-#endif

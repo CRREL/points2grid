@@ -44,16 +44,16 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _IN_CORE_INTERP_H_
-#define _IN_CORE_INTERP_H_
+#pragma once
 
 #include <iostream>
 #include <points2grid/GridPoint.hpp>
 #include <points2grid/CoreInterp.hpp>
+#include <points2grid/GridFile.hpp>
 
 using namespace std;
 
-class InCoreInterp : public CoreInterp
+class P2G_DLL InCoreInterp : public CoreInterp
 {
 public:
     InCoreInterp() {};
@@ -84,4 +84,3 @@ private:
     int outputFile(char *outputName, int outputFormat, unsigned int outputType);
 };
 
-#endif

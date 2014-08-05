@@ -44,8 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _GRID_MAP_H_
-#define _GRID_MAP_H_
+#pragma once
 
 #include <iostream>
 #include <fstream>
@@ -54,7 +53,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <points2grid/GridFile.hpp>
 
-class GridMap
+class P2G_DLL GridMap
 {
 public:
     GridMap(int id,
@@ -96,4 +95,3 @@ private:
     GridFile * m_gridFile;
 };
 
-#endif

@@ -44,17 +44,17 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _GRID_FILE_H_
-#define _GRID_FILE_H_
+#pragma once
 
 #include <iostream>
 #include <fstream>
 #include <boost/iostreams/device/mapped_file.hpp>
 #include <points2grid/GridPoint.hpp>
+#include <points2grid/export.hpp>
 
 using namespace std;
 
-class GridFile
+class P2G_DLL GridFile
 {
 public:
     GridFile(int id, char *fname, int size_x, int size_y);
@@ -79,5 +79,3 @@ private:
     bool m_firstMap;
     std::string m_filename;
 };
-
-#endif

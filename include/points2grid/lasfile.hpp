@@ -15,8 +15,7 @@
 
 
 
-#ifndef INCLUDED_P2G_LASFILE_HPP
-#define INCLUDED_P2G_LASFILE_HPP
+#pragma once
 
 #include <boost/noncopyable.hpp>
 #include <boost/interprocess/file_mapping.hpp>
@@ -26,9 +25,11 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <points2grid/export.hpp>
 
 
-class las_file : public boost::noncopyable {
+
+class P2G_DLL las_file : public boost::noncopyable {
 public:
 	las_file() : is_open_(false) {
     }
@@ -230,4 +231,3 @@ private:
     bool is_open_;
 };
 
-#endif // __HEXER_LAS_H__

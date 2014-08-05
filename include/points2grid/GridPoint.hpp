@@ -44,8 +44,9 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _GRID_POINT_H_
-#define _GRID_POINT_H_
+#pragma once
+
+#include <points2grid/export.hpp>
 
 typedef struct 
 {
@@ -61,4 +62,3 @@ typedef struct
     int filled;
 } GridPoint;
 
-#endif

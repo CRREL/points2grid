@@ -44,8 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _OUT_CORE_INTERP_H_
-#define _OUT_CORE_INTERP_H_
+#pragma once
 
 #include <string.h>
 #include <string>
@@ -57,12 +56,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #include <points2grid/GridPoint.hpp>
 #include <points2grid/GridMap.hpp>
+#include <points2grid/export.hpp>
 
 using namespace std;
 
 class UpdateInfo;
 
-class OutCoreInterp : public CoreInterp
+class P2G_DLL OutCoreInterp : public CoreInterp
 {
 public:
     OutCoreInterp() {};
@@ -119,4 +119,3 @@ public:
     double data_z;
 };
 
-#endif

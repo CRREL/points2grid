@@ -40,10 +40,9 @@ POSSIBILITY OF SUCH DAMAGE.
 *
 */
 
-#ifndef _GLOBAL_H_
-#define _GLOBAL_H_
+#pragma once
 
-static const unsigned int OUTPUT_TYPE_MIN = 0x00000001;
+P2G_DLL static const unsigned int OUTPUT_TYPE_MIN = 0x00000001;
 static const unsigned int OUTPUT_TYPE_MAX = 0x00000010;
 static const unsigned int OUTPUT_TYPE_MEAN = 0x00000100;
 static const unsigned int OUTPUT_TYPE_IDW = 0x00001000;
@@ -67,4 +66,4 @@ enum INTERPOLATION_TYPE {
     INTERP_INCORE = 1,
     INTERP_OUTCORE = 2
 };
-#endif
+
