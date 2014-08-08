@@ -8,4 +8,7 @@
 #else
 #   define P2G_DLL
 #endif
+
+#else
+#    define P2G_DLL
 #endif
