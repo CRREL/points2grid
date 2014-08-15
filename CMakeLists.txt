@@ -67,6 +67,22 @@ if(Boost_SEMVER VERSION_LESS 1.44.0)
   set(OLD_BOOST_IOSTREAMS TRUE)
 endif()
 
+# GDAL/OGR support - optional, default=ON
+option(WITH_GDAL "Choose if GDAL support should be built" TRUE)
+if(WITH_GDAL)
+  find_package(GDAL 1.9.0)
+  if (GDAL_FOUND)
+    set(HAVE_GDAL 1)
+    include_directories("${GDAL_INCLUDE_DIR}")
+    mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
+    mark_as_advanced(CLEAR GDAL_LIBRARY)
+    message(STATUS "...building with GDAL")
+  else()
+    set(WITH_GDAL FALSE)
+    set(GDAL_LIBRARY "")
+  endif()
+endif()
+
 # cURL (optional)
 # ---------------
 
@@ -180,6 +196,10 @@ endif()
 
 if (BZIP2_FOUND)
   target_link_libraries(${P2G_LIB_NAME} ${BZIP2_LIBRARIES})
+endif()
+
+if (GDAL_FOUND)
+  target_link_libraries(${P2G_LIB_NAME} ${GDAL_LIBRARIES})
 endif()
 
 if (APPLE)

@@ -45,6 +45,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 
+#include <points2grid/config.h>
 #include <points2grid/Interpolation.hpp>
 #include <points2grid/Global.hpp>
 #include <points2grid/GridPoint.hpp>
@@ -55,6 +56,11 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <float.h>
 #include <math.h>
+
+#ifdef HAVE_GDAL
+#include "gdal_priv.h"
+#include "ogr_spatialref.h"
+#endif
 
 InCoreInterp::InCoreInterp(double dist_x, double dist_y,
                            int size_x, int size_y,
@@ -168,6 +174,11 @@ int InCoreInterp::update(double data_x, double data_y, double data_z)
 
 int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int outputType)
 {
+  return finish(outputName, outputFormat, outputType, 0, 0);
+}
+
+int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
+{
     int rc;
     int i,j;
 
@@ -257,7 +268,7 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
 
     t0 = clock();
 
-    if((rc = outputFile(outputName, outputFormat, outputType)) < 0)
+    if((rc = outputFile(outputName, outputFormat, outputType, adfGeoTransform, wkt)) < 0)
     {
         cout << "InCoreInterp::finish outputFile error" << endl;
         return -1;
@@ -447,7 +458,7 @@ void InCoreInterp::printArray()
     cout << endl;
 }
 
-int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int outputType)
+int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
 {
     int i,j,k;
 
@@ -701,6 +712,124 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
                     fprintf(gridFiles[k], "\n");
             }
     }
+
+#ifdef HAVE_GDAL
+    GDALDataset **gdalFiles;
+    char gdalFileName[1024];
+    
+    // open GDAL GeoTIFF files
+    if(outputFormat == OUTPUT_FORMAT_GDAL_GTIFF || outputFormat == OUTPUT_FORMAT_ALL)
+    {
+        GDALAllRegister();
+
+        if((gdalFiles = (GDALDataset **)malloc(sizeof(GDALDataset *) *  numTypes)) == NULL)
+        {
+            cout << "File array allocation error" << endl;
+            return -1;
+        }
+
+        for(i = 0; i < numTypes; i++)
+        {
+            if(outputType & type[i])
+            {
+                strncpy(gdalFileName, outputName, sizeof(gdalFileName));
+                strncat(gdalFileName, ext[i], strlen(ext[i]));
+                strncat(gdalFileName, ".tif", strlen(".tif"));
+
+                char **papszMetadata;
+                const char *pszFormat = "GTIFF";
+                GDALDriver* tpDriver = GetGDALDriverManager()->GetDriverByName(pszFormat);
+
+                if (tpDriver)
+                {
+                    papszMetadata = tpDriver->GetMetadata();
+                    if (CSLFetchBoolean(papszMetadata, GDAL_DCAP_CREATE, FALSE))
+                    {
+                        char **papszOptions = NULL;
+                        gdalFiles[i] = tpDriver->Create(gdalFileName, GRID_SIZE_X, GRID_SIZE_Y, 1, GDT_Float32, papszOptions);
+                        if (gdalFiles[i] == NULL)
+                        {
+                            cout << "File open error: " << gdalFileName << endl;
+                            return -1;
+                        } else {
+                            if (adfGeoTransform)
+                                gdalFiles[i]->SetGeoTransform(adfGeoTransform);
+                            if (wkt)
+                                gdalFiles[i]->SetProjection(wkt);
+                        }
+                    }
+                }
+            } else {
+                gdalFiles[i] = NULL;
+            }
+        }
+    } else {
+      gdalFiles = NULL;
+    }
+
+    if (gdalFiles != NULL)
+    {
+        for (i = 0; i < numTypes; i++)
+        {
+            if (gdalFiles[i] != NULL)
+            {
+                float *poRasterData = new float[GRID_SIZE_X*GRID_SIZE_Y];
+                for (int j = 0; j < GRID_SIZE_X*GRID_SIZE_Y; j++)
+                {
+                    poRasterData[j] = 0;
+                }
+
+                for(j = GRID_SIZE_Y - 1; j >= 0; j--)
+                {
+                    for(k = 0; k < GRID_SIZE_X; k++)
+                    {
+                        int index = j * GRID_SIZE_X + k;
+
+                        if(interp[k][j].empty == 0 &&
+                                interp[k][j].filled == 0)
+                        {
+                            poRasterData[index] = -9999.f;
+                        } else {
+                            switch (i)
+                            {
+                                case 0:
+                                    poRasterData[index] = interp[k][j].Zmin;
+                                    break;
+
+                                case 1:
+                                    poRasterData[index] = interp[k][j].Zmax;
+                                    break;
+
+                                case 2:
+                                    poRasterData[index] = interp[k][j].Zmean;
+                                    break;
+
+                                case 3:
+                                    poRasterData[index] = interp[k][j].Zidw;
+                                    break;
+
+                                case 4:
+                                    poRasterData[index] = interp[k][j].count;
+                                    break;
+
+                                case 5:
+                                    poRasterData[index] = interp[k][j].Zstd;
+                                    break;
+                            }
+                        }
+                    }
+                }
+                GDALRasterBand *tBand = gdalFiles[i]->GetRasterBand(1);
+                tBand->SetNoDataValue(-9999.f);
+
+                if (GRID_SIZE_X > 0 && GRID_SIZE_Y > 0)
+                    tBand->RasterIO(GF_Write, 0, 0, GRID_SIZE_X, GRID_SIZE_Y, poRasterData, GRID_SIZE_X, GRID_SIZE_Y, GDT_Float32, 0, 0);
+                GDALClose((GDALDatasetH) gdalFiles[i]);
+                delete [] poRasterData;
+            }
+        }
+    }
+#endif // HAVE_GDAL
 
     // close files
     if(gridFiles != NULL)

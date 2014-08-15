@@ -52,12 +52,18 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <stdexcept>
 
+#include <points2grid/config.h>
 #include <points2grid/OutCoreInterp.hpp>
 #include <points2grid/Interpolation.hpp>
 #include <points2grid/Global.hpp>
 
 #ifdef _WIN32
 #include <windows.h>
+#endif
+
+#ifdef HAVE_GDAL
+#include "gdal_priv.h"
+#include "ogr_spatialref.h"
 #endif
 
 OutCoreInterp::OutCoreInterp(double dist_x, double dist_y,
@@ -258,6 +264,11 @@ int OutCoreInterp::update(double data_x, double data_y, double data_z)
 }
 
 int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outputType)
+{
+    return finish(outputName, outputFormat, outputType, 0, 0);
+}
+
+int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
 {
     int i, j;
     GridPoint *p;
@@ -501,7 +512,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
     //t0 = times(&tbuf);
 
     // merge pieces into one file
-    if(outputFile(outputName, outputFormat, outputType) < 0)
+    if(outputFile(outputName, outputFormat, outputType, adfGeoTransform, wkt) < 0)
     {
         cout << "OutCoreInterp::finish outputFile error" << endl;
         return -1;
@@ -678,7 +689,7 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
         return;
     }
 
-    if(coord < gf->getMemSize() && coord > 0)
+    if(coord < gf->getMemSize() && coord >= 0)
     {
         if(gf->interp[coord].Zmin > data_z)
             gf->interp[coord].Zmin = data_z;
@@ -708,13 +719,13 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
             // do nothing
         }
     } else {
-        cout << "OutCoreInterp::updateGridPoint() Memory Access Violation!" << endl;
+        cout << "OutCoreInterp::updateGridPoint() Memory Access Violation! " << endl;
     }
 }
 
-int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int outputType)
+int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
 {
-    int i, j, k, l;
+    int i, j, k, l, t;
 
     FILE **arcFiles;
     char arcFileName[1024];
@@ -820,7 +831,6 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
             }
         }
     }
-
 
     for(i = numFiles -1; i >= 0; i--)
     {
@@ -988,6 +998,136 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
 
         gf->unmap();
     }
+
+#ifdef HAVE_GDAL
+    GDALDataset **gdalFiles;
+    char gdalFileName[1024];
+
+    // open GDAL GeoTIFF files
+    if(outputFormat == OUTPUT_FORMAT_GDAL_GTIFF || outputFormat == OUTPUT_FORMAT_ALL)
+    {
+        GDALAllRegister();
+
+        if((gdalFiles = (GDALDataset **)malloc(sizeof(GDALDataset *) *  numTypes)) == NULL)
+        {
+            cout << "File array allocation error" << endl;
+            return -1;
+        }
+
+        for(i = 0; i < numTypes; i++)
+        {
+            if(outputType & type[i])
+            {
+                strncpy(gdalFileName, outputName, sizeof(gdalFileName));
+                strncat(gdalFileName, ext[i], strlen(ext[i]));
+                strncat(gdalFileName, ".tif", strlen(".tif"));
+
+                char **papszMetadata;
+                const char *pszFormat = "GTIFF";
+                GDALDriver* tpDriver = GetGDALDriverManager()->GetDriverByName(pszFormat);
+
+                if (tpDriver)
+                {
+                    papszMetadata = tpDriver->GetMetadata();
+                    if (CSLFetchBoolean(papszMetadata, GDAL_DCAP_CREATE, FALSE))
+                    {
+                        char **papszOptions = NULL;
+                        gdalFiles[i] = tpDriver->Create(gdalFileName, GRID_SIZE_X, GRID_SIZE_Y, 1, GDT_Float32, papszOptions);
+                        if (gdalFiles[i] == NULL)
+                        {
+                            cout << "File open error: " << gdalFileName << endl;
+                            return -1;
+                        } else {
+                            if (adfGeoTransform)
+                                gdalFiles[i]->SetGeoTransform(adfGeoTransform);
+                            if (wkt)
+                                gdalFiles[i]->SetProjection(wkt);
+                        }
+                    }
+                }
+            } else {
+                gdalFiles[i] = NULL;
+            }
+        }
+    } else {
+      gdalFiles = NULL;
+    }
+
+    if(gdalFiles != NULL)
+    {
+        for(t = 0; t < numTypes; t++)
+        {
+            if(gdalFiles[t] != NULL)
+            {
+                for(i = numFiles -1; i >= 0; i--)
+                {
+                    GridFile *gf = gridMap[i]->getGridFile();
+                    gf->map();
+
+                    int start = gridMap[i]->getLowerBound() - gridMap[i]->getOverlapLowerBound();
+                    int end = gridMap[i]->getUpperBound() - gridMap[i]->getOverlapLowerBound() + 1;
+
+                    cout << "Merging " << i << ": from " << (start) << " to " << (end) << endl;
+                    cout << "        " << i << ": from " << (start/GRID_SIZE_X) << " to " << (end/GRID_SIZE_X) << endl;
+
+                    float *poRasterData = new float[GRID_SIZE_X*GRID_SIZE_Y];
+                    for (int j = 0; j < GRID_SIZE_X*GRID_SIZE_Y; j++)
+                    {
+                        poRasterData[j] = 0;
+                    }
+
+                    for(j = end - 1; j >= start; j--)
+                    {
+                        for(k = 0; k < GRID_SIZE_X; k++)
+                        {
+                            int index = j * GRID_SIZE_X + k;
+
+                            if(gf->interp[index].empty == 0 &&
+                                    gf->interp[index].filled == 0)
+                            {
+                                poRasterData[index] = -9999.f;
+                             } else {
+                                switch (t)
+                                {
+                                    case 0:
+                                        poRasterData[index] = gf->interp[index].Zmin;
+                                        break;
+
+                                    case 1:
+                                        poRasterData[index] = gf->interp[index].Zmax;
+                                        break;
+
+                                    case 2:
+                                        poRasterData[index] = gf->interp[index].Zmean;
+                                        break;
+
+                                    case 3:
+                                        poRasterData[index] = gf->interp[index].Zidw;
+                                        break;
+
+                                    case 4:
+                                        poRasterData[index] = gf->interp[index].count;
+                                        break;
+
+                                    case 5:
+                                        poRasterData[index] = gf->interp[index].Zstd;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    GDALRasterBand *tBand = gdalFiles[t]->GetRasterBand(1);
+                    tBand->SetNoDataValue(-9999.f);
+
+                    if (GRID_SIZE_X > 0 && GRID_SIZE_Y > 0)
+                        tBand->RasterIO(GF_Write, 0, 0, GRID_SIZE_X, GRID_SIZE_Y, poRasterData, GRID_SIZE_X, GRID_SIZE_Y, GDT_Float32, 0, 0);
+                    GDALClose((GDALDatasetH) gdalFiles[t]);
+                    delete [] poRasterData;
+                }
+            }
+        }
+    }
+#endif // HAVE_GDAL
 
     // close files
     if(gridFiles != NULL)
@@ -1182,7 +1322,8 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
         throw std::logic_error("Temporary file tname was too long for program buffer, aborting.");
     }
 
-    free(tname);
+    // tname was not malloc'd, so free fails
+    //free(tname);
 }
 
 /*
