@@ -17,21 +17,21 @@ endif()
 # ==============
 
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING 
+    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
         "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel" FORCE)
 endif()
 message(STATUS "Setting ${CMAKE_PROJECT_NAME} build type - ${CMAKE_BUILD_TYPE}")
 
 set (P2G_VERSION_MAJOR 1)
-set (P2G_VERSION_MINOR 2)
-set (P2G_VERSION_PATCH 2)
+set (P2G_VERSION_MINOR 3)
+set (P2G_VERSION_PATCH 0)
 
 set (P2G_VERSION_STRING "${P2G_VERSION_MAJOR}.${P2G_VERSION_MINOR}.${P2G_VERSION_PATCH}")
 
 # setup dependencies
 # ==================
 
-# Boost (required) 
+# Boost (required)
 # ----------------
 
   if(WIN32)
@@ -50,9 +50,9 @@ if(Boost_FOUND
 endif()
 
 # make these available for the user to set.
-mark_as_advanced(CLEAR Boost_INCLUDE_DIR) 
-mark_as_advanced(CLEAR Boost_LIBRARY_DIRS) 
-link_directories(${Boost_LIBRARY_DIRS}) 
+mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
+mark_as_advanced(CLEAR Boost_LIBRARY_DIRS)
+link_directories(${Boost_LIBRARY_DIRS})
 
 set(Boost_SEMVER
   ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}
@@ -74,7 +74,7 @@ if(WITH_GDAL)
   if (GDAL_FOUND)
     set(HAVE_GDAL 1)
     include_directories("${GDAL_INCLUDE_DIR}")
-    mark_as_advanced(CLEAR GDAL_INCLUDE_DIR) 
+    mark_as_advanced(CLEAR GDAL_INCLUDE_DIR)
     mark_as_advanced(CLEAR GDAL_LIBRARY)
     message(STATUS "...building with GDAL")
   else()
@@ -133,7 +133,7 @@ if(WIN32)
       add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
       add_definitions(-D_CRT_SECURE_NO_WARNINGS)
       add_definitions(-D_CRT_NONSTDC_NO_WARNING)
-      add_definitions(-D_SCL_SECURE_NO_WARNINGS)	  
+      add_definitions(-D_SCL_SECURE_NO_WARNINGS)
   endif()
 endif()
 
@@ -152,7 +152,7 @@ set(DEFAULT_INCLUDE_SUBDIR include)
 
 set(DEFAULT_BIN_SUBDIR bin)
 set(DEFAULT_LIB_SUBDIR lib)
-  
+
 set(LIBRARY_CPP
   ${SRC_DIR}/GridFile.cpp
   ${SRC_DIR}/GridMap.cpp
@@ -171,7 +171,7 @@ set(POINTS2GRID_HPP
   ${INCLUDE_DIR}/GridFile.hpp
   ${INCLUDE_DIR}/GridMap.hpp
   ${INCLUDE_DIR}/GridPoint.hpp
-  ${INCLUDE_DIR}/InCoreInterp.hpp    
+  ${INCLUDE_DIR}/InCoreInterp.hpp
 )
 
 # setup source groups
@@ -217,7 +217,7 @@ set_target_properties(points2grid PROPERTIES
      COMPILE_DEFINITIONS P2G_DLL_IMPORT)
 endif()
 
-  
+
 # install the executable
 # ----------------------
 
@@ -226,7 +226,7 @@ install(TARGETS points2grid
   LIBRARY DESTINATION ${DEFAULT_LIB_SUBDIR}
   ARCHIVE DESTINATION ${DEFAULT_LIB_SUBDIR})
 
-install(TARGETS ${P2G_LIB_NAME} 
+install(TARGETS ${P2G_LIB_NAME}
   RUNTIME DESTINATION ${DEFAULT_BIN_SUBDIR}
   LIBRARY DESTINATION ${DEFAULT_LIB_SUBDIR}
   ARCHIVE DESTINATION ${DEFAULT_LIB_SUBDIR})

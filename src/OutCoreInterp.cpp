@@ -395,7 +395,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
 		gf->interp[j + offset].Zstd += p[j].Zstd;
                 gf->interp[j + offset].Zstd_tmp += p[j].Zstd_tmp;
 		*/
-		
+
                 if (p[j].sum != -1) {
                     gf->interp[j + offset].Zidw += p[j].Zidw;
                     gf->interp[j + offset].sum += p[j].sum;
@@ -689,7 +689,7 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
         return;
     }
 
-    if(coord < gf->getMemSize() && coord >= 0)
+    if(coord < gf->getMemSize() && coord != 0)
     {
         if(gf->interp[coord].Zmin > data_z)
             gf->interp[coord].Zmin = data_z;
@@ -705,7 +705,7 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
 	gf->interp[coord].Zstd_tmp += delta/gf->interp[coord].count;
 	gf->interp[coord].Zstd += delta * (data_z - gf->interp[coord].Zstd_tmp);
 	*/
-	
+
 	double dist = pow(distance, Interpolation::WEIGHTER);
         if (gf->interp[coord].sum != -1) {
             if (dist != 0) {
@@ -1221,7 +1221,7 @@ void OutCoreInterp::finalize()
 	  gf->interp[i].Zstd = 0;
 	}
 	*/
-	
+
 	if(gf->interp[i].sum != 0 && gf->interp[i].sum != -1)
             gf->interp[i].Zidw /= gf->interp[i].sum;
         else if (gf->interp[i].sum == -1) {
