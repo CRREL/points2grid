@@ -520,7 +520,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
 
     t1 = clock();
     //t1 = times(&tbuf);
-    cerr << "Output Execution time: " << (double)(t1 - t0)/CLOCKS_PER_SEC) << std::endl;
+    cerr << "Output Execution time: " << (double)(t1 - t0)/CLOCKS_PER_SEC << std::endl;
 
     return 0;
 }

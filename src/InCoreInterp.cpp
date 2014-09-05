@@ -276,7 +276,7 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
 
     t1 = clock();
 
-    cerr << "Output Execution time: " << (double)(t1 - t0)/ CLOCKS_PER_SEC)<< std::endl;
+    cerr << "Output Execution time: " << (double)(t1 - t0)/ CLOCKS_PER_SEC << std::endl;
 
 
     return 0;
