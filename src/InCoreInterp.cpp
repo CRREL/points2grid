@@ -276,7 +276,7 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
 
     t1 = clock();
 
-    printf("Output Execution time: %10.2f\n", (double)(t1 - t0)/ CLOCKS_PER_SEC);
+    cerr << "Output Execution time: " << (double)(t1 - t0)/ CLOCKS_PER_SEC)<< std::endl;
 
 
     return 0;
@@ -687,7 +687,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
                     else
                         fprintf(gridFiles[4], "%d ", interp[j][i].count);
 		}
-		
+
                 // count
                 if(gridFiles[5] != NULL)
                 {
@@ -716,7 +716,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
 #ifdef HAVE_GDAL
     GDALDataset **gdalFiles;
     char gdalFileName[1024];
-    
+
     // open GDAL GeoTIFF files
     if(outputFormat == OUTPUT_FORMAT_GDAL_GTIFF || outputFormat == OUTPUT_FORMAT_ALL)
     {
