@@ -100,10 +100,10 @@ OutCoreInterp::OutCoreInterp(double dist_x, double dist_y,
     // numFiles = (GRID_SIZE_X*GRID_SIZE_Y + (2 * overlapSize + 1) * GRID_SIZE_X * numFiles) / MEM_LIMIT;
     // (2 * overlapSize + 1) means, each component has one more row to handle the points in-between two components.
     numFiles = (int)ceil((double)GRID_SIZE_X * GRID_SIZE_Y / (Interpolation::MEM_LIMIT - (2 * overlapSize + 1) * GRID_SIZE_X));
-    cout << "numFiles " << numFiles << endl;
+    cerr << "numFiles " << numFiles << endl;
 
     if(numFiles == 0)
-        cout << "The number of files is 0!" << endl;
+        cerr << "The number of files is 0!" << endl;
 
     // TODO: if one row is too long,
     // i.e. the shape of decomposition is long, and thin in one direction,
@@ -120,7 +120,7 @@ OutCoreInterp::OutCoreInterp(double dist_x, double dist_y,
 
     // construct a map indicating which file corresponds which area
     if((gridMap = new GridMap*[numFiles]) == NULL)
-        cout << "OutCoreInterp::OutCoreInterp() GridMap[] allocation error" << endl;
+        cerr << "OutCoreInterp::OutCoreInterp() GridMap[] allocation error" << endl;
 
     for(i = 0; i < numFiles; i++)
     {
@@ -150,16 +150,16 @@ OutCoreInterp::OutCoreInterp(double dist_x, double dist_y,
                                  false,
                                  fname);
         if(gridMap[i] == NULL)
-            cout << "OutCoreInterp::OutCoreInterp() GridMap alloc error" << endl;
+            cerr << "OutCoreInterp::OutCoreInterp() GridMap alloc error" << endl;
 
-        cout << "[" <<  lower_bound << "," << upper_bound << "]" << endl;
-        cout << "[" << overlap_lower_bound << "," << overlap_upper_bound << "]" << endl;
+        cerr << "[" <<  lower_bound << "," << upper_bound << "]" << endl;
+        cerr << "[" << overlap_lower_bound << "," << overlap_upper_bound << "]" << endl;
     }
 
     // initializing queues
     qlist = new list<UpdateInfo> [numFiles];
     if(qlist == NULL)
-        cout << "OutCoreInterp::OutCoreInterp() qlist alloc error" << endl;
+        cerr << "OutCoreInterp::OutCoreInterp() qlist alloc error" << endl;
 
     openFile = -1;
 
@@ -219,8 +219,8 @@ int OutCoreInterp::update(double data_x, double data_y, double data_z)
     //fileNum = upper_grid_y / local_grid_size_y;
     if((fileNum = findFileNum(data_y)) < 0)
     {
-        cout << "OutCoreInterp::update() findFileNum() error!" << endl;
-        cout << "data_x: " << data_x << " data_y: " << data_y << " grid_y: " << (int)(data_y/GRID_DIST_Y) << " fileNum: " << fileNum << " open file: " << openFile << endl;
+        cerr << "OutCoreInterp::update() findFileNum() error!" << endl;
+        cerr << "data_x: " << data_x << " data_y: " << data_y << " grid_y: " << (int)(data_y/GRID_DIST_Y) << " fileNum: " << fileNum << " open file: " << openFile << endl;
         return -1;
     }
 
@@ -300,7 +300,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
         {
             if((gf = gridMap[i]->getGridFile()) == NULL)
             {
-                cout << "OutCoreInterp::finish() getGridFile() NULL" << endl;
+                cerr << "OutCoreInterp::finish() getGridFile() NULL" << endl;
                 return -1;
             }
 
@@ -330,7 +330,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
 
         if((gf = gridMap[i]->getGridFile()) == NULL)
         {
-            cout << "OutCoreInterp::finish() getGridFile() NULL" << endl;
+            cerr << "OutCoreInterp::finish() getGridFile() NULL" << endl;
             return -1;
         }
 
@@ -342,12 +342,12 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
 
             if((p = (GridPoint *)malloc(sizeof(GridPoint) * len_y * GRID_SIZE_X)) == NULL)
             {
-                cout << "OutCoreInterp::finish() malloc error" << endl;
+                cerr << "OutCoreInterp::finish() malloc error" << endl;
                 return -1;
             }
 
             int start = (gridMap[i]->getOverlapUpperBound() - gridMap[i]->getOverlapLowerBound() - len_y) * GRID_SIZE_X;
-            cout << "copy from " << start << " to " << (start + len_y * GRID_SIZE_X) << endl;
+            cerr << "copy from " << start << " to " << (start + len_y * GRID_SIZE_X) << endl;
 
             memcpy(p, &(gf->interp[start]), sizeof(GridPoint) * len_y * (GRID_SIZE_X) );
 
@@ -356,7 +356,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
             openFile = -1;
 
         } else {
-            cout << "OutCoreInterp::finish() gf->map() error" << endl;
+            cerr << "OutCoreInterp::finish() gf->map() error" << endl;
             return -1;
         }
         //////////////////////////////////////////////////////////////
@@ -365,7 +365,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
         // update (i+1)th component
         if((gf = gridMap[i+1]->getGridFile()) == NULL)
         {
-            cout << "OutCoreInterp::finish() getGridFile() NULL" << endl;
+            cerr << "OutCoreInterp::finish() getGridFile() NULL" << endl;
             return -1;
         }
 
@@ -415,7 +415,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
             openFile = -1;
 
         } else {
-            cout << "OutCoreInterp::finish() gf->map() error" << endl;
+            cerr << "OutCoreInterp::finish() gf->map() error" << endl;
             return -1;
         }
         //////////////////////////////////////////////////////////////
@@ -428,7 +428,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
 
         if((gf = gridMap[i]->getGridFile()) == NULL)
         {
-            cout << "GridFile is NULL" << endl;
+            cerr << "GridFile is NULL" << endl;
             return -1;
         }
 
@@ -439,7 +439,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
 
             if((p = (GridPoint *)malloc(sizeof(GridPoint) * len_y * GRID_SIZE_X)) == NULL)
             {
-                cout << "OutCoreInterp::finish() malloc error" << endl;
+                cerr << "OutCoreInterp::finish() malloc error" << endl;
                 return -1;
             }
 
@@ -451,7 +451,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
             gf = NULL;
             openFile = -1;
         } else {
-            cout << "OutCoreInterp::finish gf->map() error" << endl;
+            cerr << "OutCoreInterp::finish gf->map() error" << endl;
             return -1;
         }
         //////////////////////////////////////////////////////////////
@@ -460,7 +460,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
         // update (i-1)th component
         if((gf = gridMap[i-1]->getGridFile()) == NULL)
         {
-            cout << "GridFile is NULL" << endl;
+            cerr << "GridFile is NULL" << endl;
             return -1;
         }
 
@@ -514,7 +514,7 @@ int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outpu
     // merge pieces into one file
     if(outputFile(outputName, outputFormat, outputType, adfGeoTransform, wkt) < 0)
     {
-        cout << "OutCoreInterp::finish outputFile error" << endl;
+        cerr << "OutCoreInterp::finish outputFile error" << endl;
         return -1;
     }
 
@@ -719,7 +719,7 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
             // do nothing
         }
     } else {
-        cout << "OutCoreInterp::updateGridPoint() Memory Access Violation! " << endl;
+        cerr << "OutCoreInterp::updateGridPoint() Memory Access Violation! " << endl;
     }
 }
 
@@ -743,7 +743,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
     {
         if((arcFiles = (FILE **)malloc(sizeof(FILE *) *  numTypes)) == NULL)
         {
-            cout << "Arc File open error: " << endl;
+            cerr << "Arc File open error: " << endl;
             return -1;
         }
 
@@ -757,7 +757,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
 
                 if((arcFiles[i] = fopen(arcFileName, "w+")) == NULL)
                 {
-                    cout << "File open error: " << arcFileName << endl;
+                    cerr << "File open error: " << arcFileName << endl;
                     return -1;
                 }
             } else {
@@ -773,7 +773,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
     {
         if((gridFiles = (FILE **)malloc(sizeof(FILE *) * numTypes)) == NULL)
         {
-            cout << "File array allocation error" << endl;
+            cerr << "File array allocation error" << endl;
             return -1;
         }
 
@@ -787,7 +787,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
 
                 if((gridFiles[i] = fopen(gridFileName, "w+")) == NULL)
                 {
-                    cout << "File open error: " << gridFileName << endl;
+                    cerr << "File open error: " << gridFileName << endl;
                     return -1;
                 }
             } else {
@@ -843,8 +843,8 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
         //int start = (gridMap[i]->getLowerBound() - gridMap[i]->getOverlapLowerBound()) * GRID_SIZE_X;
         //int end = (gridMap[i]->getUpperBound() - gridMap[i]->getOverlapLowerBound() + 1) * GRID_SIZE_X;
 
-        cout << "Merging " << i << ": from " << (start) << " to " << (end) << endl;
-        cout << "        " << i << ": from " << (start/GRID_SIZE_X) << " to " << (end/GRID_SIZE_X) << endl;
+        cerr << "Merging " << i << ": from " << (start) << " to " << (end) << endl;
+        cerr << "        " << i << ": from " << (start/GRID_SIZE_X) << " to " << (end/GRID_SIZE_X) << endl;
 
         for(j = end - 1; j >= start; j--)
         {
@@ -1010,7 +1010,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
 
         if((gdalFiles = (GDALDataset **)malloc(sizeof(GDALDataset *) *  numTypes)) == NULL)
         {
-            cout << "File array allocation error" << endl;
+            cerr << "File array allocation error" << endl;
             return -1;
         }
 
@@ -1035,7 +1035,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
                         gdalFiles[i] = tpDriver->Create(gdalFileName, GRID_SIZE_X, GRID_SIZE_Y, 1, GDT_Float32, papszOptions);
                         if (gdalFiles[i] == NULL)
                         {
-                            cout << "File open error: " << gdalFileName << endl;
+                            cerr << "File open error: " << gdalFileName << endl;
                             return -1;
                         } else {
                             if (adfGeoTransform)
@@ -1067,8 +1067,8 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
                     int start = gridMap[i]->getLowerBound() - gridMap[i]->getOverlapLowerBound();
                     int end = gridMap[i]->getUpperBound() - gridMap[i]->getOverlapLowerBound() + 1;
 
-                    cout << "Merging " << i << ": from " << (start) << " to " << (end) << endl;
-                    cout << "        " << i << ": from " << (start/GRID_SIZE_X) << " to " << (end/GRID_SIZE_X) << endl;
+                    cerr << "Merging " << i << ": from " << (start) << " to " << (end) << endl;
+                    cerr << "        " << i << ": from " << (start/GRID_SIZE_X) << " to " << (end/GRID_SIZE_X) << endl;
 
                     float *poRasterData = new float[GRID_SIZE_X*GRID_SIZE_Y];
                     for (int j = 0; j < GRID_SIZE_X*GRID_SIZE_Y; j++)
@@ -1172,7 +1172,7 @@ int OutCoreInterp::findFileNum(double data_y)
         }
     }
 
-    cout << "findFileNum() error" << endl;
+    cerr << "findFileNum() error" << endl;
 
     return -1;
 }
@@ -1187,7 +1187,7 @@ void OutCoreInterp::finalize()
 
     if(openFile == -1)
     {
-        cout << "OutCoreInterp::finalize() no open file" << endl;
+        cerr << "OutCoreInterp::finalize() no open file" << endl;
         return;
     }
 
@@ -1196,8 +1196,8 @@ void OutCoreInterp::finalize()
     overlapEnd = (gridMap[openFile]->getOverlapUpperBound() - gridMap[openFile]->getOverlapLowerBound() + 1) * GRID_SIZE_X;
     gf = gridMap[openFile]->getGridFile();
 
-    cout << openFile << ": from " << (start) << " to " << (end) << endl;
-    cout << openFile << ": from " << (start/GRID_SIZE_X) << " to " << (end/GRID_SIZE_X) << endl;
+    cerr << openFile << ": from " << (start) << " to " << (end) << endl;
+    cerr << openFile << ": from " << (start/GRID_SIZE_X) << " to " << (end/GRID_SIZE_X) << endl;
 
     for(i = 0; i < overlapEnd; i++)
     {

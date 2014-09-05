@@ -84,7 +84,7 @@ InCoreInterp::InCoreInterp(double dist_x, double dist_y,
 
     window_size = _window_size;
 
-    cout << "InCoreInterp created successfully" << endl;
+    cerr << "InCoreInterp created successfully" << endl;
 }
 
 InCoreInterp::~InCoreInterp()
@@ -100,7 +100,7 @@ int InCoreInterp::init()
     //interp = new GridPoint*[GRID_SIZE_X];
     if(interp == NULL)
     {
-        cout << "InCoreInterp::init() new allocate error" << endl;
+        cerr << "InCoreInterp::init() new allocate error" << endl;
         return -1;
     }
 
@@ -110,7 +110,7 @@ int InCoreInterp::init()
         //interp[i] = new GridPoint[GRID_SIZE_Y];
         if(interp[i] == NULL)
         {
-            cout << "InCoreInterp::init() new allocate error" << endl;
+            cerr << "InCoreInterp::init() new allocate error" << endl;
             return -1;
         }
     }
@@ -130,7 +130,7 @@ int InCoreInterp::init()
             interp[i][j].filled = 0;
         }
 
-    cout << "InCoreInterp::init() done" << endl;
+    cerr << "InCoreInterp::init() done" << endl;
 
     return 0;
 }
@@ -143,13 +143,13 @@ int InCoreInterp::update(double data_x, double data_y, double data_z)
     int lower_grid_x;
     int lower_grid_y;
 
-    //cout << GRID_DIST_X << " " << GRID_DIST_Y;
+    //cerr << GRID_DIST_X << " " << GRID_DIST_Y;
     lower_grid_x = (int)floor((double)data_x/GRID_DIST_X);
     lower_grid_y = (int)floor((double)data_y/GRID_DIST_Y);
 
     if(lower_grid_x > GRID_SIZE_X || lower_grid_y > GRID_SIZE_Y)
     {
-        cout << "larger at (" << lower_grid_x << "," << lower_grid_y << "): ("<< data_x << ", " << data_y << ")" << endl;
+        cerr << "larger at (" << lower_grid_x << "," << lower_grid_y << "): ("<< data_x << ", " << data_y << ")" << endl;
         return 0;
     }
 
@@ -157,7 +157,7 @@ int InCoreInterp::update(double data_x, double data_y, double data_z)
     x = (data_x - (lower_grid_x) * GRID_DIST_X);
     y = (data_y - (lower_grid_y) * GRID_DIST_Y);
 
-    //cout << "(" << data_x << " " << data_y << ")=(" << lower_grid_x << ", " << lower_grid_y << "): ";
+    //cerr << "(" << data_x << " " << data_y << ")=(" << lower_grid_x << ", " << lower_grid_y << "): ";
     //printf("(%f %f) = (%d, %d): ", data_x, data_y, lower_grid_x, lower_grid_y);
 
     //if(lower_grid_y == 30 && data_y > GRID_DIST_Y * lower_grid_y)
@@ -168,7 +168,7 @@ int InCoreInterp::update(double data_x, double data_y, double data_z)
     update_third_quadrant(data_z, lower_grid_x, lower_grid_y, x, y);
     update_fourth_quadrant(data_z, lower_grid_x+1, lower_grid_y, GRID_DIST_X - x, y);
 
-    //cout << "test" << endl;
+    //cerr << "test" << endl;
     return 0;
 }
 
@@ -270,7 +270,7 @@ int InCoreInterp::finish(char *outputName, int outputFormat, unsigned int output
 
     if((rc = outputFile(outputName, outputFormat, outputType, adfGeoTransform, wkt)) < 0)
     {
-        cout << "InCoreInterp::finish outputFile error" << endl;
+        cerr << "InCoreInterp::finish outputFile error" << endl;
         return -1;
     }
 
@@ -325,7 +325,7 @@ void InCoreInterp::update_first_quadrant(double data_z, int base_x, int base_y, 
         }
     }
 
-    //cout << "test2" << endl;
+    //cerr << "test2" << endl;
 }
 
 
@@ -449,13 +449,13 @@ void InCoreInterp::printArray()
     {
         for(j = 1; j < GRID_SIZE_Y; j++)
         {
-            cout << interp[i][j].Zmin << ", " << interp[i][j].Zmax << ", ";
-            cout << interp[i][j].Zmean << ", " << interp[i][j].Zidw << endl;
+            cerr << interp[i][j].Zmin << ", " << interp[i][j].Zmax << ", ";
+            cerr << interp[i][j].Zmean << ", " << interp[i][j].Zidw << endl;
             //printf("%.20f ", interp[i][j].Zmax);
         }
         //printf("\n");
     }
-    cout << endl;
+    cerr << endl;
 }
 
 int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
@@ -479,7 +479,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
     {
         if((arcFiles = (FILE **)malloc(sizeof(FILE *) *  numTypes)) == NULL)
         {
-            cout << "Arc File open error: " << endl;
+            cerr << "Arc File open error: " << endl;
             return -1;
         }
 
@@ -493,7 +493,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
 
                 if((arcFiles[i] = fopen(arcFileName, "w+")) == NULL)
                 {
-                    cout << "File open error: " << arcFileName << endl;
+                    cerr << "File open error: " << arcFileName << endl;
                     return -1;
                 }
             } else {
@@ -509,7 +509,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
     {
         if((gridFiles = (FILE **)malloc(sizeof(FILE *) * numTypes)) == NULL)
         {
-            cout << "File array allocation error" << endl;
+            cerr << "File array allocation error" << endl;
             return -1;
         }
 
@@ -523,7 +523,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
 
                 if((gridFiles[i] = fopen(gridFileName, "w+")) == NULL)
                 {
-                    cout << "File open error: " << gridFileName << endl;
+                    cerr << "File open error: " << gridFileName << endl;
                     return -1;
                 }
             } else {
@@ -724,7 +724,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
 
         if((gdalFiles = (GDALDataset **)malloc(sizeof(GDALDataset *) *  numTypes)) == NULL)
         {
-            cout << "File array allocation error" << endl;
+            cerr << "File array allocation error" << endl;
             return -1;
         }
 
@@ -749,7 +749,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
                         gdalFiles[i] = tpDriver->Create(gdalFileName, GRID_SIZE_X, GRID_SIZE_Y, 1, GDT_Float32, papszOptions);
                         if (gdalFiles[i] == NULL)
                         {
-                            cout << "File open error: " << gdalFileName << endl;
+                            cerr << "File open error: " << gdalFileName << endl;
                             return -1;
                         } else {
                             if (adfGeoTransform)

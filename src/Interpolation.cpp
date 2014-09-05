@@ -62,7 +62,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 #include <fstream>  // std::ifstream
-#include <iostream> // std::cout
+#include <iostream> // std::cerr
 #include <string.h>
 
 /////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ int Interpolation::init(char *inputName, int inputFormat)
 
     if(inputName == NULL)
     {
-        cout << "Wrong Input File Name" << endl;
+        cerr << "Wrong Input File Name" << endl;
         return -1;
     }
 
@@ -124,7 +124,7 @@ int Interpolation::init(char *inputName, int inputFormat)
 
         if((fp = fopen(inputName, "r")) == NULL)
         {
-            cout << "file open error" << endl;
+            cerr << "file open error" << endl;
             return -1;
         }
 
@@ -214,13 +214,13 @@ int Interpolation::init(char *inputName, int inputFormat)
       }
     */
 
-    cout << "min_x: " << min_x << ", max_x: " << max_x << ", min_y: " << min_y << ", max_y: " << max_y << endl;
+    cerr << "min_x: " << min_x << ", max_x: " << max_x << ", min_y: " << min_y << ", max_y: " << max_y << endl;
 
     GRID_SIZE_X = (int)(ceil((max_x - min_x)/GRID_DIST_X)) + 1;
     GRID_SIZE_Y = (int)(ceil((max_y - min_y)/GRID_DIST_Y)) + 1;
 
-    cout << "GRID_SIZE_X " << GRID_SIZE_X << endl;
-    cout << "GRID_SIZE_Y " << GRID_SIZE_Y << endl;
+    cerr << "GRID_SIZE_X " << GRID_SIZE_X << endl;
+    cerr << "GRID_SIZE_Y " << GRID_SIZE_Y << endl;
 
     if (interpolation_mode == INTERP_AUTO) {
         // if the size is too big to fit in memory,
@@ -233,32 +233,32 @@ int Interpolation::init(char *inputName, int inputFormat)
     }
 
     if (interpolation_mode == INTERP_OUTCORE) {
-        cout << "Using out of core interp code" << endl;;
+        cerr << "Using out of core interp code" << endl;;
 
         interp = new OutCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
         if(interp == NULL)
         {
-            cout << "OutCoreInterp construction error" << endl;
+            cerr << "OutCoreInterp construction error" << endl;
             return -1;
         }
 
-        cout << "Interpolation uses out-of-core algorithm" << endl;
+        cerr << "Interpolation uses out-of-core algorithm" << endl;
 
     } else {
-        cout << "Using incore interp code" << endl;
+        cerr << "Using incore interp code" << endl;
 
         interp = new InCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
 
-        cout << "Interpolation uses in-core algorithm" << endl;
+        cerr << "Interpolation uses in-core algorithm" << endl;
     }
 
     if(interp->init() < 0)
     {
-        cout << "inter->init() error" << endl;
+        cerr << "inter->init() error" << endl;
         return -1;
     }
 
-    cout << "Interpolation::init() done successfully" << endl;
+    cerr << "Interpolation::init() done successfully" << endl;
 
     return 0;
 }
@@ -281,12 +281,12 @@ int Interpolation::interpolation(char *inputName,
 
     //t0 = times(&tbuf);
 
-    //cout << "data_count: " << data_count << endl;
+    //cerr << "data_count: " << data_count << endl;
 
     /*
       if((rc = interp->init()) < 0)
       {
-      cout << "inter->init() error" << endl;
+      cerr << "inter->init() error" << endl;
       return -1;
       }
     */
@@ -317,7 +317,7 @@ int Interpolation::interpolation(char *inputName,
             //if((rc = interp->update(arrX[i], arrY[i], arrZ[i])) < 0)
             if((rc = interp->update(data_x, data_y, data_z)) < 0)
             {
-                cout << "interp->update() error while processing " << endl;
+                cerr << "interp->update() error while processing " << endl;
                 return -1;
             }
         }
@@ -342,7 +342,7 @@ int Interpolation::interpolation(char *inputName,
             data_y -= min_y;
             
             if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
-                cout << "interp->update() error while processing " << endl;
+                cerr << "interp->update() error while processing " << endl;
                 return -1;
             }
             index++;
@@ -353,11 +353,11 @@ int Interpolation::interpolation(char *inputName,
 
     if((rc = interp->finish(outputName, outputFormat, outputType)) < 0)
     {
-        cout << "interp->finish() error" << endl;
+        cerr << "interp->finish() error" << endl;
         return -1;
     }
 
-    cout << "Interpolation::interpolation() done successfully" << endl;
+    cerr << "Interpolation::interpolation() done successfully" << endl;
 
     return 0;
 }

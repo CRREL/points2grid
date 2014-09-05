@@ -113,7 +113,7 @@ int GridFile::map()
         GridPoint init_value = {DBL_MAX, -DBL_MAX, 0, 0, 0, 0, 0, 0};
         for(int i = 0; i < m_size_x * m_size_y; i++)
             memcpy(interp + i, &init_value, sizeof(GridPoint));
-        cout << m_id << ". file size: " << params.new_file_size << endl;
+        cerr << m_id << ". file size: " << params.new_file_size << endl;
         m_firstMap = false;
     }
     
