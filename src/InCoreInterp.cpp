@@ -783,7 +783,7 @@ int InCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int ou
                 {
                     for(k = 0; k < GRID_SIZE_X; k++)
                     {
-                        int index = j * GRID_SIZE_X + k;
+                        int index = (GRID_SIZE_Y - 1 - j) * GRID_SIZE_X + k;
 
                         if(interp[k][j].empty == 0 &&
                                 interp[k][j].filled == 0)

@@ -1081,36 +1081,37 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
                         for(k = 0; k < GRID_SIZE_X; k++)
                         {
                             int index = j * GRID_SIZE_X + k;
+                            int out_index = (end - 1 - j) * GRID_SIZE_X + k;
 
                             if(gf->interp[index].empty == 0 &&
                                     gf->interp[index].filled == 0)
                             {
-                                poRasterData[index] = -9999.f;
+                                poRasterData[out_index] = -9999.f;
                              } else {
                                 switch (t)
                                 {
                                     case 0:
-                                        poRasterData[index] = gf->interp[index].Zmin;
+                                        poRasterData[out_index] = gf->interp[index].Zmin;
                                         break;
 
                                     case 1:
-                                        poRasterData[index] = gf->interp[index].Zmax;
+                                        poRasterData[out_index] = gf->interp[index].Zmax;
                                         break;
 
                                     case 2:
-                                        poRasterData[index] = gf->interp[index].Zmean;
+                                        poRasterData[out_index] = gf->interp[index].Zmean;
                                         break;
 
                                     case 3:
-                                        poRasterData[index] = gf->interp[index].Zidw;
+                                        poRasterData[out_index] = gf->interp[index].Zidw;
                                         break;
 
                                     case 4:
-                                        poRasterData[index] = gf->interp[index].count;
+                                        poRasterData[out_index] = gf->interp[index].count;
                                         break;
 
                                     case 5:
-                                        poRasterData[index] = gf->interp[index].Zstd;
+                                        poRasterData[out_index] = gf->interp[index].Zstd;
                                         break;
                                 }
                             }
