@@ -36,18 +36,13 @@ set (P2G_VERSION_STRING "${P2G_VERSION_MAJOR}.${P2G_VERSION_MINOR}.${P2G_VERSION
 
   if(WIN32)
     if (MSVC)
-      set(Boost_USE_STATIC_LIBS   ON)
+#      set(Boost_USE_STATIC_LIBS   ON)
       set(Boost_USE_MULTITHREADED ON)
-      set(Boost_USE_STATIC_RUNTIME    OFF)
+ #     set(Boost_USE_STATIC_RUNTIME    ON)
     endif(MSVC)
   endif(WIN32)
 find_package( Boost 1.40 COMPONENTS iostreams program_options system filesystem REQUIRED )
-
-if(Boost_FOUND
-  AND Boost_IOSTREAMS_FOUND
-  AND Boost_PROGRAM_OPTIONS_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-endif()
+include_directories(${Boost_INCLUDE_DIRS})
 
 # make these available for the user to set.
 mark_as_advanced(CLEAR Boost_INCLUDE_DIR)
@@ -134,6 +129,8 @@ if(WIN32)
       add_definitions(-D_CRT_SECURE_NO_WARNINGS)
       add_definitions(-D_CRT_NONSTDC_NO_WARNING)
       add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+	  add_definitions(-DBOOST_LIB_TOOLSET="vc110")
+	  add_definitions(-DBOOST_ALL_DYN_LINK)	  
   endif()
 endif()
 
@@ -199,7 +196,7 @@ if (BZIP2_FOUND)
 endif()
 
 if (GDAL_FOUND)
-  target_link_libraries(${P2G_LIB_NAME} ${GDAL_LIBRARIES})
+  target_link_libraries(${P2G_LIB_NAME} ${GDAL_LIBRARY})
 endif()
 
 if (APPLE)
