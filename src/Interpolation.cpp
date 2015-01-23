@@ -70,7 +70,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////
 
 Interpolation::Interpolation(double x_dist, double y_dist, double radius,
-                             int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist)
+                             int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist), interp(NULL)
 {
     data_count = 0;
     radius_sqr = radius * radius;
