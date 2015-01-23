@@ -1,0 +1,11 @@
+language: cpp
+
+compiler:
+    - clang
+    - gcc
+
+install:
+    - sudo apt-get install libboost-all-dev
+
+script:
+    - scripts/build_and_test.sh

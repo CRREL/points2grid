@@ -6,7 +6,7 @@ configure_file(
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_BINARY_DIR}/test
-    ${gtest_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/vendor/gtest-1.7.0/include
     )
 
 set(src
