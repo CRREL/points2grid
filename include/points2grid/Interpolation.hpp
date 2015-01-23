@@ -67,8 +67,8 @@ public:
                   int _window_size, int _interpolation_mode);
     ~Interpolation();
 
-    int init(char *inputName, int inputFormat);
-    int interpolation(char *inputName, char *outputName, int inputFormat,
+    int init(const std::string& inputName, int inputFormat);
+    int interpolation(const std::string& inputName, const std::string& outputName, int inputFormat,
                       int outputFormat, unsigned int type);
     unsigned int getDataCount();
 

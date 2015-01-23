@@ -263,12 +263,12 @@ int OutCoreInterp::update(double data_x, double data_y, double data_z)
     return 0;
 }
 
-int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outputType)
+int OutCoreInterp::finish(const std::string& outputName, int outputFormat, unsigned int outputType)
 {
     return finish(outputName, outputFormat, outputType, 0, 0);
 }
 
-int OutCoreInterp::finish(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
+int OutCoreInterp::finish(const std::string& outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
 {
     int i, j;
     GridPoint *p;
@@ -723,7 +723,7 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
     }
 }
 
-int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
+int OutCoreInterp::outputFile(const std::string& outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
 {
     int i, j, k, l, t;
 
@@ -751,7 +751,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
         {
             if(outputType & type[i])
             {
-                strncpy(arcFileName, outputName, sizeof(arcFileName));
+                strncpy(arcFileName, outputName.c_str(), sizeof(arcFileName));
                 strncat(arcFileName, ext[i], strlen(ext[i]));
                 strncat(arcFileName, ".asc", strlen(".asc"));
 
@@ -781,7 +781,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
         {
             if(outputType & type[i])
             {
-                strncpy(gridFileName, outputName, sizeof(arcFileName));
+                strncpy(gridFileName, outputName.c_str(), sizeof(arcFileName));
                 strncat(gridFileName, ext[i], strlen(ext[i]));
                 strncat(gridFileName, ".grid", strlen(".grid"));
 
@@ -1018,7 +1018,7 @@ int OutCoreInterp::outputFile(char *outputName, int outputFormat, unsigned int o
         {
             if(outputType & type[i])
             {
-                strncpy(gdalFileName, outputName, sizeof(gdalFileName));
+                strncpy(gdalFileName, outputName.c_str(), sizeof(gdalFileName));
                 strncat(gdalFileName, ext[i], strlen(ext[i]));
                 strncat(gdalFileName, ".tif", strlen(".tif"));
 

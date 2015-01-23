@@ -67,8 +67,8 @@ public:
 
     virtual int init();
     virtual int update(double data_x, double data_y, double data_z);
-    virtual int finish(char *outputName, int outputFormat, unsigned int outputType);
-    virtual int finish(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt);
+    virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType);
+    virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt);
 
 private:
     GridPoint **interp;
@@ -82,6 +82,6 @@ private:
 
     void updateGridPoint(int x, int y, double data_z, double distance);
     void printArray();
-    int outputFile(char *outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt);
+    int outputFile(const std::string& outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt);
 };
 
