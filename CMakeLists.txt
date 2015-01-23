@@ -231,3 +231,13 @@ install(TARGETS ${P2G_LIB_NAME}
 install(DIRECTORY ${INCLUDE_DIR}
   DESTINATION ${DEFAULT_INCLUDE_SUBDIR}
   FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
+# tests
+# -----
+option(WITH_TESTS "Choose if tests should be built" TRUE)
+if (WITH_TESTS)
+    enable_testing()
+    set(P2G_TEST_NAME points2grid-test)
+    add_subdirectory(test)
+    add_subdirectory(vendor/gtest-1.7.0)
+endif(WITH_TESTS)
