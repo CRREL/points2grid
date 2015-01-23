@@ -89,7 +89,7 @@ Interpolation::~Interpolation()
     delete interp;
 }
 
-int Interpolation::init(char *inputName, int inputFormat)
+int Interpolation::init(const std::string& inputName, int inputFormat)
 {
     //unsigned int i;
 
@@ -108,13 +108,7 @@ int Interpolation::init(char *inputName, int inputFormat)
     //t0 = times(&tbuf);
     t0 = clock();
 
-    if(inputName == NULL)
-    {
-        cerr << "Wrong Input File Name" << endl;
-        return -1;
-    }
-
-    printf("inputName: '%s'\n", inputName);
+    printf("inputName: '%s'\n", inputName.c_str());
 
     if (inputFormat == INPUT_ASCII) {
         FILE *fp;
@@ -122,7 +116,7 @@ int Interpolation::init(char *inputName, int inputFormat)
         double data_x, data_y;
         //double data_z;
 
-        if((fp = fopen(inputName, "r")) == NULL)
+        if((fp = fopen(inputName.c_str(), "r")) == NULL)
         {
             cerr << "file open error" << endl;
             return -1;
@@ -263,8 +257,8 @@ int Interpolation::init(char *inputName, int inputFormat)
     return 0;
 }
 
-int Interpolation::interpolation(char *inputName,
-                                 char *outputName,
+int Interpolation::interpolation(const std::string& inputName,
+                                 const std::string& outputName,
                                  int inputFormat,
                                  int outputFormat,
                                  unsigned int outputType)
@@ -295,7 +289,7 @@ int Interpolation::interpolation(char *inputName,
         FILE *fp;
         char line[1024];
 
-        if((fp = fopen(inputName, "r")) == NULL)
+        if((fp = fopen(inputName.c_str(), "r")) == NULL)
         {
             printf("file open error\n");
             return -1;

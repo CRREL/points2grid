@@ -56,7 +56,7 @@ public:
 
     virtual int init() = 0;
     virtual int update(double data_x, double data_y, double data_z) = 0;
-    virtual int finish(char *outputName, int outputFormat, unsigned int outputType) = 0;
+    virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType) = 0;
 
 protected:
     double GRID_DIST_X;
