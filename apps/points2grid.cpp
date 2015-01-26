@@ -379,10 +379,11 @@ int main(int argc, char **argv)
     Interpolation *ip = new Interpolation(GRID_DIST_X, GRID_DIST_Y, searchRadius,
                                           window_size, interpolation_mode);
 
+
     if(ip->init(inputName, input_format) < 0)
     {
-        fprintf(stderr, "Interpolation::init() error\n");
-        return -1;
+	fprintf(stderr, "Interpolation::init() error\n");
+	return -1;
     }
 
     t1 = clock();
