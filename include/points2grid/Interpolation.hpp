@@ -64,10 +64,11 @@ class P2G_DLL Interpolation
 {
 public:
     Interpolation(double x_dist, double y_dist, double radius,
-                  int _window_size, int _interpolation_mode);
+		  int _window_size, int _interpolation_mode);
     ~Interpolation();
 
     int init(const std::string& inputName, int inputFormat);
+    int init(const std::string& inputName, int inputFormat, double n, double s, double e, double w);
     int interpolation(const std::string& inputName, const std::string& outputName, int inputFormat,
                       int outputFormat, unsigned int type);
     unsigned int getDataCount();
