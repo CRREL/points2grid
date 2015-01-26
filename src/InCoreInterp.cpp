@@ -543,8 +543,8 @@ int InCoreInterp::outputFile(const std::string& outputName, int outputFormat, un
             {
                 fprintf(arcFiles[i], "ncols %d\n", GRID_SIZE_X);
                 fprintf(arcFiles[i], "nrows %d\n", GRID_SIZE_Y);
-                fprintf(arcFiles[i], "xllcorner %f\n", min_x);
-                fprintf(arcFiles[i], "yllcorner %f\n", min_y);
+                fprintf(arcFiles[i], "xllcorner %f\n", min_x - 0.5*GRID_DIST_X);
+                fprintf(arcFiles[i], "yllcorner %f\n", min_y - 0.5*GRID_DIST_Y);
                 fprintf(arcFiles[i], "cellsize %f\n", GRID_DIST_X);
                 fprintf(arcFiles[i], "NODATA_value -9999\n");
             }
@@ -558,10 +558,10 @@ int InCoreInterp::outputFile(const std::string& outputName, int outputFormat, un
         {
             if(gridFiles[i] != NULL)
             {
-                fprintf(gridFiles[i], "north: %f\n", max_y);
-                fprintf(gridFiles[i], "south: %f\n", min_y);
-                fprintf(gridFiles[i], "east: %f\n", max_x);
-                fprintf(gridFiles[i], "west: %f\n", min_x);
+                fprintf(gridFiles[i], "north: %f\n", min_y - 0.5*GRID_DIST_Y + GRID_DIST_Y*GRID_SIZE_Y);
+                fprintf(gridFiles[i], "south: %f\n", min_y - 0.5*GRID_DIST_Y);
+                fprintf(gridFiles[i], "east: %f\n", min_x - 0.5*GRID_DIST_X + GRID_DIST_X*GRID_SIZE_X);
+                fprintf(gridFiles[i], "west: %f\n", min_x - 0.5*GRID_DIST_X);
                 fprintf(gridFiles[i], "rows: %d\n", GRID_SIZE_Y);
                 fprintf(gridFiles[i], "cols: %d\n", GRID_SIZE_X);
             }
