@@ -6,7 +6,9 @@
 
 #include "config.hpp"
 
+#ifdef HAVE_GDAL
 #include "gdal_priv.h"
+#endif // HAVE_GDAL
 
 
 namespace points2grid
