@@ -1,9 +1,12 @@
 #include <gtest/gtest.h>
 #include <points2grid/Interpolation.hpp>
 
+#include <points2grid/config.h>
 #include <points2grid/Global.hpp>
 
 #include "config.hpp"
+
+#include "gdal_priv.h"
 
 
 namespace points2grid
@@ -147,6 +150,7 @@ TEST_F(InterpolationTest, Headers)
     interp.init(infile, INPUT_ASCII);
     interp.interpolation(infile, outfile, INPUT_ASCII, OUTPUT_FORMAT_ALL, OUTPUT_TYPE_ALL);
 
+    // Test ArcGIS headers
     std::ifstream asc;
     asc.open((outfile + ".idw.asc").c_str());
     AscHeader asc_header = read_asc_header(asc);
@@ -157,6 +161,7 @@ TEST_F(InterpolationTest, Headers)
     EXPECT_DOUBLE_EQ(asc_header.cellsize, 1.0);
     EXPECT_EQ(asc_header.NODATA_value, -9999);
 
+    // Test GRID headers
     std::ifstream grid;
     grid.open((outfile + ".idw.grid").c_str());
     GridHeader grid_header = read_grid_header(grid);
@@ -166,6 +171,23 @@ TEST_F(InterpolationTest, Headers)
     EXPECT_DOUBLE_EQ(grid_header.west, 0.5);
     EXPECT_EQ(grid_header.rows, 2);
     EXPECT_EQ(grid_header.cols, 2);
+
+    // Test GeoTIFF headers
+#ifdef HAVE_GDAL
+    GDALDataset *dataset;
+    GDALAllRegister();
+    dataset = (GDALDataset *) GDALOpen((outfile + ".idw.tif").c_str(), GA_ReadOnly);
+    ASSERT_TRUE(dataset != NULL);
+    double adfGeoTransform[6];
+    EXPECT_EQ(dataset->GetGeoTransform(adfGeoTransform), CE_None);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[0], 0.5);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[1], 1.0);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[2], 0.0);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[3], 2.5);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[4], 0.0);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[5], -1.0);
+    delete dataset;
+#endif // HAVE_GDAL
 }
 
 

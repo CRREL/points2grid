@@ -1039,7 +1039,19 @@ int OutCoreInterp::outputFile(const std::string& outputName, int outputFormat, u
                             return -1;
                         } else {
                             if (adfGeoTransform)
+                            {
                                 gdalFiles[i]->SetGeoTransform(adfGeoTransform);
+                            }
+                            else
+                            {
+                                double defaultTransform [6] = { min_x - 0.5*GRID_DIST_X,                            // top left x
+                                                                (double)GRID_DIST_X,                                // w-e pixel resolution
+                                                                0.0,                                                // no rotation/shear
+                                                                min_y - 0.5*GRID_DIST_Y + GRID_DIST_Y*GRID_SIZE_Y,  // top left y
+                                                                0.0,                                                // no rotation/shear
+                                                                -(double)GRID_DIST_Y };                             // n-x pixel resolution (negative value)
+                                gdalFiles[i]->SetGeoTransform(defaultTransform);
+                            }
                             if (wkt)
                                 gdalFiles[i]->SetProjection(wkt);
                         }
