@@ -78,6 +78,7 @@ public:
     virtual int update(double data_x, double data_y, double data_z);
     virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType);
     virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt);
+    void isUserDefinedGrid(bool defined);
 
 private:
     void updateInterpArray(int fileNum, double data_x, double data_y, double data_z);
@@ -106,6 +107,8 @@ private:
     list<UpdateInfo> *qlist;
     GridMap **gridMap;
     int openFile;
+
+    bool user_defined_grid;
 };
 
 class UpdateInfo

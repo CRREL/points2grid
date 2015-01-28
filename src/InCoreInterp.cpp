@@ -413,6 +413,9 @@ void InCoreInterp::update_fourth_quadrant(double data_z, int base_x, int base_y,
 
 void InCoreInterp::updateGridPoint(int x, int y, double data_z, double distance)
 {
+    // Add checks for invalid indices that result from user-defined grids
+    if (x >= GRID_SIZE_X || x < 0 || y >= GRID_SIZE_Y || y < 0) return;
+
     if(interp[x][y].Zmin > data_z)
         interp[x][y].Zmin = data_z;
     if(interp[x][y].Zmax < data_z)
@@ -753,7 +756,19 @@ int InCoreInterp::outputFile(const std::string& outputName, int outputFormat, un
                             return -1;
                         } else {
                             if (adfGeoTransform)
+                            {
                                 gdalFiles[i]->SetGeoTransform(adfGeoTransform);
+                            }
+                            else
+                            {
+                                double defaultTransform [6] = { min_x - 0.5*GRID_DIST_X,                            // top left x
+                                                                (double)GRID_DIST_X,                                // w-e pixel resolution
+                                                                0.0,                                                // no rotation/shear
+                                                                min_y - 0.5*GRID_DIST_Y + GRID_DIST_Y*GRID_SIZE_Y,  // top left y
+                                                                0.0,                                                // no rotation/shear
+                                                                -(double)GRID_DIST_Y };                             // n-x pixel resolution (negative value)
+                                gdalFiles[i]->SetGeoTransform(defaultTransform);
+                            }
                             if (wkt)
                                 gdalFiles[i]->SetProjection(wkt);
                         }
