@@ -296,12 +296,14 @@ int Interpolation::init(const std::string& inputName, double n, double s, double
     if (interpolation_mode == INTERP_OUTCORE) {
         cerr << "Using out of core interp code" << endl;;
 
-        interp = new OutCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
-        if(interp == NULL)
+        OutCoreInterp *ointerp = new OutCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
+        if(ointerp == NULL)
         {
             cerr << "OutCoreInterp construction error" << endl;
             return -1;
         }
+        ointerp->isUserDefinedGrid(true);
+        interp = ointerp;
 
         cerr << "Interpolation uses out-of-core algorithm" << endl;
 
