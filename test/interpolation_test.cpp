@@ -324,4 +324,24 @@ TEST_F(InterpolationTest, ValuesUserGridLarge)
 }
 
 
+TEST_F(InterpolationTest, ValuesUserGridSmall)
+{
+    Interpolation interp(1, 1, 0.01, 0, INTERP_INCORE);
+    interp.init(infile, 1.5, 0.5, 1.5, 0.5);
+    interp.interpolation(infile, outfile, INPUT_ASCII, OUTPUT_FORMAT_ALL, OUTPUT_TYPE_ALL);
+
+    // Test ArcGIS data
+    std::ifstream asc;
+    asc.open((outfile + ".mean.asc").c_str());
+    AsciiData ascdata = read_asc_data(asc);
+    EXPECT_DOUBLE_EQ(ascdata.values[0], 3.0);
+
+    // Test GRID data
+    std::ifstream grid;
+    grid.open((outfile + ".mean.grid").c_str());
+    AsciiData griddata = read_grid_data(grid);
+    EXPECT_DOUBLE_EQ(griddata.values[0], 3.0);
+}
+
+
 }
