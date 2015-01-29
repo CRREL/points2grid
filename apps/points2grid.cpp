@@ -92,11 +92,15 @@ int main(int argc, char **argv)
     double searchRadius = (double) sqrt(2.0) * GRID_DIST_X;
     int window_size = 0;
 
+    bool user_defined_bounds = false;
+    double n = 0.0, s = 0.0, e = 0.0, w = 0.0;
+
     // argument processing..
     po::options_description general("General options"),
        df("Data file"),
        ot("Output Type"),
        res("Resolution"),
+       bnds("Grid Bounds (optional, all four must be included if used)"),
        nf("Null Filling"),
        desc;
 
@@ -139,11 +143,17 @@ int main(int argc, char **argv)
     ("resolution-x", po::value<float>(), "The X side of grid cells is set to the specified value")
     ("resolution-y", po::value<float>(), "The Y side of grid cells is set to the specified value");
 
+    bnds.add_options()
+    ("north,n", po::value<double>(), "The northern edge of the grid")
+    ("south,s", po::value<double>(), "The southern edge of the grid")
+    ("east,e", po::value<double>(), "The eastern edge of the grid")
+    ("west,w", po::value<double>(), "The western edge of the grid");
+
     nf.add_options()
     ("fill", "fills nulls in the DEM. Default window size is 3.")
     ("fill_window_size", po::value<int>(), "The fill window is set to value. Permissible values are 3, 5 and 7.");
 
-    desc.add(general).add(df).add(ot).add(res).add(nf);
+    desc.add(general).add(df).add(ot).add(res).add(bnds).add(nf);
 
     po::variables_map vm;
 
@@ -205,6 +215,18 @@ int main(int argc, char **argv)
             }
         }
 
+        int bounds_count = vm.count("north") + vm.count("south") + vm.count("east") + vm.count("west");
+        if (bounds_count > 0) {
+            if (bounds_count != 4) {
+                throw std::logic_error("To use bounds you must enter all for values (n, s, e, w)");
+            }
+            user_defined_bounds = true;
+            n = vm["north"].as<double>();
+            s = vm["south"].as<double>();
+            e = vm["east"].as<double>();
+            w = vm["west"].as<double>();
+        }
+
         if(vm.count("min")) {
             type |= OUTPUT_TYPE_MIN;
         }
@@ -221,7 +243,7 @@ int main(int argc, char **argv)
             type |= OUTPUT_TYPE_IDW;
         }
 
-	if(vm.count("std")) {
+        if(vm.count("std")) {
             type |= OUTPUT_TYPE_STD;
         }
 
@@ -379,7 +401,9 @@ int main(int argc, char **argv)
     Interpolation *ip = new Interpolation(GRID_DIST_X, GRID_DIST_Y, searchRadius,
                                           window_size, interpolation_mode);
 
-    if(ip->init(inputName, input_format) < 0)
+
+    int init_result = user_defined_bounds ? ip->init(inputName, n, s, e, w) : ip->init(inputName, input_format);
+    if(init_result < 0)
     {
         fprintf(stderr, "Interpolation::init() error\n");
         return -1;

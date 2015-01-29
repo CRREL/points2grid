@@ -257,6 +257,75 @@ int Interpolation::init(const std::string& inputName, int inputFormat)
     return 0;
 }
 
+int Interpolation::init(const std::string& inputName, double n, double s, double e, double w)
+{
+    printf("inputName: '%s'\n", inputName.c_str());
+    printf("Grid Bounds:\nNorth: %f\nSouth: %f\nEast: %f\nWest: %f\n", n, s, e, w);
+
+    // Check that the bounding box is properly defined
+    if (n-s >= GRID_DIST_Y && e-w >= GRID_DIST_X)
+    {
+        // The user defines the edges of the bounding box, here we want the min/max values
+        // to represent the centers of the edge cells
+        min_x = w + GRID_DIST_X/2.0;
+        min_y = s + GRID_DIST_Y/2.0;
+        max_x = e - GRID_DIST_X/2.0;
+        max_y = n - GRID_DIST_Y/2.0;
+
+    } else {
+        cerr << "Error in bounding box definition" << endl;
+        return -1;
+    }
+
+    GRID_SIZE_X = (int)(ceil((max_x - min_x)/GRID_DIST_X)) + 1;
+    GRID_SIZE_Y = (int)(ceil((max_y - min_y)/GRID_DIST_Y)) + 1;
+
+    cerr << "GRID_SIZE_X " << GRID_SIZE_X << endl;
+    cerr << "GRID_SIZE_Y " << GRID_SIZE_Y << endl;
+
+    if (interpolation_mode == INTERP_AUTO) {
+        // if the size is too big to fit in memory,
+        // then construct out-of-core structure
+        if(GRID_SIZE_X * GRID_SIZE_Y > MEM_LIMIT) {
+            interpolation_mode= INTERP_OUTCORE;
+        } else {
+            interpolation_mode = INTERP_INCORE;
+        }
+    }
+
+    if (interpolation_mode == INTERP_OUTCORE) {
+        cerr << "Using out of core interp code" << endl;;
+
+        OutCoreInterp *ointerp = new OutCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
+        if(ointerp == NULL)
+        {
+            cerr << "OutCoreInterp construction error" << endl;
+            return -1;
+        }
+        ointerp->isUserDefinedGrid(true);
+        interp = ointerp;
+
+        cerr << "Interpolation uses out-of-core algorithm" << endl;
+
+    } else {
+        cerr << "Using incore interp code" << endl;
+
+        interp = new InCoreInterp(GRID_DIST_X, GRID_DIST_Y, GRID_SIZE_X, GRID_SIZE_Y, radius_sqr, min_x, max_x, min_y, max_y, window_size);
+
+        cerr << "Interpolation uses in-core algorithm" << endl;
+    }
+
+    if(interp->init() < 0)
+    {
+        cerr << "inter->init() error" << endl;
+        return -1;
+    }
+
+    cerr << "Interpolation::init() done successfully" << endl;
+
+    return 0;
+}
+
 int Interpolation::interpolation(const std::string& inputName,
                                  const std::string& outputName,
                                  int inputFormat,
