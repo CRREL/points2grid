@@ -1,9 +1,10 @@
 #include <gtest/gtest.h>
 #include <points2grid/Interpolation.hpp>
 
+#include <points2grid/config.h>
 #include <points2grid/Global.hpp>
 
-#include "config.hpp"
+#include "fixtures.hpp"
 
 
 namespace points2grid
@@ -74,45 +75,11 @@ GridHeader read_grid_header(std::istream& is)
 }
 
 
+class InterpolationTest : public FourPointsTest
+{};
+
+
 }
-
-
-class InterpolationTest : public ::testing::Test
-{
-public:
-
-    virtual void SetUp()
-    {
-        infile = get_test_data_filename("four-points.txt");
-        outfile = get_test_data_filename("outfile");
-    }
-
-    virtual void TearDown()
-    {
-        std::remove((outfile + ".den.asc").c_str());
-        std::remove((outfile + ".idw.asc").c_str());
-        std::remove((outfile + ".max.asc").c_str());
-        std::remove((outfile + ".mean.asc").c_str());
-        std::remove((outfile + ".min.asc").c_str());
-        std::remove((outfile + ".std.asc").c_str());
-        std::remove((outfile + ".den.grid").c_str());
-        std::remove((outfile + ".idw.grid").c_str());
-        std::remove((outfile + ".max.grid").c_str());
-        std::remove((outfile + ".mean.grid").c_str());
-        std::remove((outfile + ".min.grid").c_str());
-        std::remove((outfile + ".std.grid").c_str());
-        std::remove((outfile + ".den.tif").c_str());
-        std::remove((outfile + ".idw.tif").c_str());
-        std::remove((outfile + ".max.tif").c_str());
-        std::remove((outfile + ".mean.tif").c_str());
-        std::remove((outfile + ".min.tif").c_str());
-        std::remove((outfile + ".std.tif").c_str());
-    }
-
-    std::string infile;
-    std::string outfile;
-
-};
 
 
 TEST_F(InterpolationTest, Constructor)
@@ -141,12 +108,13 @@ TEST_F(InterpolationTest, Interpolate)
 }
 
 
-TEST_F(InterpolationTest, Headers)
+TEST_F(InterpolationTest, ArcGISHeaders)
 {
     Interpolation interp(1, 1, 1, 3, INTERP_INCORE);
     interp.init(infile, INPUT_ASCII);
     interp.interpolation(infile, outfile, INPUT_ASCII, OUTPUT_FORMAT_ALL, OUTPUT_TYPE_ALL);
 
+    // Test ArcGIS headers
     std::ifstream asc;
     asc.open((outfile + ".idw.asc").c_str());
     AscHeader asc_header = read_asc_header(asc);
@@ -156,7 +124,16 @@ TEST_F(InterpolationTest, Headers)
     EXPECT_DOUBLE_EQ(asc_header.yllcorner, 0.5);
     EXPECT_DOUBLE_EQ(asc_header.cellsize, 1.0);
     EXPECT_EQ(asc_header.NODATA_value, -9999);
+}
 
+
+TEST_F(InterpolationTest, GridHeaders)
+{
+    Interpolation interp(1, 1, 1, 3, INTERP_INCORE);
+    interp.init(infile, INPUT_ASCII);
+    interp.interpolation(infile, outfile, INPUT_ASCII, OUTPUT_FORMAT_ALL, OUTPUT_TYPE_ALL);
+
+    // Test GRID headers
     std::ifstream grid;
     grid.open((outfile + ".idw.grid").c_str());
     GridHeader grid_header = read_grid_header(grid);

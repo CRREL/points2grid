@@ -13,6 +13,10 @@ set(src
     interpolation_test.cpp
     )
 
+if (WITH_GDAL)
+    list(APPEND src interpolation_geotiff_test.cpp)
+endif(WITH_GDAL)
+
 set(deps
     ${P2G_LIB_NAME}
     gtest_main

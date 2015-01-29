@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 
 
@@ -5,7 +7,7 @@ namespace points2grid
 {
 
 
-std::string get_test_data_filename(const std::string& filename)
+inline std::string get_test_data_filename(const std::string& filename)
 {
     std::string root = "@PROJECT_SOURCE_DIR@/test/data/";
     return root + filename;
