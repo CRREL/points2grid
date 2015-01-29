@@ -46,4 +46,26 @@ TEST_F(InterpolationGeotiffTest, GeotiffHeaders)
 }
 
 
+TEST_F(InterpolationGeotiffTest, GeotiffHeadersUserGrid)
+{
+    Interpolation interp(1, 1, 0.01, 3, INTERP_INCORE);
+    interp.init(infile, 3.5, -0.5, 4.5, -1.5);
+    interp.interpolation(infile, outfile, INPUT_ASCII, OUTPUT_FORMAT_ALL, OUTPUT_TYPE_ALL);
+
+    GDALDataset *dataset;
+    GDALAllRegister();
+    dataset = (GDALDataset *) GDALOpen((outfile + ".mean.tif").c_str(), GA_ReadOnly);
+    ASSERT_TRUE(dataset != NULL);
+    double adfGeoTransform[6];
+    EXPECT_EQ(dataset->GetGeoTransform(adfGeoTransform), CE_None);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[0], -1.5);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[1], 1.0);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[2], 0.0);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[3], 3.5);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[4], 0.0);
+    EXPECT_DOUBLE_EQ(adfGeoTransform[5], -1.0);
+    delete dataset;
+}
+
+
 }
