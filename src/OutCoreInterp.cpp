@@ -163,6 +163,8 @@ OutCoreInterp::OutCoreInterp(double dist_x, double dist_y,
 
     openFile = -1;
 
+    user_defined_grid = false;
+
     //cout << overlapSize << endl;
     //cout << "data size: " << (size_x * size_y) << " numFiles: " << numFiles << " local_grid_size_y: " << local_grid_size_y << " overlap: " << overlapSize << endl;
     //cout << fname << endl;
@@ -217,8 +219,10 @@ int OutCoreInterp::update(double data_x, double data_y, double data_z)
     int fileNum;
 
     //fileNum = upper_grid_y / local_grid_size_y;
-    if((fileNum = findFileNum(data_y)) < 0)
+    fileNum = findFileNum(data_y);
+    if(fileNum < 0 || fileNum > numFiles-1)
     {
+        if (user_defined_grid) return 0;
         cerr << "OutCoreInterp::update() findFileNum() error!" << endl;
         cerr << "data_x: " << data_x << " data_y: " << data_y << " grid_y: " << (int)(data_y/GRID_DIST_Y) << " fileNum: " << fileNum << " open file: " << openFile << endl;
         return -1;
@@ -525,6 +529,10 @@ int OutCoreInterp::finish(const std::string& outputName, int outputFormat, unsig
     return 0;
 }
 
+void OutCoreInterp::isUserDefinedGrid(bool defined) {
+    user_defined_grid = defined;
+}
+
 void OutCoreInterp::updateInterpArray(int fileNum, double data_x, double data_y, double data_z)
 {
     double x;
@@ -538,7 +546,6 @@ void OutCoreInterp::updateInterpArray(int fileNum, double data_x, double data_y,
 
     x = data_x - lower_grid_x * GRID_DIST_X;
     y = data_y - lower_grid_y * GRID_DIST_Y;
-
 
     //if(lower_grid_y == 30 && data_y > GRID_DIST_Y * lower_grid_y)
     //printf("(%f %f) = (%d, %d)\n", data_x, data_y, lower_grid_x, lower_grid_y);
@@ -683,13 +690,13 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
     unsigned int coord = y * local_grid_size_x + x;
     GridFile *gf = gridMap[fileNum]->getGridFile();
 
-    if(gf == NULL || gf->interp == NULL)
+    if(gf == NULL || gf->interp == NULL || x >= local_grid_size_x)
     {
         //cout << "OutCoreInterp::updateGridPoint() gridFile is NULL" << endl;
         return;
     }
 
-    if(coord < gf->getMemSize() && coord != 0)
+    if(coord < gf->getMemSize() && coord >= 0)
     {
         if(gf->interp[coord].Zmin > data_z)
             gf->interp[coord].Zmin = data_z;
@@ -706,7 +713,7 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
 	gf->interp[coord].Zstd += delta * (data_z - gf->interp[coord].Zstd_tmp);
 	*/
 
-	double dist = pow(distance, Interpolation::WEIGHTER);
+    double dist = pow(distance, Interpolation::WEIGHTER);
         if (gf->interp[coord].sum != -1) {
             if (dist != 0) {
                 gf->interp[coord].Zidw += data_z/dist;
@@ -1185,7 +1192,7 @@ int OutCoreInterp::findFileNum(double data_y)
         }
     }
 
-    cerr << "findFileNum() error" << endl;
+    if (!user_defined_grid) cerr << "findFileNum() error" << endl;
 
     return -1;
 }

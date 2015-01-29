@@ -413,6 +413,9 @@ void InCoreInterp::update_fourth_quadrant(double data_z, int base_x, int base_y,
 
 void InCoreInterp::updateGridPoint(int x, int y, double data_z, double distance)
 {
+    // Add checks for invalid indices that result from user-defined grids
+    if (x >= GRID_SIZE_X || x < 0 || y >= GRID_SIZE_Y || y < 0) return;
+
     if(interp[x][y].Zmin > data_z)
         interp[x][y].Zmin = data_z;
     if(interp[x][y].Zmax < data_z)
