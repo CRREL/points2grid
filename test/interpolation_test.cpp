@@ -4,9 +4,7 @@
 #include <points2grid/config.h>
 #include <points2grid/Global.hpp>
 
-#include "config.hpp"
-
-#include "gdal_priv.h"
+#include "fixtures.hpp"
 
 
 namespace points2grid
@@ -77,45 +75,11 @@ GridHeader read_grid_header(std::istream& is)
 }
 
 
+class InterpolationTest : public FourPointsTest
+{};
+
+
 }
-
-
-class InterpolationTest : public ::testing::Test
-{
-public:
-
-    virtual void SetUp()
-    {
-        infile = get_test_data_filename("four-points.txt");
-        outfile = get_test_data_filename("outfile");
-    }
-
-    virtual void TearDown()
-    {
-        std::remove((outfile + ".den.asc").c_str());
-        std::remove((outfile + ".idw.asc").c_str());
-        std::remove((outfile + ".max.asc").c_str());
-        std::remove((outfile + ".mean.asc").c_str());
-        std::remove((outfile + ".min.asc").c_str());
-        std::remove((outfile + ".std.asc").c_str());
-        std::remove((outfile + ".den.grid").c_str());
-        std::remove((outfile + ".idw.grid").c_str());
-        std::remove((outfile + ".max.grid").c_str());
-        std::remove((outfile + ".mean.grid").c_str());
-        std::remove((outfile + ".min.grid").c_str());
-        std::remove((outfile + ".std.grid").c_str());
-        std::remove((outfile + ".den.tif").c_str());
-        std::remove((outfile + ".idw.tif").c_str());
-        std::remove((outfile + ".max.tif").c_str());
-        std::remove((outfile + ".mean.tif").c_str());
-        std::remove((outfile + ".min.tif").c_str());
-        std::remove((outfile + ".std.tif").c_str());
-    }
-
-    std::string infile;
-    std::string outfile;
-
-};
 
 
 TEST_F(InterpolationTest, Constructor)
@@ -144,7 +108,7 @@ TEST_F(InterpolationTest, Interpolate)
 }
 
 
-TEST_F(InterpolationTest, Headers)
+TEST_F(InterpolationTest, ArcGISHeaders)
 {
     Interpolation interp(1, 1, 1, 3, INTERP_INCORE);
     interp.init(infile, INPUT_ASCII);
@@ -160,6 +124,14 @@ TEST_F(InterpolationTest, Headers)
     EXPECT_DOUBLE_EQ(asc_header.yllcorner, 0.5);
     EXPECT_DOUBLE_EQ(asc_header.cellsize, 1.0);
     EXPECT_EQ(asc_header.NODATA_value, -9999);
+}
+
+
+TEST_F(InterpolationTest, GridHeaders)
+{
+    Interpolation interp(1, 1, 1, 3, INTERP_INCORE);
+    interp.init(infile, INPUT_ASCII);
+    interp.interpolation(infile, outfile, INPUT_ASCII, OUTPUT_FORMAT_ALL, OUTPUT_TYPE_ALL);
 
     // Test GRID headers
     std::ifstream grid;
@@ -171,23 +143,6 @@ TEST_F(InterpolationTest, Headers)
     EXPECT_DOUBLE_EQ(grid_header.west, 0.5);
     EXPECT_EQ(grid_header.rows, 2);
     EXPECT_EQ(grid_header.cols, 2);
-
-    // Test GeoTIFF headers
-#ifdef HAVE_GDAL
-    GDALDataset *dataset;
-    GDALAllRegister();
-    dataset = (GDALDataset *) GDALOpen((outfile + ".idw.tif").c_str(), GA_ReadOnly);
-    ASSERT_TRUE(dataset != NULL);
-    double adfGeoTransform[6];
-    EXPECT_EQ(dataset->GetGeoTransform(adfGeoTransform), CE_None);
-    EXPECT_DOUBLE_EQ(adfGeoTransform[0], 0.5);
-    EXPECT_DOUBLE_EQ(adfGeoTransform[1], 1.0);
-    EXPECT_DOUBLE_EQ(adfGeoTransform[2], 0.0);
-    EXPECT_DOUBLE_EQ(adfGeoTransform[3], 2.5);
-    EXPECT_DOUBLE_EQ(adfGeoTransform[4], 0.0);
-    EXPECT_DOUBLE_EQ(adfGeoTransform[5], -1.0);
-    delete dataset;
-#endif // HAVE_GDAL
 }
 
 

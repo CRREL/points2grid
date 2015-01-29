@@ -4,7 +4,15 @@ compiler:
     - clang
     - gcc
 
+env:
+    - POINTS2GRID_GDAL=ON
+    - POINTS2GRID_GDAL=OFF
+
 install:
+    - sudo apt-get update
+    - if [[ "$POINTS2GRID_GDAL" == "ON" ]]; then
+      sudo apt-get install libgdal-dev;
+      fi
     - sudo apt-get install libboost-all-dev
 
 script:
