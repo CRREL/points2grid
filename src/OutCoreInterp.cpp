@@ -696,7 +696,7 @@ void OutCoreInterp::updateGridPoint(int fileNum, int x, int y, double data_z, do
         return;
     }
 
-    if(coord < gf->getMemSize() && coord >= 0)
+    if(coord < gf->getMemSize())
     {
         if(gf->interp[coord].Zmin > data_z)
             gf->interp[coord].Zmin = data_z;
