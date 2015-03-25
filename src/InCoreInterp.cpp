@@ -313,7 +313,7 @@ void InCoreInterp::update_first_quadrant(double data_z, int base_x, int base_y, 
                 //interp[i][j]++;
 
                 // update GridPoint
-                updateGridPoint(i, j, data_z, distance);
+                updateGridPoint(i, j, data_z, sqrt(distance));
 
             } else if(j == base_y) {
                 //printf("return ");
