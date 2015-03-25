@@ -586,7 +586,7 @@ void OutCoreInterp::update_first_quadrant(int fileNum, double data_z, int base_x
             if(distance <= radius_sqr)
             {
                 // update GridPoint
-                updateGridPoint(fileNum, i, j, data_z, distance);
+                updateGridPoint(fileNum, i, j, data_z, sqrt(distance));
 
             } else if(j == base_y) {
                 //printf("return ");
