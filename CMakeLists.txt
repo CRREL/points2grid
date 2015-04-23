@@ -114,10 +114,6 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
     -D_GNU_SOURCE
     -D_LARGEFILE_SOURCE
     ${LFS_CFLAGS})
-
-  if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    add_definitions(-m64)
-  endif()
 endif()
 
 if(WIN32)
