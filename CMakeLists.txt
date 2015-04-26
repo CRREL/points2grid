@@ -31,11 +31,11 @@ set (P2G_VERSION_STRING "${P2G_VERSION_MAJOR}.${P2G_VERSION_MINOR}.${P2G_VERSION
 # Boost (required)
 # ----------------
 
-  if(WIN32)
+if(WIN32)
     if (MSVC)
-      set(Boost_USE_MULTITHREADED ON)
+        set(Boost_USE_MULTITHREADED ON)
     endif(MSVC)
-  endif(WIN32)
+endif(WIN32)
 find_package( Boost 1.40 COMPONENTS iostreams program_options system filesystem REQUIRED )
 include_directories(${Boost_INCLUDE_DIRS})
 
@@ -45,32 +45,32 @@ mark_as_advanced(CLEAR Boost_LIBRARY_DIRS)
 link_directories(${Boost_LIBRARY_DIRS})
 
 set(Boost_SEMVER
-  ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}
-  CACHE STRING "The Boost version you are linking against.")
+    ${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}
+    CACHE STRING "The Boost version you are linking against.")
 
 #provide a fallback in case version detection fails
 mark_as_advanced(Boost_SEMVER)
 
 # message("Boost semantic version:" ${Boost_SEMVER})
 if(Boost_SEMVER VERSION_LESS 1.44.0)
-  message("Using old Boost.Iostreams")
-  set(OLD_BOOST_IOSTREAMS TRUE)
+    message("Using old Boost.Iostreams")
+    set(OLD_BOOST_IOSTREAMS TRUE)
 endif()
 
 # GDAL/OGR support - optional, default=ON
 option(WITH_GDAL "Choose if GDAL support should be built" TRUE)
 if(WITH_GDAL)
-  find_package(GDAL 1.9.0)
-  if (GDAL_FOUND)
-    set(HAVE_GDAL 1)
-    include_directories("${GDAL_INCLUDE_DIR}")
-    mark_as_advanced(CLEAR GDAL_INCLUDE_DIR)
-    mark_as_advanced(CLEAR GDAL_LIBRARY)
-    message(STATUS "...building with GDAL")
-  else()
-    set(WITH_GDAL FALSE)
-    set(GDAL_LIBRARY "")
-  endif()
+    find_package(GDAL 1.9.0)
+    if (GDAL_FOUND)
+        set(HAVE_GDAL 1)
+        include_directories("${GDAL_INCLUDE_DIR}")
+        mark_as_advanced(CLEAR GDAL_INCLUDE_DIR)
+        mark_as_advanced(CLEAR GDAL_LIBRARY)
+        message(STATUS "...building with GDAL")
+    else()
+        set(WITH_GDAL FALSE)
+        set(GDAL_LIBRARY "")
+    endif()
 endif()
 
 # cURL (optional)
@@ -86,43 +86,43 @@ include_directories(${CURL_INCLUDE_DIRS})
 
 find_package(BZip2)
 if(BZIP2_FOUND)
-  include_directories(${BZIP2_INCLUDE_DIRS})
+    include_directories(${BZIP2_INCLUDE_DIRS})
 else()
-  message(STATUS "BZip2 not found.  Builds using packaged Boost libraries may fail.")
+    message(STATUS "BZip2 not found.  Builds using packaged Boost libraries may fail.")
 endif()
 
 # generate our configuration header
 # =================================
 
 configure_file(${PROJECT_SOURCE_DIR}/include/points2grid/config.h.in
-  ${PROJECT_SOURCE_DIR}/include/points2grid/config.h)
+    ${PROJECT_SOURCE_DIR}/include/points2grid/config.h)
 
 # set flags for GCC (from original Makefile)
 # ==========================================
 
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
-  # implicit large file support
-  execute_process(COMMAND getconf LFS_CFLAGS
-    OUTPUT_VARIABLE LFS_CFLAGS
-    ERROR_QUIET)
+    # implicit large file support
+    execute_process(COMMAND getconf LFS_CFLAGS
+        OUTPUT_VARIABLE LFS_CFLAGS
+        ERROR_QUIET)
 
-  add_definitions(
-    -Wall
-    -g
-    -D_GNU_SOURCE
-    -D_LARGEFILE_SOURCE
-    ${LFS_CFLAGS})
+    add_definitions(
+        -Wall
+        -g
+        -D_GNU_SOURCE
+        -D_LARGEFILE_SOURCE
+        ${LFS_CFLAGS})
 endif()
 
 if(WIN32)
-  if (MSVC)
-      add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-      add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-      add_definitions(-D_CRT_NONSTDC_NO_WARNING)
-      add_definitions(-D_SCL_SECURE_NO_WARNINGS)
-	  add_definitions(-DBOOST_LIB_TOOLSET="vc110")
-	  add_definitions(-DBOOST_ALL_DYN_LINK)	  
-  endif()
+    if (MSVC)
+        add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+        add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+        add_definitions(-D_CRT_NONSTDC_NO_WARNING)
+        add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+        add_definitions(-DBOOST_LIB_TOOLSET="vc110")
+        add_definitions(-DBOOST_ALL_DYN_LINK)	  
+    endif()
 endif()
 
 # and now the actual project that we'll build
@@ -142,25 +142,25 @@ set(DEFAULT_BIN_SUBDIR bin)
 set(DEFAULT_LIB_SUBDIR lib)
 
 set(LIBRARY_CPP
-  ${SRC_DIR}/GridFile.cpp
-  ${SRC_DIR}/GridMap.cpp
-  ${SRC_DIR}/InCoreInterp.cpp
-  ${SRC_DIR}/Interpolation.cpp
-  ${SRC_DIR}/OutCoreInterp.cpp
+    ${SRC_DIR}/GridFile.cpp
+    ${SRC_DIR}/GridMap.cpp
+    ${SRC_DIR}/InCoreInterp.cpp
+    ${SRC_DIR}/Interpolation.cpp
+    ${SRC_DIR}/OutCoreInterp.cpp
 
-)
+    )
 
 set(POINTS2GRID_HPP
-  ${INCLUDE_DIR}/config.h
-  ${INCLUDE_DIR}/Interpolation.hpp
-  ${INCLUDE_DIR}/OutCoreInterp.hpp
-  ${INCLUDE_DIR}/CoreInterp.hpp
-  ${INCLUDE_DIR}/Global.hpp
-  ${INCLUDE_DIR}/GridFile.hpp
-  ${INCLUDE_DIR}/GridMap.hpp
-  ${INCLUDE_DIR}/GridPoint.hpp
-  ${INCLUDE_DIR}/InCoreInterp.hpp
-)
+    ${INCLUDE_DIR}/config.h
+    ${INCLUDE_DIR}/Interpolation.hpp
+    ${INCLUDE_DIR}/OutCoreInterp.hpp
+    ${INCLUDE_DIR}/CoreInterp.hpp
+    ${INCLUDE_DIR}/Global.hpp
+    ${INCLUDE_DIR}/GridFile.hpp
+    ${INCLUDE_DIR}/GridMap.hpp
+    ${INCLUDE_DIR}/GridPoint.hpp
+    ${INCLUDE_DIR}/InCoreInterp.hpp
+    )
 
 # setup source groups
 # -------------------
@@ -178,31 +178,31 @@ set(P2G_LIB_NAME pts2grd)
 add_library(${P2G_LIB_NAME} SHARED ${LIBRARY_CPP} ${POINTS2GRID_HPP})
 target_link_libraries(${P2G_LIB_NAME} ${Boost_LIBRARIES} ${CURL_LIBRARIES})
 if (WIN32)
-set_target_properties(${P2G_LIB_NAME} PROPERTIES
-     COMPILE_DEFINITIONS P2G_DLL_EXPORT)
+    set_target_properties(${P2G_LIB_NAME} PROPERTIES
+        COMPILE_DEFINITIONS P2G_DLL_EXPORT)
 endif()
 
 if (BZIP2_FOUND)
-  target_link_libraries(${P2G_LIB_NAME} ${BZIP2_LIBRARIES})
+    target_link_libraries(${P2G_LIB_NAME} ${BZIP2_LIBRARIES})
 endif()
 
 if (GDAL_FOUND)
-  target_link_libraries(${P2G_LIB_NAME} ${GDAL_LIBRARY})
+    target_link_libraries(${P2G_LIB_NAME} ${GDAL_LIBRARY})
 endif()
 
 if (APPLE)
-  set_target_properties(
-    ${P2G_LIB_NAME}
-    PROPERTIES
-    INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_RPATH ON)
+    set_target_properties(
+        ${P2G_LIB_NAME}
+        PROPERTIES
+        INSTALL_NAME_DIR "@rpath" BUILD_WITH_INSTALL_RPATH ON)
 endif()
 
 
 add_executable(points2grid ${APPS_DIR}/points2grid.cpp)
 target_link_libraries(points2grid ${P2G_LIB_NAME}  )
 if (WIN32)
-set_target_properties(points2grid PROPERTIES
-     COMPILE_DEFINITIONS P2G_DLL_IMPORT)
+    set_target_properties(points2grid PROPERTIES
+        COMPILE_DEFINITIONS P2G_DLL_IMPORT)
 endif()
 
 
@@ -210,18 +210,18 @@ endif()
 # ----------------------
 
 install(TARGETS points2grid
-  RUNTIME DESTINATION ${DEFAULT_BIN_SUBDIR}
-  LIBRARY DESTINATION ${DEFAULT_LIB_SUBDIR}
-  ARCHIVE DESTINATION ${DEFAULT_LIB_SUBDIR})
+    RUNTIME DESTINATION ${DEFAULT_BIN_SUBDIR}
+    LIBRARY DESTINATION ${DEFAULT_LIB_SUBDIR}
+    ARCHIVE DESTINATION ${DEFAULT_LIB_SUBDIR})
 
 install(TARGETS ${P2G_LIB_NAME}
-  RUNTIME DESTINATION ${DEFAULT_BIN_SUBDIR}
-  LIBRARY DESTINATION ${DEFAULT_LIB_SUBDIR}
-  ARCHIVE DESTINATION ${DEFAULT_LIB_SUBDIR})
+    RUNTIME DESTINATION ${DEFAULT_BIN_SUBDIR}
+    LIBRARY DESTINATION ${DEFAULT_LIB_SUBDIR}
+    ARCHIVE DESTINATION ${DEFAULT_LIB_SUBDIR})
 
 install(DIRECTORY ${INCLUDE_DIR}
-  DESTINATION ${DEFAULT_INCLUDE_SUBDIR}
-  FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+    DESTINATION ${DEFAULT_INCLUDE_SUBDIR}
+    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 
 # tests
 # -----
