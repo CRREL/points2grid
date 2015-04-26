@@ -288,6 +288,12 @@ void InCoreInterp::calculate_grid_values()
 }
 
 
+const GridPoint& InCoreInterp::get_grid_point(int i, int j)
+{
+    return interp[i][j];
+}
+
+
 //////////////////////////////////////////////////////
 // Private Methods
 //////////////////////////////////////////////////////

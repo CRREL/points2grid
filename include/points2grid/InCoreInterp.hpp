@@ -70,6 +70,7 @@ public:
     virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType);
     virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt);
     void calculate_grid_values();
+    const GridPoint& get_grid_point(int i, int j);
 
 private:
     GridPoint **interp;
