@@ -1,0 +1,41 @@
+## PREREQUISITES
+
+**points2grid** depends on one external library.
+
+1) curl: Please install libcurl from http://curl.haxx.se/.
+   **points2grid** has been tested to work with version 7.20.0 of libcurl.
+
+
+## Configuration
+
+Please adjust the `MEM_LIMIT` variable in the `Interpolation.h` file to reflect the memory limitations of your system.
+As a rule of thumb, set the `MEM_LIMIT` to be (available memory in bytes)/55.
+For jobs that generate grids cells greater than the `MEM_LIMIT`, **points2grid** goes "out-of-core", resulting in significantly worse performance.
+
+
+## Compilation
+
+If you have installed libraries at non-standard locations, please set your `CMAKE_PREFIX_PATH` environment variable to respectively point to the parent directory of the include files and libraries of the installed software pre-requisites.
+Multiple paths can be separated with the platform-specific path delimiter.
+
+```bash
+export CMAKE_PREFIX_PATH=/opt/curl:/other/prefix
+```
+
+If you define `CMAKE_PREFIX_PATH` as a command line option to `cmake`, you need to use the CMake list delimiter, i.e. a semicolon.
+
+```bash
+cmake .. -DCMAKE_PREFIX_PATH="/opt/curl;/other/prefix"
+```
+
+To compile **points2grid**, simply use the standard cmake procedures:
+
+```bash
+mkdir build # make a build folder
+cd build
+cmake .. [-DCMAKE_INSTALL_PREFIX="/install/prefix"]
+make
+make install
+```
+
+The software has been confirmed to work with gcc3 and gcc4 on Linux, Solaris and OSX, and with clang on OSX. 
