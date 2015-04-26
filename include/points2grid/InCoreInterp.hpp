@@ -69,6 +69,7 @@ public:
     virtual int update(double data_x, double data_y, double data_z);
     virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType);
     virtual int finish(const std::string& outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt);
+    void calculate_grid_values();
 
 private:
     GridPoint **interp;

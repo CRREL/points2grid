@@ -180,13 +180,33 @@ int InCoreInterp::finish(const std::string& outputName, int outputFormat, unsign
 int InCoreInterp::finish(const std::string& outputName, int outputFormat, unsigned int outputType, double *adfGeoTransform, const char* wkt)
 {
     int rc;
-    int i,j;
 
     //struct tms tbuf;
     clock_t t0, t1;
 
-    for(i = 0; i < GRID_SIZE_X; i++)
-        for(j = 0; j < GRID_SIZE_Y; j++)
+    calculate_grid_values();
+
+    t0 = clock();
+
+    if((rc = outputFile(outputName, outputFormat, outputType, adfGeoTransform, wkt)) < 0)
+    {
+        cerr << "InCoreInterp::finish outputFile error" << endl;
+        return -1;
+    }
+
+    t1 = clock();
+
+    cerr << "Output Execution time: " << (double)(t1 - t0)/ CLOCKS_PER_SEC << std::endl;
+
+
+    return 0;
+}
+
+
+void InCoreInterp::calculate_grid_values()
+{
+    for(int i = 0; i < GRID_SIZE_X; i++)
+        for(int j = 0; j < GRID_SIZE_Y; j++)
         {
             if(interp[i][j].Zmin == DBL_MAX) {
                 //		interp[i][j].Zmin = NAN;
@@ -265,22 +285,8 @@ int InCoreInterp::finish(const std::string& outputName, int outputFormat, unsign
                 }
             }
     }
-
-    t0 = clock();
-
-    if((rc = outputFile(outputName, outputFormat, outputType, adfGeoTransform, wkt)) < 0)
-    {
-        cerr << "InCoreInterp::finish outputFile error" << endl;
-        return -1;
-    }
-
-    t1 = clock();
-
-    cerr << "Output Execution time: " << (double)(t1 - t0)/ CLOCKS_PER_SEC << std::endl;
-
-
-    return 0;
 }
+
 
 //////////////////////////////////////////////////////
 // Private Methods
