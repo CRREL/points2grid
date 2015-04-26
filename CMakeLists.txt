@@ -33,9 +33,7 @@ set (P2G_VERSION_STRING "${P2G_VERSION_MAJOR}.${P2G_VERSION_MINOR}.${P2G_VERSION
 
   if(WIN32)
     if (MSVC)
-#      set(Boost_USE_STATIC_LIBS   ON)
       set(Boost_USE_MULTITHREADED ON)
- #     set(Boost_USE_STATIC_RUNTIME    ON)
     endif(MSVC)
   endif(WIN32)
 find_package( Boost 1.40 COMPONENTS iostreams program_options system filesystem REQUIRED )
