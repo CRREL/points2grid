@@ -79,6 +79,8 @@ public:
     // for debug
     void printArray();
 
+	void setLasExcludeClassification(int classification);
+
     // depricated
     void setRadius(double r);
 
@@ -106,6 +108,8 @@ private:
     double radius_sqr;
     int window_size;
     int interpolation_mode;
+    
+    int las_exclude_classification;
 
     CoreInterp *interp;
 };

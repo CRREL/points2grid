@@ -72,6 +72,7 @@ POSSIBILITY OF SUCH DAMAGE.
 Interpolation::Interpolation(double x_dist, double y_dist, double radius,
                              int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist), interp(NULL)
 {
+	las_exclude_classification = -1;
     data_count = 0;
     radius_sqr = radius * radius;
     window_size = _window_size;
@@ -336,6 +337,7 @@ int Interpolation::interpolation(const std::string& inputName,
     //unsigned int i;
     double data_x, data_y;
     double data_z;
+    int data_class;
 
     //struct tms tbuf;
     //clock_t t0, t1;
@@ -400,14 +402,17 @@ int Interpolation::interpolation(const std::string& inputName,
             data_x = las.getX(index);
             data_y = las.getY(index);
             data_z = las.getZ(index);
+            data_class = las.getClassification(index);
             
             data_x -= min_x;
             data_y -= min_y;
             
-            if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
-                cerr << "interp->update() error while processing " << endl;
-                return -1;
-            }
+            if (las_exclude_classification != data_class) {
+				if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
+					cerr << "interp->update() error while processing " << endl;
+					return -1;
+				}
+			}
             index++;
         }
         
@@ -428,6 +433,11 @@ int Interpolation::interpolation(const std::string& inputName,
 void Interpolation::setRadius(double r)
 {
     radius_sqr = r * r;
+}
+
+void Interpolation::setLasExcludeClassification(int classification)
+{
+	las_exclude_classification = classification;
 }
 
 unsigned int Interpolation::getDataCount()
