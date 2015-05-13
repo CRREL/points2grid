@@ -107,7 +107,7 @@ int main(int argc, char **argv)
        desc;
 
     general.add_options()
-    ("help", "produce a help message")
+    ("help,h", "produce a help message")
     ("output_file_name,o", po::value<std::string>(), "required. name of output file without extension, i.e. if you want the output file to be test.asc, this parameter shoud be \"test\"")
     ("search_radius,r", po::value<float>(), "specifies the search radius. The default value is square root 2 of horizontal distance in a grid cell")
     ("output_format", po::value<std::string>(), "'all' generates every possible format,\n"
