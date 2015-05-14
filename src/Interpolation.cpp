@@ -72,7 +72,6 @@ POSSIBILITY OF SUCH DAMAGE.
 Interpolation::Interpolation(double x_dist, double y_dist, double radius,
                              int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist), interp(NULL)
 {
-	las_exclude_classification = -1;
     data_count = 0;
     radius_sqr = radius * radius;
     window_size = _window_size;
@@ -406,8 +405,9 @@ int Interpolation::interpolation(const std::string& inputName,
             
             data_x -= min_x;
             data_y -= min_y;
-            
-            if (las_exclude_classification != data_class) {
+
+            // If exclude point is true then point should be skipped
+            if (!exclude_point_class(data_class)) {
 				if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
 					cerr << "interp->update() error while processing " << endl;
 					return -1;
@@ -435,9 +435,23 @@ void Interpolation::setRadius(double r)
     radius_sqr = r * r;
 }
 
-void Interpolation::setLasExcludeClassification(int classification)
+void Interpolation::setLasExcludeClassification(std::vector<int> classification)
 {
 	las_exclude_classification = classification;
+}
+
+bool Interpolation::exclude_point_class(int classification)
+{
+    // This checks if the classification vector contains the current classification, if it does return true
+    // to exclude point. Otherwise return false to include point
+    if(std::find(las_exclude_classification.begin(), las_exclude_classification.end(), classification) != las_exclude_classification.end())
+    {
+        // Classification is in vector, exclude point
+        return true;
+    } else {
+        // Classification isn't in vector, include point
+        return false;
+    }
 }
 
 unsigned int Interpolation::getDataCount()

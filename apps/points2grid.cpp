@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     double GRID_DIST_Y = 6.0;
     double searchRadius = (double) sqrt(2.0) * GRID_DIST_X;
     int window_size = 0;
-    int las_exclude_class = -1;
+    std::vector<int> las_exclude_classifications;
 
     bool user_defined_bounds = false;
     double n = 0.0, s = 0.0, e = 0.0, w = 0.0;
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     ("fill_window_size", po::value<int>(), "The fill window is set to value. Permissible values are 3, 5 and 7.");
     
     lasf.add_options()
-    ("exclude_point", po::value<int>(), "Exclude points with the specified classification");
+    ("exclude_points", po::value<std::vector<int> >()->multitoken(), "Exclude points with the specified classification. Can specify multiple classifications seperated by a space.");
 
     desc.add(general).add(df).add(ot).add(res).add(bnds).add(nf).add(lasf);
 
@@ -283,6 +283,10 @@ int main(int argc, char **argv)
             }
         }
 
+        if(vm.count("exclude_points")) {
+            las_exclude_classifications = vm["exclude_points"].as<std::vector<int> >();
+        }
+
 #ifdef CURL_FOUND
         if(vm.count("data_file_name")) {
             strncpy(inputName, vm["data_file_name"].as<std::string>().c_str(), sizeof(inputName));
@@ -291,8 +295,7 @@ int main(int argc, char **argv)
             strncpy(inputURL, vm["data_file_url"].as<std::string>().c_str(), sizeof(inputURL));
         }
 
-        if((inputName == NULL || !strcmp(inputName, "")) &&
-                (inputURL == NULL || !strcmp(inputURL, "")))
+        if((inputName == NULL || !strcmp(inputName, "")) && (inputURL == NULL || !strcmp(inputURL, "")))
         {
             throw std::logic_error("you must specify a valid data file");
         }
@@ -333,11 +336,6 @@ int main(int argc, char **argv)
             else {
                 throw std::logic_error("'" + im + "' is not a recognized interpolation_mode");
             }
-        }
-        
-                
-        if(vm.count("exclude_point")) {
-            las_exclude_class = vm["exclude_point"].as<int>();
         }
 
         if(type == 0)
@@ -419,7 +417,7 @@ int main(int argc, char **argv)
     }
     
     // Exclude points
-    ip->setLasExcludeClassification(las_exclude_class);
+    ip->setLasExcludeClassification(las_exclude_classifications);
     
 
     t1 = clock();

@@ -79,7 +79,7 @@ public:
     // for debug
     void printArray();
 
-	void setLasExcludeClassification(int classification);
+	void setLasExcludeClassification(std::vector<int> classification);
 
     // depricated
     void setRadius(double r);
@@ -108,8 +108,10 @@ private:
     double radius_sqr;
     int window_size;
     int interpolation_mode;
-    
-    int las_exclude_classification;
+
+    bool exclude_point_class(int classification);
+
+    std::vector<int> las_exclude_classification;
 
     CoreInterp *interp;
 };
