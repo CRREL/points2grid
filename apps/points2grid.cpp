@@ -156,7 +156,7 @@ int main(int argc, char **argv)
     ("fill_window_size", po::value<int>(), "The fill window is set to value. Permissible values are 3, 5 and 7.");
     
     lasf.add_options()
-    ("exclude_points", po::value<std::vector<int> >()->multitoken(), "Exclude points with the specified classification. Can specify multiple classifications seperated by a space.");
+    ("exclude_class", po::value<std::vector<int> >()->multitoken(), "Exclude points with the specified classification. Can specify multiple classifications seperated by a space.");
 
     desc.add(general).add(df).add(ot).add(res).add(bnds).add(nf).add(lasf);
 
@@ -283,8 +283,8 @@ int main(int argc, char **argv)
             }
         }
 
-        if(vm.count("exclude_points")) {
-            las_exclude_classifications = vm["exclude_points"].as<std::vector<int> >();
+        if(vm.count("exclude_class")) {
+            las_exclude_classifications = vm["exclude_class"].as<std::vector<int> >();
         }
 
 #ifdef CURL_FOUND
