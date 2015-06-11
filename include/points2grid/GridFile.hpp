@@ -65,6 +65,7 @@ public:
     int unmap();
     bool isInMemory();
     unsigned int getMemSize();
+    inline std::string getFileName() const { return m_filename; }
 
     GridPoint *interp;
 
