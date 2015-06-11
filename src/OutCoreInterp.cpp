@@ -181,7 +181,12 @@ OutCoreInterp::~OutCoreInterp()
     for(int i = 0; i < numFiles; i++)
     {
         //cout << "gridMap " << i << " deleted" << endl;
-        if(gridMap[i] != NULL)
+            GridFile* f = gridMap[i]->getGridFile();
+
+            // Try to wipe the Grid data
+            int status = remove (f->getFileName().c_str());
+            if (status != 0)
+                std::cerr << "unable to remove tmpfile '" << f->getFileName() << "'" << std::endl;
             delete gridMap[i];
     }
     if(gridMap != NULL)
