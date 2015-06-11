@@ -801,7 +801,7 @@ int InCoreInterp::outputFile(const std::string& outputName, int outputFormat, un
             if (gdalFiles[i] != NULL)
             {
                 float *poRasterData = new float[GRID_SIZE_X*GRID_SIZE_Y];
-                for (int j = 0; j < GRID_SIZE_X*GRID_SIZE_Y; j++)
+                for (j = 0; j < GRID_SIZE_X*GRID_SIZE_Y; j++)
                 {
                     poRasterData[j] = 0;
                 }

@@ -174,6 +174,18 @@ public:
         return z;
     }
     
+    inline int getClassification(size_t point)
+    {
+		int classification_offset = 15;
+        char *position = (char *)points_offset() + stride() * point + classification_offset;
+        
+        int *classi = (int *)position;
+        
+        int classification = *classi & 0x1F;
+        
+        return classification;
+    }
+    
 private:
     void updateMinsMaxes() {
         if (start_offset_ == 0 && count_ == -1)

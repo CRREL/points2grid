@@ -336,6 +336,7 @@ int Interpolation::interpolation(const std::string& inputName,
     //unsigned int i;
     double data_x, data_y;
     double data_z;
+    int data_class;
 
     //struct tms tbuf;
     //clock_t t0, t1;
@@ -400,14 +401,18 @@ int Interpolation::interpolation(const std::string& inputName,
             data_x = las.getX(index);
             data_y = las.getY(index);
             data_z = las.getZ(index);
+            data_class = las.getClassification(index);
             
             data_x -= min_x;
             data_y -= min_y;
-            
-            if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
-                cerr << "interp->update() error while processing " << endl;
-                return -1;
-            }
+
+            // If exclude point is true then point should be skipped
+            if (!exclude_point_class(data_class)) {
+				if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
+					cerr << "interp->update() error while processing " << endl;
+					return -1;
+				}
+			}
             index++;
         }
         
@@ -428,6 +433,25 @@ int Interpolation::interpolation(const std::string& inputName,
 void Interpolation::setRadius(double r)
 {
     radius_sqr = r * r;
+}
+
+void Interpolation::setLasExcludeClassification(std::vector<int> classification)
+{
+	las_exclude_classification = classification;
+}
+
+bool Interpolation::exclude_point_class(int classification)
+{
+    // This checks if the classification vector contains the current classification, if it does return true
+    // to exclude point. Otherwise return false to include point
+    if(std::find(las_exclude_classification.begin(), las_exclude_classification.end(), classification) != las_exclude_classification.end())
+    {
+        // Classification is in vector, exclude point
+        return true;
+    } else {
+        // Classification isn't in vector, include point
+        return false;
+    }
 }
 
 unsigned int Interpolation::getDataCount()
