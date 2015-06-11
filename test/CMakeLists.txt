@@ -11,6 +11,7 @@ include_directories(
 
 set(src
     interpolation_test.cpp
+    exclude_class_test.cpp
     issues/7_two_point_cloud.cpp
     )
 

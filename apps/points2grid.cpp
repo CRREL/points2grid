@@ -91,6 +91,7 @@ int main(int argc, char **argv)
     double GRID_DIST_Y = 6.0;
     double searchRadius = (double) sqrt(2.0) * GRID_DIST_X;
     int window_size = 0;
+    std::vector<int> las_exclude_classifications;
 
     bool user_defined_bounds = false;
     double n = 0.0, s = 0.0, e = 0.0, w = 0.0;
@@ -102,10 +103,11 @@ int main(int argc, char **argv)
        res("Resolution"),
        bnds("Grid Bounds (optional, all four must be included if used)"),
        nf("Null Filling"),
+       lasf("LAS Point Filtering"),
        desc;
 
     general.add_options()
-    ("help", "produce a help message")
+    ("help,h", "produce a help message")
     ("output_file_name,o", po::value<std::string>(), "required. name of output file without extension, i.e. if you want the output file to be test.asc, this parameter shoud be \"test\"")
     ("search_radius,r", po::value<float>(), "specifies the search radius. The default value is square root 2 of horizontal distance in a grid cell")
     ("output_format", po::value<std::string>(), "'all' generates every possible format,\n"
@@ -152,8 +154,11 @@ int main(int argc, char **argv)
     nf.add_options()
     ("fill", "fills nulls in the DEM. Default window size is 3.")
     ("fill_window_size", po::value<int>(), "The fill window is set to value. Permissible values are 3, 5 and 7.");
+    
+    lasf.add_options()
+    ("exclude_class", po::value<std::vector<int> >()->multitoken(), "Exclude points with the specified classification. Can specify multiple classifications seperated by a space.");
 
-    desc.add(general).add(df).add(ot).add(res).add(bnds).add(nf);
+    desc.add(general).add(df).add(ot).add(res).add(bnds).add(nf).add(lasf);
 
     po::variables_map vm;
 
@@ -278,6 +283,9 @@ int main(int argc, char **argv)
             }
         }
 
+        if(vm.count("exclude_class")) {
+            las_exclude_classifications = vm["exclude_class"].as<std::vector<int> >();
+        }
 
 #ifdef CURL_FOUND
         if(vm.count("data_file_name")) {
@@ -287,8 +295,7 @@ int main(int argc, char **argv)
             strncpy(inputURL, vm["data_file_url"].as<std::string>().c_str(), sizeof(inputURL));
         }
 
-        if((inputName == NULL || !strcmp(inputName, "")) &&
-                (inputURL == NULL || !strcmp(inputURL, "")))
+        if((inputName == NULL || !strcmp(inputName, "")) && (inputURL == NULL || !strcmp(inputURL, "")))
         {
             throw std::logic_error("you must specify a valid data file");
         }
@@ -408,6 +415,10 @@ int main(int argc, char **argv)
         fprintf(stderr, "Interpolation::init() error\n");
         return -1;
     }
+    
+    // Exclude points
+    ip->setLasExcludeClassification(las_exclude_classifications);
+    
 
     t1 = clock();
     printf("Init + Min/Max time: %10.2f\n", (double)(t1 - t0)/CLOCKS_PER_SEC);
