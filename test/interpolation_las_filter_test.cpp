@@ -36,7 +36,7 @@ TEST_F(LASFilterTest, InterpolateExcludeClass) {
     int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_ALL);
     EXPECT_EQ(0, retval);
 
-    EXPECT_EQ(276, interp.las_point_count);
+    EXPECT_EQ(276U, interp.las_point_count);
 }
 
 TEST_F(LASFilterTest, InterpolateFirstReturns) {
@@ -47,7 +47,7 @@ TEST_F(LASFilterTest, InterpolateFirstReturns) {
     int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_ALL);
     EXPECT_EQ(0, retval);
 
-    EXPECT_EQ(925, interp.las_point_count);
+    EXPECT_EQ(925U, interp.las_point_count);
 }
 
 TEST_F(LASFilterTest, InterpolateLastReturns) {
@@ -58,7 +58,7 @@ TEST_F(LASFilterTest, InterpolateLastReturns) {
     int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_ALL);
     EXPECT_EQ(0, retval);
 
-    EXPECT_EQ(901, interp.las_point_count);
+    EXPECT_EQ(901U, interp.las_point_count);
 }
 
 
