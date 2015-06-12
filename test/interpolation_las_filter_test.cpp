@@ -33,7 +33,7 @@ TEST_F(LASFilterTest, InterpolateExcludeClass) {
     interp.init(infile, INPUT_LAS);
     interp.setLasExcludeClassification(exclude_class);
 
-    int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_ALL);
+    int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_DEN);
     EXPECT_EQ(0, retval);
 
     EXPECT_EQ(276U, interp.las_point_count);
@@ -44,7 +44,7 @@ TEST_F(LASFilterTest, InterpolateFirstReturns) {
     interp.init(infile, INPUT_LAS);
     interp.setLasExcludeReturn(true);
 
-    int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_ALL);
+    int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_DEN);
     EXPECT_EQ(0, retval);
 
     EXPECT_EQ(925U, interp.las_point_count);
@@ -55,7 +55,7 @@ TEST_F(LASFilterTest, InterpolateLastReturns) {
     interp.init(infile, INPUT_LAS);
     interp.setLasExcludeReturn(false);
 
-    int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_ALL);
+    int retval = interp.interpolation(infile, outfile, INPUT_LAS, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_DEN);
     EXPECT_EQ(0, retval);
 
     EXPECT_EQ(901U, interp.las_point_count);

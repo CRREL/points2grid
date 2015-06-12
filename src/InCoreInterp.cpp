@@ -89,6 +89,9 @@ InCoreInterp::InCoreInterp(double dist_x, double dist_y,
 
 InCoreInterp::~InCoreInterp()
 {
+    for(int i = 0; i < GRID_SIZE_X; ++i){
+        free(interp[i]);
+    }
     free(interp);
 }
 
@@ -791,7 +794,7 @@ int InCoreInterp::outputFile(const std::string& outputName, int outputFormat, un
             }
         }
     } else {
-      gdalFiles = NULL;
+        gdalFiles = NULL;
     }
 
     if (gdalFiles != NULL)
@@ -855,6 +858,8 @@ int InCoreInterp::outputFile(const std::string& outputName, int outputFormat, un
                 delete [] poRasterData;
             }
         }
+
+        free(gdalFiles);
     }
 #endif // HAVE_GDAL
 
@@ -866,6 +871,7 @@ int InCoreInterp::outputFile(const std::string& outputName, int outputFormat, un
             if(gridFiles[i] != NULL)
                 fclose(gridFiles[i]);
         }
+        free(gridFiles);
     }
 
     if(arcFiles != NULL)
@@ -875,6 +881,8 @@ int InCoreInterp::outputFile(const std::string& outputName, int outputFormat, un
             if(arcFiles[i] != NULL)
                 fclose(arcFiles[i]);
         }
+
+        free(arcFiles);
     }
 
     return 0;
