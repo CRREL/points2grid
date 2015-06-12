@@ -190,6 +190,26 @@ public:
         return classification;
     }
 
+    inline int getReturnNumber(size_t point)
+    {
+        int return_number_offset = 14;
+        char *position = (char *)points_offset() + stride() * point + return_number_offset;
+
+        int *return_num = (int *)position;
+
+        return *return_num & 0x07; // Return number in bitfield, bits 0, 1 and 2
+    }
+
+    inline int getNumberOfReturns(size_t point)
+    {
+        int return_number_offset = 14;
+        char *position = (char *)points_offset() + stride() * point + return_number_offset;
+
+        int *return_num = (int *)position;
+
+        return (*return_num >> 3) & 0x07; // Number of returns in bitfield, bits 3, 4 and 5
+    }
+
 private:
     void updateMinsMaxes() {
         if (start_offset_ == 0 && count_ == -1)
