@@ -74,6 +74,13 @@ namespace po = boost::program_options;
 
 const std::string appName("points2grid");
 
+void conflicting_options(const po::variables_map& vm, const char* opt1, const char* opt2)
+{
+    if (vm.count(opt1) && !vm[opt1].defaulted() && vm.count(opt2) && !vm[opt2].defaulted()) {
+        throw std::logic_error(std::string("Conflicting options '") + opt1 + "' and '" + opt2 + "'.");
+    }
+}
+
 int main(int argc, char **argv)
 {
     clock_t t0, t1;
@@ -94,6 +101,8 @@ int main(int argc, char **argv)
     std::vector<int> las_exclude_classifications;
 
     bool user_defined_bounds = false;
+    bool filter_returns = false;
+    bool keep_first = false;
     double n = 0.0, s = 0.0, e = 0.0, w = 0.0;
 
     // argument processing..
@@ -156,7 +165,9 @@ int main(int argc, char **argv)
     ("fill_window_size", po::value<int>(), "The fill window is set to value. Permissible values are 3, 5 and 7.");
     
     lasf.add_options()
-    ("exclude_class", po::value<std::vector<int> >()->multitoken(), "Exclude points with the specified classification. Can specify multiple classifications seperated by a space.");
+    ("exclude_class", po::value<std::vector<int> >()->multitoken(), "Exclude points with the specified classification. Can specify multiple classifications seperated by a space.")
+    ("first_return_only", "Exclude all points that are not the first return. (Cannot be used with --last_return_only)")
+    ("last_return_only", "Exclude all points that are not the last return. (Cannot be used with --first_return_only)");
 
     desc.add(general).add(df).add(ot).add(res).add(bnds).add(nf).add(lasf);
 
@@ -175,6 +186,9 @@ int main(int argc, char **argv)
         }
 
         po::notify(vm);
+
+        // Check for mutually exclusive options
+        conflicting_options(vm, "first_return_only", "last_return_only");
 
 
         if (vm.count("output_format")) {
@@ -286,6 +300,15 @@ int main(int argc, char **argv)
         if(vm.count("exclude_class")) {
             las_exclude_classifications = vm["exclude_class"].as<std::vector<int> >();
         }
+
+        if(vm.count("first_return_only")) {
+            filter_returns = true;
+            keep_first = true;
+        } else if(vm.count("last_return_only")) {
+            filter_returns = true;
+        }
+
+
 
 #ifdef CURL_FOUND
         if(vm.count("data_file_name")) {
@@ -418,6 +441,11 @@ int main(int argc, char **argv)
     
     // Exclude points
     ip->setLasExcludeClassification(las_exclude_classifications);
+
+    if(filter_returns)
+    {
+        ip->setLasExcludeReturn(keep_first);
+    }
     
 
     t1 = clock();

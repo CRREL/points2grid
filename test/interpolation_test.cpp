@@ -136,9 +136,9 @@ TEST_F(InterpolationTest, Interpolate)
     interp.init(infile, INPUT_ASCII);
     int retval = interp.interpolation(infile, outfile, INPUT_ASCII, OUTPUT_FORMAT_ARC_ASCII, OUTPUT_TYPE_ALL);
     EXPECT_EQ(0, retval);
-    EXPECT_EQ(4, interp.getDataCount());
-    EXPECT_EQ(2, interp.getGridSizeX());
-    EXPECT_EQ(2, interp.getGridSizeY());
+    EXPECT_EQ(4U, interp.getDataCount());
+    EXPECT_EQ(2U, interp.getGridSizeX());
+    EXPECT_EQ(2U, interp.getGridSizeY());
 }
 
 

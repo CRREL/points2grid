@@ -57,7 +57,7 @@ TEST(Issue7, TwoPointCloud)
     interp.update(10, 10, 0);
     interp.calculate_grid_values();
     GridPoint point = interp.get_grid_point(0, 0);
-    EXPECT_EQ(2, point.count);
+    EXPECT_EQ(2U, point.count);
     EXPECT_EQ(5, point.Zmean);
     EXPECT_EQ(0, point.Zmin);
     EXPECT_EQ(10, point.Zmax);

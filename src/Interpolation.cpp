@@ -70,8 +70,11 @@ POSSIBILITY OF SUCH DAMAGE.
 /////////////////////////////////////////////////////////////
 
 Interpolation::Interpolation(double x_dist, double y_dist, double radius,
-                             int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist), interp(NULL)
+                             int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist),
+                                                                                        filter_returns(false), keep_first_return(false), interp(NULL)
 {
+    las_point_count = 0;
+
     data_count = 0;
     radius_sqr = radius * radius;
     window_size = _window_size;
@@ -336,7 +339,7 @@ int Interpolation::interpolation(const std::string& inputName,
     //unsigned int i;
     double data_x, data_y;
     double data_z;
-    int data_class;
+    int data_class, data_return_number, data_max_return;
 
     //struct tms tbuf;
     //clock_t t0, t1;
@@ -402,12 +405,15 @@ int Interpolation::interpolation(const std::string& inputName,
             data_y = las.getY(index);
             data_z = las.getZ(index);
             data_class = las.getClassification(index);
+            data_return_number = las.getReturnNumber(index);
+            data_max_return = las.getNumberOfReturns(index);
             
             data_x -= min_x;
             data_y -= min_y;
 
             // If exclude point is true then point should be skipped
-            if (!exclude_point_class(data_class)) {
+            if (!exclude_point_class(data_class) && !exclude_point_return(data_return_number, data_max_return)) {
+                las_point_count++;
 				if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
 					cerr << "interp->update() error while processing " << endl;
 					return -1;
@@ -440,19 +446,41 @@ void Interpolation::setLasExcludeClassification(std::vector<int> classification)
 	las_exclude_classification = classification;
 }
 
+void Interpolation::setLasExcludeReturn(bool keep_first_return)
+{
+    filter_returns = true;
+    this->keep_first_return = keep_first_return;
+}
+
 bool Interpolation::exclude_point_class(int classification)
 {
     // This checks if the classification vector contains the current classification, if it does return true
     // to exclude point. Otherwise return false to include point
-    if(std::find(las_exclude_classification.begin(), las_exclude_classification.end(), classification) != las_exclude_classification.end())
-    {
-        // Classification is in vector, exclude point
-        return true;
-    } else {
-        // Classification isn't in vector, include point
-        return false;
-    }
+    return std::find(las_exclude_classification.begin(), las_exclude_classification.end(), classification) != las_exclude_classification.end();
 }
+
+bool Interpolation::exclude_point_return(int current_return, int max_returns)
+{
+    // keeping the first return return false when the current return is not equal to 1 (as we include point by returning false)
+    // keeping last return return false when current return is not equal to max_returns
+    if(filter_returns) {
+        if(keep_first_return)
+        {
+            return current_return != 1;
+        } else {
+            return current_return != max_returns; // if the current return == the max numbers of returns
+        }
+    }
+
+    return false; // return false to include the point
+}
+
+
+
+
+
+
+
 
 unsigned int Interpolation::getDataCount()
 {

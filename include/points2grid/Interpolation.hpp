@@ -80,9 +80,12 @@ public:
     void printArray();
 
 	void setLasExcludeClassification(std::vector<int> classification);
+    void setLasExcludeReturn(bool keep_first_return);
 
     // depricated
     void setRadius(double r);
+
+    unsigned long las_point_count;
 
 public:
     double GRID_DIST_X;
@@ -110,8 +113,12 @@ private:
     int interpolation_mode;
 
     bool exclude_point_class(int classification);
+    bool exclude_point_return(int current_return, int max_returns);
 
+    bool filter_returns;
+    bool keep_first_return;
     std::vector<int> las_exclude_classification;
+
 
     CoreInterp *interp;
 };

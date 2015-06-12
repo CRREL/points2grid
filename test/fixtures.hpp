@@ -59,23 +59,8 @@ public:
     virtual void TearDown()
     {
         std::remove((outfile + ".den.asc").c_str());
-        std::remove((outfile + ".idw.asc").c_str());
-        std::remove((outfile + ".max.asc").c_str());
-        std::remove((outfile + ".mean.asc").c_str());
-        std::remove((outfile + ".min.asc").c_str());
-        std::remove((outfile + ".std.asc").c_str());
         std::remove((outfile + ".den.grid").c_str());
-        std::remove((outfile + ".idw.grid").c_str());
-        std::remove((outfile + ".max.grid").c_str());
-        std::remove((outfile + ".mean.grid").c_str());
-        std::remove((outfile + ".min.grid").c_str());
-        std::remove((outfile + ".std.grid").c_str());
         std::remove((outfile + ".den.tif").c_str());
-        std::remove((outfile + ".idw.tif").c_str());
-        std::remove((outfile + ".max.tif").c_str());
-        std::remove((outfile + ".mean.tif").c_str());
-        std::remove((outfile + ".min.tif").c_str());
-        std::remove((outfile + ".std.tif").c_str());
     }
 
     std::string infile;
