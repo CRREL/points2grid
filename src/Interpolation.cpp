@@ -73,6 +73,8 @@ Interpolation::Interpolation(double x_dist, double y_dist, double radius,
                              int _window_size, int _interpolation_mode = INTERP_AUTO) : GRID_DIST_X (x_dist), GRID_DIST_Y(y_dist),
                                                                                         filter_returns(false), keep_first_return(false), interp(NULL)
 {
+    las_point_count = 0;
+
     data_count = 0;
     radius_sqr = radius * radius;
     window_size = _window_size;
@@ -411,6 +413,7 @@ int Interpolation::interpolation(const std::string& inputName,
 
             // If exclude point is true then point should be skipped
             if (!exclude_point_class(data_class) && !exclude_point_return(data_return_number, data_max_return)) {
+                las_point_count++;
 				if ((rc = interp->update(data_x, data_y, data_z)) < 0) {
 					cerr << "interp->update() error while processing " << endl;
 					return -1;

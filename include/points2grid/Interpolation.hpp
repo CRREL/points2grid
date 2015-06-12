@@ -85,6 +85,8 @@ public:
     // depricated
     void setRadius(double r);
 
+    unsigned long las_point_count;
+
 public:
     double GRID_DIST_X;
     double GRID_DIST_Y;
