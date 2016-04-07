@@ -51,6 +51,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 #include <stdexcept>
+#include <sstream>
 
 #include <points2grid/config.h>
 #include <points2grid/OutCoreInterp.hpp>
@@ -1305,7 +1306,20 @@ void OutCoreInterp::finalize()
 
 void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
     int tname = -1;
-    char tname_template[] = "/tmp/p2gXXXXXX";
+    std::string default_path("/tmp");
+    std::string fname_template("/p2gXXXXXX");
+
+    std::ostringstream oss;
+
+    char* tmppath = ::getenv("TMPDIR");
+
+    if (tmppath)
+        oss << std::string(tmppath) << fname_template;
+    else
+        oss << default_path << fname_template;
+
+    char* tname_template = (char*)oss.str().c_str();
+
 #ifdef _WIN32
 	const char *pfx = "grd";
     char dir[MAX_PATH];
