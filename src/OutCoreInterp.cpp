@@ -1352,7 +1352,7 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
     }
 #endif
 
-    size_t tname_len = sizeof(tname_template);
+    size_t tname_len = strlen(tname_template);
     if (tname_len < fname_len) {
         strncpy(fname, tname_template, tname_len);
         fname[tname_len] = '\0';
