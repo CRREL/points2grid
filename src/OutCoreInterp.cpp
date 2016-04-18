@@ -1318,7 +1318,8 @@ void OutCoreInterp::get_temp_file_name(char *fname, size_t fname_len) {
     else
         oss << default_path << fname_template;
 
-    char* tname_template = (char*)oss.str().c_str();
+    std::string name_template(oss.str());
+    char* tname_template = (char*)name_template.data();
 
 #ifdef _WIN32
 	const char *pfx = "grd";
