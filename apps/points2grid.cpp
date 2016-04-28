@@ -318,7 +318,7 @@ int main(int argc, char **argv)
             strncpy(inputURL, vm["data_file_url"].as<std::string>().c_str(), sizeof(inputURL));
         }
 
-        if((inputName == NULL || !strcmp(inputName, "")) && (inputURL == NULL || !strcmp(inputURL, "")))
+        if (!strcmp(inputName, "") && !strcmp(inputURL, ""))
         {
             throw std::logic_error("you must specify a valid data file");
         }
@@ -367,7 +367,7 @@ int main(int argc, char **argv)
 
 #ifdef CURL_FOUND
         // download file from URL, and set input name
-        if (!((inputURL == NULL || !strcmp(inputURL, "")))) {
+        if (strcmp(inputURL, "")) {
 
             CURL *curl;
             CURLcode res;
