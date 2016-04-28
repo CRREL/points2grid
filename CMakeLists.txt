@@ -21,7 +21,7 @@ message(STATUS "Setting ${CMAKE_PROJECT_NAME} build type - ${CMAKE_BUILD_TYPE}")
 
 set (P2G_VERSION_MAJOR 1)
 set (P2G_VERSION_MINOR 3)
-set (P2G_VERSION_PATCH 0)
+set (P2G_VERSION_PATCH 1)
 
 set (P2G_VERSION_STRING "${P2G_VERSION_MAJOR}.${P2G_VERSION_MINOR}.${P2G_VERSION_PATCH}")
 
@@ -121,7 +121,7 @@ if(WIN32)
         add_definitions(-D_CRT_NONSTDC_NO_WARNING)
         add_definitions(-D_SCL_SECURE_NO_WARNINGS)
         add_definitions(-DBOOST_LIB_TOOLSET="vc110")
-        add_definitions(-DBOOST_ALL_DYN_LINK)	  
+        add_definitions(-DBOOST_ALL_DYN_LINK)
     endif()
 endif()
 
