@@ -8,7 +8,7 @@ These values are then assigned to the corresponding DEM node and used to represe
 If no points are found within a given bin, the DEM node receives a value of null.
 **points2grid** also provides a null filling option, which applies an inverse distance weighted focal mean via a square moving window of 3, 5, or 7 pixels to fill cells in the DEM that have null values.
 
-More information about **points2grid** can be found on its [OpenTopography page](http://opentopo.sdsc.edu/gridsphere/gridsphere;jsessionid=3E6AD86428FB61C15BB10A9972E2EE8B?gs_action=viewTool&cid=contributeframeportlet&toolId=201) or [SourceForge page](http://sourceforge.net/projects/otforge/files/points2grid/1.0.1/).
+More information about **points2grid** can be found on its [OpenTopography page](http://www.opentopography.org/otsoftware/points2grid) or [SourceForge page](https://github.com/OpenTopography/points2grid/).
 
 
 ## History
