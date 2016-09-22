@@ -139,7 +139,11 @@ include_directories(
 set(DEFAULT_INCLUDE_SUBDIR include)
 
 set(DEFAULT_BIN_SUBDIR bin)
-set(DEFAULT_LIB_SUBDIR lib)
+if(DEFINED CMAKE_INSTALL_LIBDIR)
+  set(DEFAULT_LIB_SUBDIR "${CMAKE_INSTALL_LIBDIR}")
+else()
+  set(DEFAULT_LIB_SUBDIR "lib")
+endif()
 
 set(LIBRARY_CPP
     ${SRC_DIR}/GridFile.cpp
